@@ -34,6 +34,15 @@ import { loadSheetData, demoData, getActiveSpreadsheetId } from "./sheets";
 import "./index.css";
 
 const BRAND = "#00b8b5";
+// RUTA_HITOS_DETALLE_VISIBLE_FINAL
+
+function formatSheetText(value = "") {
+  return String(value || "")
+    .replace(/<\s*br\s*\/?\s*>/gi, "\n")
+    .replace(/\r\n/g, "\n")
+    .trim();
+}
+
 
 function getStatusType(status = "") {
   const normalized = String(status).toLowerCase();
@@ -94,7 +103,7 @@ function Sidebar({ view, setView, project }) {
         <Logo src={project.logoGSE} fallback="GSE" />
         <div>
           <div className="brandTitle">GSE&CO.</div>
-          <div className="brandSub">Ruta de Implementación Visible™</div>
+          <div className="brandSub">Ruta de Avance Visible™</div>
         </div>
       </div>
 
@@ -153,7 +162,7 @@ function Header({ project, connected }) {
         <div className="headerText">
           <div className="eyebrow">{project.service}</div>
           <h1>{company}</h1>
-          <p>Seguimiento ejecutivo del proyecto · Ruta de Implementación Visible™</p>
+          <p>Seguimiento ejecutivo del proyecto · Ruta de Avance Visible™</p>
         </div>
       </div>
 
@@ -172,7 +181,7 @@ function PortalProject({ project, milestones, pending, setView }) {
   const role = project.contactRole || "Responsable del proyecto";
   const completed = milestones.filter((m) => m.status === "Finalizado" || m.status === "Aprobado").length;
   const disorder = Math.max(0, 100 - (Number(project.progress) || 0));
-  const welcome = project.welcomeMessage || "Bienvenido a tu Ruta de Implementación Visible™. Aquí podrás revisar el avance del proyecto, los hitos trabajados, los pendientes activos y los entregables construidos por GSE para ordenar tu empresa.";
+  const welcome = project.welcomeMessage || "Bienvenido a tu Ruta de Avance Visible™. Aquí podrás revisar el avance del proyecto, los hitos trabajados, los pendientes activos y los entregables construidos por GSE para ordenar tu empresa.";
 
   return (
     <div className="portalPage">
@@ -191,7 +200,7 @@ function PortalProject({ project, milestones, pending, setView }) {
             Portal privado del proyecto
           </div>
 
-          <h2>Bienvenido a tu Ruta de Implementación Visible™</h2>
+          <h2>Bienvenido a tu Ruta de Avance Visible™</h2>
           <p>{welcome}</p>
 
           <div className="portalClientBox">
@@ -828,6 +837,9 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
         {milestones.map((m, index) => {
           const relatedDeliverables = deliverables.filter((d) => String(d.milestone || "").trim().toLowerCase() === String(m.title || "").trim().toLowerCase());
           const isSelected = selectedHito === m.title;
+          const titleText = formatSheetText(m.title);
+          const descriptionText = formatSheetText(m.description);
+          const includesText = formatSheetText(m.includes);
 
           return (
             <div
@@ -849,7 +861,7 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
                 {m.status === "Finalizado" || m.status === "Aprobado" ? <CheckCircle2 size={20} /> : index + 1}
               </div>
 
-              <div className="milestoneTitle">{m.title}</div>
+              <div className="milestoneTitle routeMilestoneTitle">{titleText}</div>
 
               <div className="badgeRow center">
                 {m.system && <Badge status="info">{m.system}</Badge>}
@@ -869,17 +881,17 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
 
               {detailed && (
                 <div className="milestoneDetails alwaysVisible">
-                  {m.description && (
+                  {descriptionText && (
                     <div className="detailBlock">
                       <strong>Descripción</strong>
-                      <p>{m.description}</p>
+                      <p>{descriptionText}</p>
                     </div>
                   )}
 
-                  {m.includes && (
+                  {includesText && (
                     <div className="detailBlock">
                       <strong>Qué incluye</strong>
-                      <p>{m.includes}</p>
+                      <p>{includesText}</p>
                     </div>
                   )}
 
@@ -915,7 +927,7 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
                     </a>
                   )}
 
-                  {!m.description && !m.includes && !safeUrl(m.link) && relatedDeliverables.length === 0 && (
+                  {!descriptionText && !includesText && !safeUrl(m.link) && relatedDeliverables.length === 0 && (
                     <p className="muted">
                       Agrega Descripcion, Qué incluye, Link o entregables relacionados para mostrar el detalle de este hito.
                     </p>
@@ -1712,7 +1724,7 @@ function App() {
             </>
           )}
 
-          {view === "ruta" && <Timeline milestones={milestones} deliverables={deliverables} setView={setView} setSelectedDeliverable={setSelectedDeliverable} selectedHito={selectedHito} setSelectedHito={setSelectedHito} />}
+          {view === "ruta" && <Timeline milestones={milestones} deliverables={deliverables} detailed setView={setView} setSelectedDeliverable={setSelectedDeliverable} selectedHito={selectedHito} setSelectedHito={setSelectedHito} />}
           {view === "hallazgos" && <Findings findings={findings} />}
           {view === "pendientes" && <PendingClient pending={pending} />}
           {view === "entregables" && <Deliverables deliverables={deliverables} selectedDeliverable={selectedDeliverable} setSelectedDeliverable={setSelectedDeliverable} />}

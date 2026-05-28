@@ -4489,3 +4489,112 @@ a.secondaryLink {
   color: var(--muted);
   font-size: 14px;
 }
+
+/* ==========================================================
+   RUTA_HITOS_DETALLE_VISIBLE_FINAL
+   Tarjetas de ruta anchas + descripción / qué incluye / link visibles
+   ========================================================== */
+.timelineDetailed {
+  grid-template-columns: repeat(2, minmax(460px, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 24px !important;
+}
+
+.timelineDetailed .premiumMilestone,
+.timelineDetailed .milestone {
+  min-height: 520px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  padding: 28px !important;
+  text-align: left !important;
+}
+
+.timelineDetailed .circle {
+  margin: 0 0 14px 0 !important;
+}
+
+.timelineDetailed .routeMilestoneTitle,
+.timelineDetailed .milestoneTitle {
+  min-height: auto !important;
+  margin: 4px 0 18px !important;
+  text-align: left !important;
+  font-size: clamp(18px, 1.35vw, 24px) !important;
+  line-height: 1.18 !important;
+  white-space: pre-line !important;
+  overflow-wrap: anywhere !important;
+  word-break: normal !important;
+}
+
+.timelineDetailed .badgeRow.center {
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  margin: 0 0 16px !important;
+}
+
+.timelineDetailed .targetDate {
+  justify-content: flex-start !important;
+  margin: 0 0 16px !important;
+}
+
+.timelineDetailed .milestoneDetails.alwaysVisible,
+.timelineDetailed .milestoneDetails {
+  display: grid !important;
+  gap: 14px !important;
+  margin-top: 20px !important;
+  padding: 18px !important;
+  width: 100% !important;
+  flex: 1 !important;
+}
+
+.timelineDetailed .detailBlock {
+  display: grid !important;
+  gap: 6px !important;
+}
+
+.timelineDetailed .detailBlock strong {
+  font-size: 12px !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+.timelineDetailed .detailBlock p,
+.timelineDetailed .muted {
+  margin: 0 !important;
+  line-height: 1.55 !important;
+  white-space: pre-line !important;
+  overflow-wrap: anywhere !important;
+}
+
+.timelineDetailed .secondaryLink {
+  margin-top: 4px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  background: rgba(0, 184, 181, 0.12) !important;
+  color: #006f6d !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+  box-shadow: none !important;
+}
+
+.timelineDetailed .secondaryLink svg {
+  color: #006f6d !important;
+  stroke: #006f6d !important;
+}
+
+@media (max-width: 1180px) {
+  .timelineDetailed {
+    grid-template-columns: 1fr !important;
+  }
+  .timelineDetailed .premiumMilestone,
+  .timelineDetailed .milestone {
+    min-height: auto !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .timelineDetailed .premiumMilestone,
+  .timelineDetailed .milestone {
+    padding: 22px !important;
+    border-radius: 26px !important;
+  }
+}
