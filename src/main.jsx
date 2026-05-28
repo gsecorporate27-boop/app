@@ -378,20 +378,28 @@ function DashboardMiniPending({ pending = 0, done = 0 }) {
 }
 
 function DashboardMiniBlockers({ blocked = 0 }) {
-  const mood = blocked > 0 ? 'Atención' : 'All Good';
-  const ratio = blocked > 0 ? Math.min(100, 20 + blocked * 22) : 82;
+  const safeBlocked = Math.max(0, Number(blocked) || 0);
+  const mood = safeBlocked > 0 ? "Atención" : "All Good";
+  const ratio = safeBlocked > 0 ? Math.min(95, 30 + safeBlocked * 18) : 82;
+  const angle = Math.round((ratio / 100) * 180);
+  const linePoints = safeBlocked > 0
+    ? "0,20 18,19 36,18 54,17 72,15 90,18 108,21 120,23"
+    : "0,22 18,22 36,22 54,20 72,20 90,13 108,11 120,8";
+  const markerLeft = safeBlocked > 0 ? Math.min(92, 22 + safeBlocked * 17) : 12;
+
   return (
-    <div className="miniBlockerWidget">
-      <div className="miniSmileGauge" style={{ background: `conic-gradient(from 180deg, var(--brand) 0deg ${Math.round((ratio/100)*180)}deg, #dfe7ea ${Math.round((ratio/100)*180)}deg 180deg, transparent 180deg 360deg)` }}>
+    <div className={`miniBlockerWidget ${safeBlocked > 0 ? "hasBlocks" : "noBlocks"}`}>
+      <div className="miniSmileGauge" style={{ background: `conic-gradient(from 180deg, var(--brand) 0deg ${angle}deg, #dfe7ea ${angle}deg 180deg, transparent 180deg 360deg)` }}>
         <div className="miniSmileCenter">
-          <div className="miniSmileFace">{blocked > 0 ? '😐' : '😊'}</div>
+          <div className="miniSmileFace">{safeBlocked > 0 ? "😐" : "😊"}</div>
           <strong>{mood}</strong>
         </div>
       </div>
       <div className="miniSparkline">
-        <span className="sparkCheck">✓</span>
+        <span className={`sparkCheck ${safeBlocked > 0 ? "alert" : "ok"}`}>{safeBlocked > 0 ? "!" : "✓"}</span>
         <svg viewBox="0 0 120 26" preserveAspectRatio="none">
-          <polyline points="0,22 18,22 36,22 54,20 72,20 90,13 108,11 120,8" fill="none" stroke="var(--brand)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={linePoints} fill="none" stroke="var(--brand)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx={markerLeft} cy={safeBlocked > 0 ? 18 : 20} r="3.2" fill="var(--brand)" />
         </svg>
       </div>
     </div>
@@ -410,31 +418,31 @@ function normalizeSystemName(value = "") {
 
 const BUSINESS_POWER_SYSTEMS = [
   {
-    short: "Operación",
+    short: "S1",
     label: "Operación sin Caos",
     keys: ["operacion sin caos", "operación sin caos", "procesos", "sistema 1"],
     fallback: 0,
   },
   {
-    short: "Talento",
+    short: "S2",
     label: "Talento en el Rol Correcto",
     keys: ["talento en el rol correcto", "talento", "estructura", "roles", "sistema 2"],
     fallback: 0,
   },
   {
-    short: "Salarios",
+    short: "S3",
     label: "Salarios Justos que Retienen",
     keys: ["salarios justos que retienen", "salarios", "salarial", "remuneracion", "remuneración", "sistema 3"],
     fallback: 0,
   },
   {
-    short: "Desempeño",
+    short: "S4",
     label: "Desempeño que Optimiza la Estructura",
     keys: ["desempeno que optimiza la estructura", "desempeño que optimiza la estructura", "desempeno", "desempeño", "evaluacion", "evaluación", "sistema 4"],
     fallback: 0,
   },
   {
-    short: "K&ZEN",
+    short: "S5",
     label: "K&ZEN Interno Permanente",
     keys: ["kzen interno permanente", "k zen interno permanente", "kaizen", "mejora continua", "k&zen", "sistema 5"],
     fallback: 0,
@@ -443,7 +451,27 @@ const BUSINESS_POWER_SYSTEMS = [
 
 function isCompletedStatus(status = "") {
   const normalized = normalizeSystemName(status);
-  return normalized.includes("finalizado") || normalized.includes("aprobado") || normalized.includes("completado");
+  return (
+    normalized.includes("finalizado") ||
+    normalized.includes("aprobado") ||
+    normalized.includes("completado") ||
+    normalized.includes("terminado")
+  );
+}
+
+function isPendingCompleted(item = {}) {
+  const status = normalizeSystemName(item.status || "");
+  const validation = normalizeSystemName(item.validationClient || item.validacionCliente || "");
+  return status.includes("terminado") || validation.includes("validado");
+}
+
+function isPendingBlocked(item = {}) {
+  const status = normalizeSystemName(item.status || "");
+  return status.includes("bloqueado") && !isPendingCompleted(item);
+}
+
+function isPendingActive(item = {}) {
+  return !isPendingCompleted(item);
 }
 
 function getSystemScores({ milestones = [], deliverables = [], projectProgress = 0 }) {
@@ -558,9 +586,10 @@ function DashboardRadar({ systemScores = [] }) {
 }
 
 function KpiCards({ project, milestones, pending, setView }) {
-  const blocked = pending.filter((p) => String(p.status).toLowerCase().includes("bloqueado")).length;
+  const activePending = pending.filter(isPendingActive).length;
+  const completedPending = pending.filter(isPendingCompleted).length;
+  const blocked = pending.filter(isPendingBlocked).length;
   const disorder = Math.max(0, 100 - (Number(project.progress) || 0));
-  const completedPending = Math.max(0, milestones.length - pending.length - blocked);
 
   const cards = [
     {
@@ -578,10 +607,10 @@ function KpiCards({ project, milestones, pending, setView }) {
     },
     {
       label: "Pendientes cliente",
-      value: pending.length,
-      note: "Seguimiento necesario",
+      value: activePending,
+      note: activePending ? "Seguimiento necesario" : "Todo validado",
       target: "pendientes",
-      widget: <DashboardMiniPending pending={pending.length} done={completedPending} />,
+      widget: <DashboardMiniPending pending={activePending} done={completedPending} />,
     },
     {
       label: "Bloqueos",
@@ -1920,3 +1949,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RUTA_ACORDEONES_DETALLE_FINAL
+
+
+// GRAFICOS_ESTADOS_TERMINADO_RADAR_S_FIX_FINAL

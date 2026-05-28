@@ -5447,3 +5447,135 @@ a.secondaryLink {
     padding: 0 15px 15px !important;
   }
 }
+
+
+/* ==========================================================
+   GRAFICOS_ESTADOS_TERMINADO_RADAR_S_FIX_FINAL
+   Estados reales, bloqueos dinámicos, hitos con color marca y radar S1-S5.
+   ========================================================== */
+
+/* Número grande de hitos en color de marca */
+.hitosProgressValue {
+  color: #007f7d !important;
+  -webkit-text-fill-color: #007f7d !important;
+}
+
+/* Mini gráfico de bloqueos: indicador visual cambia con bloqueos */
+.miniBlockerWidget.hasBlocks .miniSmileGauge {
+  filter: saturate(1.15);
+}
+
+.miniBlockerWidget.hasBlocks .miniSmileCenter strong {
+  color: #007f7d !important;
+}
+
+.sparkCheck.alert {
+  background: rgba(0, 184, 181, 0.18) !important;
+  color: #007f7d !important;
+  font-weight: 900 !important;
+}
+
+.sparkCheck.ok {
+  background: rgba(0, 184, 181, 0.12) !important;
+  color: #007f7d !important;
+}
+
+/* Leyendas alineadas */
+.chartLegendRow,
+.radarLegend {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 18px !important;
+  flex-wrap: nowrap !important;
+  width: 100% !important;
+}
+
+.chartLegendRow span,
+.radarLegend span {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  white-space: nowrap !important;
+  line-height: 1 !important;
+}
+
+.legendDot {
+  flex: 0 0 auto !important;
+  margin-right: 0 !important;
+}
+
+/* Radar: nombres de sistemas compactos S1-S5 */
+.dashboardRadarLabel {
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  fill: #003f3e !important;
+}
+
+.radarSystemLegend {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-top: 12px !important;
+}
+
+.radarSystemItem {
+  min-width: 0 !important;
+  padding: 9px 6px !important;
+  border-radius: 14px !important;
+  text-align: center !important;
+  overflow: hidden !important;
+}
+
+.radarSystemItem span {
+  display: block !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  color: #557176 !important;
+  white-space: nowrap !important;
+}
+
+.radarSystemItem strong {
+  display: block !important;
+  margin-top: 3px !important;
+  font-size: 15px !important;
+  color: #007f7d !important;
+  white-space: nowrap !important;
+}
+
+/* Gráfico de barras: título/leyenda más ordenados */
+.dashboardChartCard .dashboardChartTitle {
+  margin-bottom: 14px !important;
+}
+
+.dashboardChartCard > .chartLegendRow {
+  justify-content: flex-start !important;
+  margin-bottom: 14px !important;
+}
+
+/* Móvil: leyendas de radar pueden respirar */
+@media (max-width: 720px) {
+  .radarSystemLegend {
+    grid-template-columns: repeat(5, minmax(44px, 1fr)) !important;
+    gap: 6px !important;
+  }
+
+  .radarSystemItem {
+    padding: 8px 4px !important;
+  }
+
+  .radarSystemItem span {
+    font-size: 11px !important;
+  }
+
+  .radarSystemItem strong {
+    font-size: 13px !important;
+  }
+
+  .chartLegendRow,
+  .radarLegend {
+    gap: 12px !important;
+  }
+}
