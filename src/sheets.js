@@ -359,16 +359,47 @@ function mapMilestones(rows) {
 }
 
 function mapFindings(rows) {
-  return rows.map((row) => ({
-    area: getRowValue(row, ["Área", "Area"]),
-    finding: getRowValue(row, ["Hallazgo"]),
-    impact: getRowValue(row, ["Impacto"]),
-    priority: getRowValue(row, ["Prioridad"]),
-    system: getRowValue(row, ["Sistema", "Sistema que lo resuelve"]),
-    description: getRowValue(row, ["Descripcion", "Descripción", "Detalle", "Explicacion", "Explicación"]),
-    solution: getRowValue(row, ["Solucion", "Solución", "Propuesta", "Accion", "Acción"]),
-    image: getRowValue(row, ["Imagen", "ImagenPreview", "Imagen previa", "URLImagen"]),
-  })).filter((x) => x.finding);
+  return rows.map((row, index) => {
+    const processArea = getRowValue(row, [
+      "ProcesoAreaImpactada", "Proceso / Área Impactada", "Proceso / Area Impactada",
+      "ProcesoArea", "Proceso Area", "Área Impactada", "Area Impactada", "Area", "Área", "Area 2"
+    ]);
+    const finding = getRowValue(row, [
+      "HallazgoIdentificado", "Hallazgo Identificado", "Hallazgo", "Hallazgo identificado"
+    ]);
+    const description = getRowValue(row, [
+      "DescripcionTecnica", "Descripción Técnica del Hallazgo", "Descripcion Tecnica del Hallazgo",
+      "Descripción Técnica", "Descripcion Tecnica", "Descripcion", "Descripción", "Detalle", "Explicacion", "Explicación"
+    ]);
+    const recommendation = getRowValue(row, [
+      "RecomendacionTecnica", "Recomendación Técnica", "Recomendacion Tecnica",
+      "Solucion", "Solución", "Propuesta", "Accion", "Acción"
+    ]);
+    const solutionType = getRowValue(row, [
+      "TipoSolucion", "Tipo de Solución", "Tipo de Solucion", "Tipo Solucion", "Sistema", "Sistema que lo resuelve"
+    ]);
+    const owner = getRowValue(row, [
+      "ResponsableSugerido", "Responsable Sugerido", "Responsable", "Responsable sugerido"
+    ]);
+
+    return {
+      id: getRowValue(row, ["ID", "Id", "Codigo", "Código"]) || String(index + 1),
+      processArea,
+      area: processArea,
+      finding,
+      description,
+      recommendation,
+      solution: recommendation,
+      priority: getRowValue(row, ["Prioridad"]),
+      solutionType,
+      system: solutionType,
+      owner,
+      status: getRowValue(row, ["Estado"]),
+      link: getRowValue(row, ["Link", "URL", "Enlace", "Documento", "Archivo", "Carpeta", "LinkHallazgo"]),
+      impact: getRowValue(row, ["Impacto"]),
+      image: getRowValue(row, ["Imagen", "ImagenPreview", "Imagen previa", "URLImagen"]),
+    };
+  }).filter((x) => x.finding || x.description || x.processArea);
 }
 
 function mapPending(rows) {
@@ -490,3 +521,9 @@ export async function loadSheetData() {
 // SHEETSJS_SYNTAX_FIX_PENDIENTESCLIENTE_FINAL
 
 // PENDIENTES_VALIDACION_CLIENTE_FINAL
+
+// Estado soportado en PendientesCliente: Terminado
+
+// GRAFICOS_ESTADOS_TERMINADO_RADAR_S_FIX_FINAL
+
+// HALLAZGOS_MATRIZ_FIX_FINAL

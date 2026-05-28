@@ -5579,3 +5579,155 @@ a.secondaryLink {
     gap: 12px !important;
   }
 }
+
+
+/* ==========================================================
+   HALLAZGOS_MATRIZ_FIX_FINAL
+   Hallazgos alineados a matriz técnica con buscador, filtros y detalle fijo.
+   ========================================================== */
+.findingsPremiumSection .sectionHeader {
+  align-items: flex-start;
+}
+
+.findingsFilters {
+  display: grid !important;
+  grid-template-columns: minmax(280px, 1.5fr) minmax(180px, 0.65fr) minmax(220px, 0.85fr);
+  gap: 14px !important;
+  align-items: end;
+}
+
+.findingsGridWhite {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.findingWhiteCard {
+  border-radius: 26px;
+  border: 1px solid rgba(0, 184, 181, 0.22);
+  background: radial-gradient(circle at top left, rgba(0,184,181,0.07), transparent 14rem), rgba(255,255,255,0.98);
+  box-shadow: 0 16px 34px rgba(3,54,57,0.055);
+  overflow: hidden;
+}
+
+.findingWhiteCard.selected {
+  border-color: rgba(0,184,181,0.38);
+  box-shadow: 0 20px 42px rgba(3,54,57,0.08);
+}
+
+.findingWhiteHeader {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.findingWhiteHeader h3 {
+  margin: 8px 0 12px;
+  color: #002f36;
+  font-size: 20px;
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+}
+
+.findingMetaLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  color: #007f7d;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.findingMetaLine span {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(0,184,181,0.10);
+  color: #007f7d;
+}
+
+.findingFixedExpanded {
+  padding: 0 22px 22px;
+}
+
+.findingFixedScroll {
+  height: 280px;
+  overflow-y: auto;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(0,184,181,0.18);
+  background: rgba(0,184,181,0.055);
+  display: grid;
+  align-content: start;
+  gap: 16px;
+}
+
+.findingDetailBlock strong,
+.findingDetailGrid strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #003f3e;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.findingDetailBlock p,
+.findingDetailGrid span {
+  margin: 0;
+  color: #315a60;
+  line-height: 1.62;
+  white-space: pre-line;
+}
+
+.findingDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.findingDetailGrid > div {
+  border-radius: 18px;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(0,184,181,0.14);
+  padding: 14px;
+}
+
+.findingLink {
+  justify-self: start;
+  width: auto !important;
+  max-width: max-content !important;
+}
+
+.emptyState {
+  margin-top: 18px;
+  border-radius: 22px;
+  border: 1px dashed rgba(0,184,181,0.24);
+  background: rgba(0,184,181,0.045);
+  padding: 22px;
+  color: #557176;
+  text-align: center;
+}
+
+@media (max-width: 1080px) {
+  .findingsFilters,
+  .findingsGridWhite {
+    grid-template-columns: 1fr;
+  }
+
+  .findingDetailGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1051,48 +1051,138 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
   );
 }
 
-function Findings({ findings }) {
+function Findings({ findings = [] }) {
   const [open, setOpen] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("Todos");
+  const [areaFilter, setAreaFilter] = useState("Todos");
+
+  const priorities = useMemo(() => findings.map((item) => item.priority).filter(Boolean), [findings]);
+  const areas = useMemo(() => findings.map((item) => item.processArea || item.area).filter(Boolean), [findings]);
+
+  const filteredFindings = useMemo(() => {
+    const query = normalizeSystemName(searchTerm);
+    return findings.filter((item) => {
+      const area = item.processArea || item.area || "";
+      const priority = item.priority || "";
+      const matchesPriority = priorityFilter === "Todos" || priority === priorityFilter;
+      const matchesArea = areaFilter === "Todos" || area === areaFilter;
+      const searchable = normalizeSystemName([
+        item.id,
+        area,
+        item.finding,
+        item.description,
+        item.recommendation || item.solution,
+        item.solutionType || item.system,
+        item.owner,
+        item.status,
+        item.priority,
+      ].join(" "));
+      return matchesPriority && matchesArea && (!query || searchable.includes(query));
+    });
+  }, [findings, searchTerm, priorityFilter, areaFilter]);
+
   return (
-    <section className="card premiumSectionCard">
+    <section className="card premiumSectionCard findingsPremiumSection">
       <div className="sectionHeader">
         <div>
           <h2>Hallazgos encontrados</h2>
-          <p>Haz clic en cada hallazgo para ver su descripción, evidencia y solución propuesta.</p>
+          <p>Busca, filtra y revisa los hallazgos críticos de la matriz técnica.</p>
         </div>
+        <Badge status="En validación">{filteredFindings.length} visibles</Badge>
       </div>
 
-      <div className="list">
-        {findings.map((item) => {
-          const isOpen = open === item.finding;
-          const image = safeUrl(item.image);
+      <div className="premiumFilters findingsFilters">
+        <label className="searchFilter">
+          <span>Buscar</span>
+          <div className="searchInputWrap">
+            <Search size={18} />
+            <input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar por hallazgo, área, responsable o recomendación"
+            />
+          </div>
+        </label>
+        <FilterSelect label="Prioridad" value={priorityFilter} onChange={setPriorityFilter} options={priorities} />
+        <FilterSelect label="Área" value={areaFilter} onChange={setAreaFilter} options={areas} />
+      </div>
+
+      <div className="findingsGridWhite">
+        {filteredFindings.map((item) => {
+          const area = item.processArea || item.area || "Área no definida";
+          const recommendation = item.recommendation || item.solution;
+          const solutionType = item.solutionType || item.system;
+          const link = safeUrl(item.link || item.image);
+          const key = `${item.id}-${item.finding || item.description}`;
+          const isOpen = open === key;
+          const status = item.status || "Pendiente";
+
           return (
-            <div key={item.finding} className="findingItem clickable" onClick={() => setOpen(isOpen ? "" : item.finding)}>
-              <div className="findingHeader">
+            <article key={key} className={`findingWhiteCard ${isOpen ? "selected" : ""}`}>
+              <button className="findingWhiteHeader" onClick={() => setOpen(isOpen ? "" : key)}>
                 <div>
-                  <div className="area">{item.area}</div>
-                  <div className="itemTitle">{item.finding}</div>
-                  <div className="muted">Sistema que lo resolverá: {item.system}</div>
+                  <div className="findingMetaLine">
+                    <span>ID {item.id}</span>
+                    <span>{area}</span>
+                  </div>
+                  <h3>{item.finding || "Hallazgo sin título"}</h3>
                   <div className="badgeRow">
-                    <Badge status={item.impact}>Impacto: {item.impact}</Badge>
-                    <Badge status={item.priority === "Alta" ? "Bloqueado" : "En validación"}>Prioridad: {item.priority}</Badge>
+                    {item.priority && <Badge status={item.priority === "Alta" ? "Bloqueado" : "En validación"}>Prioridad: {item.priority}</Badge>}
+                    <Badge status={status}>{status}</Badge>
                   </div>
                 </div>
                 <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={20} />
-              </div>
+              </button>
 
               {isOpen && (
-                <div className="findingExpanded" onClick={(e) => e.stopPropagation()}>
-                  {image && <img className="findingImage" src={image} alt={item.finding} />}
-                  {item.description && <p><strong>Descripción:</strong><br />{item.description}</p>}
-                  {item.solution && <p><strong>Solución propuesta:</strong><br />{item.solution}</p>}
-                  {!item.description && !item.solution && <p className="muted">Agrega columnas Descripcion y Solucion en la pestaña Hallazgos para mostrar más detalle.</p>}
+                <div className="findingFixedExpanded">
+                  <div className="findingFixedScroll">
+                    {item.description && (
+                      <div className="findingDetailBlock">
+                        <strong>Descripción técnica del hallazgo</strong>
+                        <p>{item.description}</p>
+                      </div>
+                    )}
+                    {recommendation && (
+                      <div className="findingDetailBlock">
+                        <strong>Recomendación técnica</strong>
+                        <p>{recommendation}</p>
+                      </div>
+                    )}
+                    <div className="findingDetailGrid">
+                      {solutionType && (
+                        <div>
+                          <strong>Tipo de solución</strong>
+                          <span>{solutionType}</span>
+                        </div>
+                      )}
+                      {item.owner && (
+                        <div>
+                          <strong>Responsable sugerido</strong>
+                          <span>{item.owner}</span>
+                        </div>
+                      )}
+                    </div>
+                    {link && (
+                      <a className="secondaryLink findingLink" href={link} target="_blank" rel="noreferrer">
+                        Abrir evidencia o carpeta <ExternalLink size={15} />
+                      </a>
+                    )}
+                    {!item.description && !recommendation && !solutionType && !item.owner && !link && (
+                      <p className="muted">Agrega descripción, recomendación, responsable o link en la pestaña Hallazgos para mostrar más detalle.</p>
+                    )}
+                  </div>
                 </div>
               )}
-            </div>
+            </article>
           );
         })}
       </div>
+
+      {filteredFindings.length === 0 && (
+        <div className="emptyState">No hay hallazgos que coincidan con los filtros seleccionados.</div>
+      )}
     </section>
   );
 }
@@ -1952,3 +2042,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // GRAFICOS_ESTADOS_TERMINADO_RADAR_S_FIX_FINAL
+
+
+// HALLAZGOS_MATRIZ_FIX_FINAL
