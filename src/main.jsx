@@ -34,7 +34,7 @@ import { loadSheetData, demoData, getActiveSpreadsheetId } from "./sheets";
 import "./index.css";
 
 const BRAND = "#00b8b5";
-// RUTA_HITOS_DETALLE_VISIBLE_FINAL
+// RUTA_HITOS_DETALLE_VISIBLE_FINAL RUTA_HITOS_TARJETAS_HOMOGENEAS_FINAL
 
 function formatSheetText(value = "") {
   return String(value || "")
@@ -1737,3 +1737,6 @@ function App() {
 }
 
 createRoot(document.getElementById("root")).render(<App />);
+
+
+// PENDIENTESCLIENTE_FIX_FINAL

@@ -4598,3 +4598,157 @@ a.secondaryLink {
     border-radius: 26px !important;
   }
 }
+
+
+/* ==========================================================
+   RUTA_HITOS_TARJETAS_HOMOGENEAS_FINAL
+   Todas las tarjetas de Ruta del proyecto quedan blancas.
+   ========================================================== */
+
+.routeGrid,
+.timelineGrid,
+.milestonesGrid,
+.routeCardsGrid {
+  align-items: stretch;
+}
+
+/* Tarjetas de hitos en la ruta: fondo homogéneo blanco */
+.routeGrid article,
+.timelineGrid article,
+.milestonesGrid article,
+.routeCardsGrid article,
+.routeMilestoneCard,
+.premiumMilestone,
+.milestoneCard,
+.milestone,
+.routeCard {
+  background:
+    radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem),
+    rgba(255, 255, 255, 0.96) !important;
+  color: #002f36 !important;
+  border: 1px solid rgba(0, 184, 181, 0.24) !important;
+  box-shadow: 0 18px 42px rgba(3, 54, 57, 0.06) !important;
+}
+
+/* Neutraliza cualquier tarjeta activa/seleccionada/finalizada que se pinte con degradado */
+.routeGrid article.active,
+.routeGrid article.selected,
+.routeGrid article.success,
+.routeGrid article.finalizado,
+.timelineGrid article.active,
+.timelineGrid article.selected,
+.timelineGrid article.success,
+.timelineGrid article.finalizado,
+.milestonesGrid article.active,
+.milestonesGrid article.selected,
+.milestonesGrid article.success,
+.milestonesGrid article.finalizado,
+.routeCardsGrid article.active,
+.routeCardsGrid article.selected,
+.routeCardsGrid article.success,
+.routeCardsGrid article.finalizado,
+.routeMilestoneCard.active,
+.routeMilestoneCard.selected,
+.routeMilestoneCard.success,
+.routeMilestoneCard.finalizado,
+.premiumMilestone.active,
+.premiumMilestone.selected,
+.premiumMilestone.success,
+.premiumMilestone.finalizado,
+.milestoneCard.active,
+.milestoneCard.selected,
+.milestoneCard.success,
+.milestoneCard.finalizado {
+  background:
+    radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem),
+    rgba(255, 255, 255, 0.96) !important;
+  color: #002f36 !important;
+}
+
+/* Asegura legibilidad del texto dentro de tarjetas de ruta */
+.routeGrid article *,
+.timelineGrid article *,
+.milestonesGrid article *,
+.routeCardsGrid article *,
+.routeMilestoneCard *,
+.premiumMilestone *,
+.milestoneCard *,
+.milestone *,
+.routeCard * {
+  color: inherit;
+}
+
+/* Botones/etiquetas mantienen marca, no texto blanco perdido */
+.routeGrid .badge,
+.timelineGrid .badge,
+.milestonesGrid .badge,
+.routeCardsGrid .badge,
+.routeMilestoneCard .badge,
+.premiumMilestone .badge,
+.milestoneCard .badge,
+.milestone .badge,
+.routeCard .badge,
+.routeGrid [class*="Badge"],
+.timelineGrid [class*="Badge"],
+.milestonesGrid [class*="Badge"],
+.routeCardsGrid [class*="Badge"] {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #007f7d 0%, #00b8b5 100%) !important;
+  border: 1px solid rgba(255,255,255,0.18) !important;
+}
+
+/* Cajas internas de descripción/qué incluye/link */
+.routeGrid .milestoneDetail,
+.timelineGrid .milestoneDetail,
+.milestonesGrid .milestoneDetail,
+.routeCardsGrid .milestoneDetail,
+.routeMilestoneCard .milestoneDetail,
+.premiumMilestone .milestoneDetail,
+.milestoneCard .milestoneDetail,
+.routeGrid .detailBox,
+.timelineGrid .detailBox,
+.milestonesGrid .detailBox,
+.routeCardsGrid .detailBox,
+.routeMilestoneCard .detailBox,
+.premiumMilestone .detailBox,
+.milestoneCard .detailBox {
+  background: rgba(0, 184, 181, 0.06) !important;
+  color: #315a60 !important;
+  border: 1px solid rgba(0, 184, 181, 0.16) !important;
+}
+
+/* Links visibles */
+.routeGrid a,
+.timelineGrid a,
+.milestonesGrid a,
+.routeCardsGrid a,
+.routeMilestoneCard a,
+.premiumMilestone a,
+.milestoneCard a {
+  color: #007f7d !important;
+  background: transparent !important;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+/* Layout más ancho: 2 tarjetas por fila en escritorio */
+.routeGrid,
+.timelineGrid,
+.milestonesGrid,
+.routeCardsGrid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 24px !important;
+}
+
+@media (max-width: 900px) {
+  .routeGrid,
+  .timelineGrid,
+  .milestonesGrid,
+  .routeCardsGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
+/* PENDIENTESCLIENTE_FIX_FINAL */
