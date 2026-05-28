@@ -5175,3 +5175,91 @@ a.secondaryLink {
 .timelineDetailed .finalizado .badge * {
   color: #ffffff !important;
 }
+
+
+/* ==========================================================
+   RUTA_JSX_TEXTO_OSCURO_FINAL
+   Corrección por clases exactas del JSX: elimina texto blanco en detalles.
+   ========================================================== */
+
+.timelineDetailed .routeDetailsFixed,
+.timelineDetailed .routeDetailsFixed.routeDetailsFixed,
+.timelineDetailed .premiumMilestone .routeDetailsFixed,
+.timelineDetailed .milestone .routeDetailsFixed {
+  background: rgba(0, 184, 181, 0.06) !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+  color: #315a60 !important;
+  -webkit-text-fill-color: #315a60 !important;
+  text-shadow: none !important;
+}
+
+.timelineDetailed .routeDetailsFixed .routeDetailTextBlock,
+.timelineDetailed .routeDetailsFixed .routeDetailTextBlock *,
+.timelineDetailed .routeDetailsFixed .routeMiniListFixed,
+.timelineDetailed .routeDetailsFixed .routeMiniListFixed *,
+.timelineDetailed .routeDetailsFixed p,
+.timelineDetailed .routeDetailsFixed span,
+.timelineDetailed .routeDetailsFixed div,
+.timelineDetailed .routeDetailsFixed li {
+  color: #315a60 !important;
+  -webkit-text-fill-color: #315a60 !important;
+  text-shadow: none !important;
+  background: transparent !important;
+}
+
+.timelineDetailed .routeDetailsFixed strong,
+.timelineDetailed .routeDetailsFixed .routeDetailTextBlock strong,
+.timelineDetailed .routeDetailsFixed .routeMiniListFixed > strong {
+  color: #003f3e !important;
+  -webkit-text-fill-color: #003f3e !important;
+  text-shadow: none !important;
+  background: transparent !important;
+}
+
+.timelineDetailed .routeMiniListItemFixed,
+.timelineDetailed .routeMiniListItemFixed *,
+.timelineDetailed button.routeMiniListItemFixed,
+.timelineDetailed button.routeMiniListItemFixed * {
+  color: #003f3e !important;
+  -webkit-text-fill-color: #003f3e !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  text-shadow: none !important;
+}
+
+.timelineDetailed .routeSecondaryLinkFixed,
+.timelineDetailed .routeSecondaryLinkFixed *,
+.timelineDetailed a.routeSecondaryLinkFixed,
+.timelineDetailed a.routeSecondaryLinkFixed * {
+  color: #007f7d !important;
+  -webkit-text-fill-color: #007f7d !important;
+  text-shadow: none !important;
+}
+
+.timelineDetailed a.routeSecondaryLinkFixed {
+  display: inline-flex !important;
+  width: auto !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  background: rgba(0, 184, 181, 0.10) !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+}
+
+/* Limpia rectángulos internos innecesarios */
+.timelineDetailed .routeDetailTextBlock {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Mantiene la primera tarjeta blanca, pero no afecta color de textos de detalle */
+.timelineDetailed .premiumMilestone:first-child,
+.timelineDetailed .milestone:first-child {
+  background: rgba(255, 255, 255, 0.98) !important;
+  color: #002f36 !important;
+}

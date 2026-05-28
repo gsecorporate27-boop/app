@@ -880,28 +880,28 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
               <div className="milestoneStatus">{m.progress}% de avance</div>
 
               {detailed && (
-                <div className="milestoneDetails alwaysVisible">
+                <div className="milestoneDetails alwaysVisible routeDetailsFixed">
                   {descriptionText && (
-                    <div className="detailBlock">
+                    <div className="detailBlock routeDetailTextBlock">
                       <strong>Descripción</strong>
                       <p>{descriptionText}</p>
                     </div>
                   )}
 
                   {includesText && (
-                    <div className="detailBlock">
+                    <div className="detailBlock routeDetailTextBlock">
                       <strong>Qué incluye</strong>
                       <p>{includesText}</p>
                     </div>
                   )}
 
                   {relatedDeliverables.length > 0 && (
-                    <div className="miniList">
+                    <div className="miniList routeMiniListFixed">
                       <strong>Entregables dentro de este hito:</strong>
                       {relatedDeliverables.map((d) => (
                         <button
                           key={d.deliverable}
-                          className="miniListItem"
+                          className="miniListItem routeMiniListItemFixed"
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedDeliverable?.(d.deliverable);
@@ -917,7 +917,7 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
 
                   {m.link && safeUrl(m.link) && (
                     <a
-                      className="secondaryLink"
+                      className="secondaryLink routeSecondaryLinkFixed"
                       href={m.link}
                       target="_blank"
                       rel="noreferrer"
@@ -1131,14 +1131,14 @@ function PendingClient({ pending, compact = false, setView }) {
               {!compact && isOpen && (
                 <div className="pendingDetails" onClick={(e) => e.stopPropagation()}>
                   {item.description && (
-                    <div className="detailBlock">
+                    <div className="detailBlock routeDetailTextBlock">
                       <strong>Descripción</strong>
                       <p>{item.description}</p>
                     </div>
                   )}
 
                   {link && (
-                    <a className="secondaryLink" href={link} target="_blank" rel="noreferrer">
+                    <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer">
                       Abrir documento para aprobación <ExternalLink size={15} />
                     </a>
                   )}
@@ -1239,7 +1239,7 @@ function Deliverables({ deliverables, selectedDeliverable, setSelectedDeliverabl
               <div className="muted">{item.progress}% de avance</div>
               {item.observation && <p className="observation">{item.observation}</p>}
               {link && (
-                <a className="secondaryLink" href={link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+                <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
                   Ver entregable <ExternalLink size={15} />
                 </a>
               )}
@@ -1403,7 +1403,7 @@ function Education({ education }) {
           {item.howToRead && <p><strong>¿Cómo leerlo?</strong><br />{item.howToRead}</p>}
 
           {link && (
-            <a className="secondaryLink" href={link} target="_blank" rel="noreferrer">
+            <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer">
               Ver entregable <ExternalLink size={15} />
             </a>
           )}
@@ -1831,3 +1831,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RUTA_PRIMERA_TARJETA_TEXTO_OSCURO_FINAL
+
+
+// RUTA_JSX_TEXTO_OSCURO_FINAL
