@@ -1740,3 +1740,5 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // PENDIENTESCLIENTE_FIX_FINAL
+
+// SHEETSJS_SYNTAX_FIX_PENDIENTESCLIENTE_FINAL

@@ -18,7 +18,7 @@ export const demoData = {
     contactRole: "",
     welcomeMessage: "",
     service: "Business Power™",
-    status: clean(row.Estado || "Pendiente"),
+    status: "Pendiente",
     progress: 0,
     nextStep: "Configurar Google Sheet",
     nextDate: "Sin fecha",
@@ -41,39 +41,39 @@ export const demoData = {
     {
       id: "1",
       title: "Carga de documentos iniciales",
-      description: clean(row.Descripcion || row.Descripción || ""), sube en la carpeta compartida toda la información documental disponible de la empresa.",
+      description: "Para iniciar el diagnóstico, sube en la carpeta compartida toda la información documental disponible de la empresa.",
       category: "Estructura",
       item: "Organigrama actual",
       detail: "Documento donde se visualice la estructura actual de la empresa.",
       required: "Sí",
       responseClient: "",
-      status: clean(row.Estado || "Pendiente"),
+      status: "Pendiente",
       observation: "",
       responseDate: ""
     },
     {
       id: "2",
       title: "Carga de documentos iniciales",
-      description: clean(row.Descripcion || row.Descripción || ""), sube en la carpeta compartida toda la información documental disponible de la empresa.",
+      description: "Para iniciar el diagnóstico, sube en la carpeta compartida toda la información documental disponible de la empresa.",
       category: "Talento Humano",
       item: "Listado de colaboradores",
       detail: "Base actual de colaboradores con cargo, área, fecha de ingreso y sueldo si aplica.",
       required: "Sí",
       responseClient: "",
-      status: clean(row.Estado || "Pendiente"),
+      status: "Pendiente",
       observation: "",
       responseDate: ""
     },
     {
       id: "3",
       title: "Carga de documentos iniciales",
-      description: clean(row.Descripcion || row.Descripción || ""), sube en la carpeta compartida toda la información documental disponible de la empresa.",
+      description: "Para iniciar el diagnóstico, sube en la carpeta compartida toda la información documental disponible de la empresa.",
       category: "Procesos",
       item: "Manuales o procedimientos actuales",
       detail: "Manuales, instructivos, flujos o documentos internos existentes.",
       required: "No",
       responseClient: "",
-      status: clean(row.Estado || "Pendiente"),
+      status: "No disponible",
       observation: "",
       responseDate: ""
     }
@@ -329,7 +329,7 @@ function projectFromRawRows(rows) {
     contactRole: map.cargocliente || "",
     welcomeMessage: map.mensajebienvenida || "",
     service: map.servicio || demoData.project.service,
-    status: clean(row.Estado || "Pendiente"),
+    status: map.estadogeneral || map.estado || demoData.project.status,
     progress: parseNumber(map.avancegeneral || map.avance, demoData.project.progress),
     nextStep: map.proximopaso || map.proximopasoactual || demoData.project.nextStep,
     nextDate: map.fechaproximopaso || map.proximafecha || demoData.project.nextDate,
@@ -349,11 +349,11 @@ function mapMilestones(rows) {
     id: getRowValue(row, ["ID", "Id"]) || String(index + 1),
     title: getRowValue(row, ["Hito", "Titulo", "Título", "Nombre"]),
     system: getRowValue(row, ["Sistema"]),
-    status: clean(row.Estado || "Pendiente"), ["Estado"]),
+    status: getRowValue(row, ["Estado"]),
     progress: parseNumber(getRowValue(row, ["% Avance", "Avance", "Progreso"])),
-    description: clean(row.Descripcion || row.Descripción || ""), ["Descripcion", "Descripción", "Detalle"]),
+    description: getRowValue(row, ["Descripcion", "Descripción", "Detalle"]),
     includes: getRowValue(row, ["Qué incluye", "Que incluye", "QueIncluye", "Incluye", "Contenido", "Dentro", "Actividades"]),
-    link: safeUrl(row.Link || row.LinkPendiente || ""), ["Link", "URL", "Enlace", "LinkHito"]),
+    link: getRowValue(row, ["Link", "URL", "Enlace", "LinkHito"]),
     targetDate: getRowValue(row, ["FechaObjetivo", "Fecha Objetivo", "Fecha objetivo", "Fecha", "FechaMeta"]),
   })).filter((x) => x.title);
 }
@@ -365,7 +365,7 @@ function mapFindings(rows) {
     impact: getRowValue(row, ["Impacto"]),
     priority: getRowValue(row, ["Prioridad"]),
     system: getRowValue(row, ["Sistema", "Sistema que lo resuelve"]),
-    description: clean(row.Descripcion || row.Descripción || ""), ["Descripcion", "Descripción", "Detalle", "Explicacion", "Explicación"]),
+    description: getRowValue(row, ["Descripcion", "Descripción", "Detalle", "Explicacion", "Explicación"]),
     solution: getRowValue(row, ["Solucion", "Solución", "Propuesta", "Accion", "Acción"]),
     image: getRowValue(row, ["Imagen", "ImagenPreview", "Imagen previa", "URLImagen"]),
   })).filter((x) => x.finding);
@@ -373,13 +373,13 @@ function mapFindings(rows) {
 
 function mapPending(rows) {
   return rows.map((row) => ({
-    request: clean(row.Pendiente || row.Solicitud || row.Titulo || ""), ["Pendiente", "Solicitud"]),
-    owner: clean(row.Responsable || ""), ["Responsable", "Responsable cliente", "Responsable Cliente"]),
-    dueDate: clean(row.Fecha || row.FechaObjetivo || ""), ["Fecha límite", "Fecha limite", "Fecha", "FechaObjetivo", "Fecha Objetivo"]),
-    status: clean(row.Estado || "Pendiente"), ["Estado"]),
-    blocks: clean(row["Que bloquea"] || row.Bloquea || row.QueBloquea || ""), ["Qué bloquea", "Que bloquea", "Bloquea", "Impacto"]),
-    description: clean(row.Descripcion || row.Descripción || ""), ["Descripcion", "Descripción", "Detalle", "Explicacion", "Explicación"]),
-    link: safeUrl(row.Link || row.LinkPendiente || ""), ["LinkPendiente", "Link Pendiente", "Link", "URL", "Enlace", "LinkDocumento", "Link Documento", "Documento", "Archivo"]),
+    request: getRowValue(row, ["Pendiente", "Solicitud"]),
+    owner: getRowValue(row, ["Responsable", "Responsable cliente", "Responsable Cliente"]),
+    dueDate: getRowValue(row, ["Fecha límite", "Fecha limite", "Fecha", "FechaObjetivo", "Fecha Objetivo"]),
+    status: getRowValue(row, ["Estado"]),
+    blocks: getRowValue(row, ["Qué bloquea", "Que bloquea", "Bloquea", "Impacto"]),
+    description: getRowValue(row, ["Descripcion", "Descripción", "Detalle", "Explicacion", "Explicación"]),
+    link: getRowValue(row, ["LinkPendiente", "Link Pendiente", "Link", "URL", "Enlace", "LinkDocumento", "Link Documento", "Documento", "Archivo"]),
   })).filter((x) => x.request);
 }
 
@@ -388,9 +388,9 @@ function mapDeliverables(rows) {
     system: getRowValue(row, ["Sistema"]),
     milestone: getRowValue(row, ["Hito"]),
     deliverable: getRowValue(row, ["Entregable"]),
-    status: clean(row.Estado || "Pendiente"), ["Estado"]),
+    status: getRowValue(row, ["Estado"]),
     progress: parseNumber(getRowValue(row, ["% Avance", "Avance", "Progreso"])),
-    link: safeUrl(row.Link || row.LinkPendiente || ""), [
+    link: getRowValue(row, [
       "LinkEntregable", "Link Entregable", "Link entregable", "Link", "URL", "Enlace",
       "EnlaceEntregable", "Enlace Entregable", "Documento", "Archivo"
     ]),
@@ -434,7 +434,7 @@ function mapDocuments(rows) {
       detail,
       required: getRowValue(row, ["Obligatorio", "Required", "Requerido", "Es obligatorio"]),
       responseClient: getRowValue(row, ["RespuestaCliente", "Respuesta Cliente", "Respuesta", "Tiene", "Disponibilidad", "SeleccionCliente", "Selección Cliente"]),
-      status: clean(row.Estado || "Pendiente"), ["Estado", "Status", "Situacion", "Situación", "Disponible"]),
+      status: getRowValue(row, ["Estado", "Status", "Situacion", "Situación", "Disponible"]),
       observation: getRowValue(row, ["Observacion", "Observación", "Notas", "Comentario", "Comentarios", "Observaciones"]),
       responseDate: getRowValue(row, ["FechaRespuesta", "Fecha Respuesta", "Fecha", "FechaRegistro"]),
     };
@@ -450,8 +450,8 @@ function mapEducation(rows) {
     purpose: getRowValue(row, ["ParaQueSirve", "Para qué sirve", "Para que sirve"]),
     howToRead: getRowValue(row, ["ComoLeerlo", "Cómo leerlo", "Como leerlo"]),
     imagePreview: getRowValue(row, ["ImagenPreview", "Imagen previa", "Imagen"]),
-    link: safeUrl(row.Link || row.LinkPendiente || ""), ["LinkEntregable", "Link Entregable", "Link", "URL", "Enlace", "Documento", "Archivo"]),
-    status: clean(row.Estado || "Pendiente"), ["Estado"]),
+    link: getRowValue(row, ["LinkEntregable", "Link Entregable", "Link", "URL", "Enlace", "Documento", "Archivo"]),
+    status: getRowValue(row, ["Estado"]),
   })).filter((x) => x.deliverable || x.whatIs || x.purpose);
 }
 
@@ -464,7 +464,7 @@ export async function loadSheetData() {
     fetchCsvRows("Proyecto"),
     fetchCsvSheet("Hitos"),
     fetchCsvSheet("Hallazgos"),
-    fetchFirstAvailableSheet(["PendientesCliente", "PendientesCliente", "Pendientes Cliente", "Pendientes"]),
+    fetchFirstAvailableSheet(["PendientesCliente", "Pendientes del cliente", "Pendientes Cliente", "Pendientes"]),
     fetchCsvSheet("Entregables"),
     fetchCsvSheet("Actualizaciones", false),
     fetchFirstAvailableSheet(["Educacion", "Educación", "Lo que vas a recibir", "Educacion Cliente"]),
@@ -483,4 +483,4 @@ export async function loadSheetData() {
   };
 }
 
-// PENDIENTESCLIENTE_FIX_FINAL
+// SHEETSJS_SYNTAX_FIX_PENDIENTESCLIENTE_FINAL
