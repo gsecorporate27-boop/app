@@ -1828,3 +1828,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // PENDIENTES_VALIDAR_BOTON_SUPERIOR_FINAL
+
+
+// RUTA_PRIMERA_TARJETA_TEXTO_OSCURO_FINAL

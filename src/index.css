@@ -4998,3 +4998,180 @@ a.secondaryLink {
 .pendingValidationBox {
   display: none !important;
 }
+
+
+/* ==========================================================
+   RUTA_PRIMERA_TARJETA_TEXTO_OSCURO_FINAL
+   Corrección definitiva: texto oscuro en detalles de TODAS las tarjetas,
+   especialmente la primera tarjeta finalizada/seleccionada.
+   ========================================================== */
+
+/* Fuerza fondo blanco homogéneo para cualquier tarjeta de ruta */
+.timelineDetailed > *,
+.timelineDetailed article,
+.timelineDetailed .milestone,
+.timelineDetailed .premiumMilestone,
+.timelineDetailed .routeMilestoneCard,
+.timelineDetailed .milestoneCard,
+.timelineDetailed [class*="milestone"],
+.timelineDetailed [class*="Milestone"] {
+  background:
+    radial-gradient(circle at top left, rgba(0, 184, 181, 0.07), transparent 16rem),
+    rgba(255, 255, 255, 0.98) !important;
+  color: #002f36 !important;
+  border-color: rgba(0, 184, 181, 0.24) !important;
+}
+
+/* Evita que la primera tarjeta herede texto blanco por estado finalizado */
+.timelineDetailed > *:first-child,
+.timelineDetailed > *:first-child *,
+.timelineDetailed article:first-child,
+.timelineDetailed article:first-child *,
+.timelineDetailed .milestone:first-child,
+.timelineDetailed .milestone:first-child *,
+.timelineDetailed .premiumMilestone:first-child,
+.timelineDetailed .premiumMilestone:first-child *,
+.timelineDetailed [class*="milestone"]:first-child,
+.timelineDetailed [class*="milestone"]:first-child * {
+  color: #002f36 !important;
+}
+
+/* Detalles internos: descripción, qué incluye y entregables siempre legibles */
+.timelineDetailed .milestoneDetails,
+.timelineDetailed .milestoneDetails *,
+.timelineDetailed .milestoneDetails.alwaysVisible,
+.timelineDetailed .milestoneDetails.alwaysVisible *,
+.timelineDetailed .detailBox,
+.timelineDetailed .detailBox *,
+.timelineDetailed .detailBlock,
+.timelineDetailed .detailBlock *,
+.timelineDetailed .milestoneDetail,
+.timelineDetailed .milestoneDetail *,
+.timelineDetailed .deliverablesInside,
+.timelineDetailed .deliverablesInside *,
+.timelineDetailed .relatedDeliverables,
+.timelineDetailed .relatedDeliverables *,
+.timelineDetailed .routeDetail,
+.timelineDetailed .routeDetail *,
+.timelineDetailed .description,
+.timelineDetailed .description *,
+.timelineDetailed .includes,
+.timelineDetailed .includes * {
+  color: #315a60 !important;
+}
+
+/* Títulos dentro de detalles */
+.timelineDetailed .milestoneDetails strong,
+.timelineDetailed .milestoneDetails h3,
+.timelineDetailed .milestoneDetails h4,
+.timelineDetailed .detailBox strong,
+.timelineDetailed .detailBox h3,
+.timelineDetailed .detailBox h4,
+.timelineDetailed .detailBlock strong,
+.timelineDetailed .detailBlock h3,
+.timelineDetailed .detailBlock h4,
+.timelineDetailed .milestoneDetail strong,
+.timelineDetailed .milestoneDetail h3,
+.timelineDetailed .milestoneDetail h4,
+.timelineDetailed .deliverablesInside strong,
+.timelineDetailed .relatedDeliverables strong {
+  color: #003f3e !important;
+}
+
+/* Fondo interno del detalle */
+.timelineDetailed .milestoneDetails,
+.timelineDetailed .milestoneDetails.alwaysVisible,
+.timelineDetailed .detailBox,
+.timelineDetailed .detailBlock,
+.timelineDetailed .milestoneDetail,
+.timelineDetailed .deliverablesInside,
+.timelineDetailed .relatedDeliverables,
+.timelineDetailed .routeDetail {
+  background: rgba(0, 184, 181, 0.06) !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+}
+
+/* Tarjetas internas de entregables dentro del hito */
+.timelineDetailed .deliverableMiniCard,
+.timelineDetailed .deliverableMiniCard *,
+.timelineDetailed .routeDeliverableCard,
+.timelineDetailed .routeDeliverableCard *,
+.timelineDetailed .milestoneDeliverable,
+.timelineDetailed .milestoneDeliverable *,
+.timelineDetailed [class*="deliverable"],
+.timelineDetailed [class*="deliverable"] * {
+  color: #003f3e !important;
+}
+
+/* Evita cajas internas con texto blanco sobre fondo claro */
+.timelineDetailed .deliverableMiniCard,
+.timelineDetailed .routeDeliverableCard,
+.timelineDetailed .milestoneDeliverable,
+.timelineDetailed [class*="deliverable"] {
+  background: rgba(255,255,255,0.72) !important;
+  border: 1px solid rgba(0, 184, 181, 0.16) !important;
+}
+
+/* Badges sí mantienen letra blanca */
+.timelineDetailed .badge,
+.timelineDetailed .badge *,
+.timelineDetailed [class*="badge"],
+.timelineDetailed [class*="badge"] *,
+.timelineDetailed [class*="Badge"],
+.timelineDetailed [class*="Badge"] * {
+  color: #ffffff !important;
+}
+
+/* Links compactos y visibles */
+.timelineDetailed a,
+.timelineDetailed a *,
+.timelineDetailed .secondaryLink,
+.timelineDetailed .secondaryLink *,
+.timelineDetailed .milestoneLink,
+.timelineDetailed .milestoneLink * {
+  color: #007f7d !important;
+}
+
+.timelineDetailed .secondaryLink,
+.timelineDetailed a.secondaryLink,
+.timelineDetailed .milestoneLink {
+  display: inline-flex !important;
+  width: auto !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  background: rgba(0, 184, 181, 0.10) !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+}
+
+/* Seguridad: si una tarjeta usa clase de gradiente por ser finalizada, se neutraliza */
+.timelineDetailed .gradient,
+.timelineDetailed .gradient *,
+.timelineDetailed .active,
+.timelineDetailed .active *,
+.timelineDetailed .selected,
+.timelineDetailed .selected *,
+.timelineDetailed .success,
+.timelineDetailed .success *,
+.timelineDetailed .finalizado,
+.timelineDetailed .finalizado * {
+  color: #002f36 !important;
+}
+
+/* Pero los badges dentro de esas clases conservan blanco */
+.timelineDetailed .gradient .badge,
+.timelineDetailed .gradient .badge *,
+.timelineDetailed .active .badge,
+.timelineDetailed .active .badge *,
+.timelineDetailed .selected .badge,
+.timelineDetailed .selected .badge *,
+.timelineDetailed .success .badge,
+.timelineDetailed .success .badge *,
+.timelineDetailed .finalizado .badge,
+.timelineDetailed .finalizado .badge * {
+  color: #ffffff !important;
+}
