@@ -5263,3 +5263,76 @@ a.secondaryLink {
   background: rgba(255, 255, 255, 0.98) !important;
   color: #002f36 !important;
 }
+
+
+/* ==========================================================
+   FILTERSELECT_FIX_ENTREGABLES_EDUCACION_FINAL
+   Evita pantalla blanca en Entregables y Lo que vas a recibir.
+   ========================================================== */
+
+.filters,
+.premiumFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: end;
+  margin: 20px 0;
+}
+
+.filter {
+  display: grid;
+  gap: 8px;
+  min-width: 220px;
+}
+
+.filter span {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  color: #557176;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.filter select,
+.searchInputWrap input {
+  min-height: 52px;
+  border: 1px solid rgba(0, 184, 181, 0.22);
+  border-radius: 18px;
+  background: #ffffff;
+  color: #002f36;
+  padding: 0 16px;
+  font-size: 15px;
+  outline: none;
+}
+
+.searchInputWrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  border: 1px solid rgba(0, 184, 181, 0.22);
+  border-radius: 18px;
+  background: #ffffff;
+  padding: 0 14px;
+}
+
+.searchInputWrap input {
+  border: 0;
+  min-height: auto;
+  padding: 0;
+  width: 100%;
+}
+
+.searchInputWrap svg {
+  color: #007f7d;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 720px) {
+  .filter,
+  .searchFilter {
+    min-width: 100%;
+    width: 100%;
+  }
+}

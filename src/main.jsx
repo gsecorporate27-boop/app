@@ -73,6 +73,32 @@ function ProgressBar({ value, status, reverse = false }) {
   );
 }
 
+
+function FilterSelect({ label, value, onChange, options = [] }) {
+  const cleanOptions = Array.from(
+    new Set(
+      (Array.isArray(options) ? options : [])
+        .map((option) => String(option || "").trim())
+        .filter(Boolean)
+    )
+  );
+
+  return (
+    <label className="filter">
+      <span>{label}</span>
+      <select value={value || "Todos"} onChange={(event) => onChange?.(event.target.value)}>
+        <option value="Todos">Todos</option>
+        {cleanOptions.map((option) => (
+          <option value={option} key={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+
 function Logo({ src, fallback, className = "" }) {
   const url = safeUrl(src);
   if (url) {
@@ -1162,7 +1188,7 @@ function PendingClient({ pending, compact = false, setView }) {
   );
 }
 
-function Deliverables({ deliverables, selectedDeliverable, setSelectedDeliverable, compact = false, setView }) {
+function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliverable, compact = false, setView }) {
   const [systemFilter, setSystemFilter] = useState("Todos");
   const [milestoneFilter, setMilestoneFilter] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
@@ -1328,7 +1354,7 @@ function UpdatesPanel({ project, updates, setView, pending = [] }) {
   );
 }
 
-function Education({ education }) {
+function Education({ education = [] }) {
   const [systemFilter, setSystemFilter] = useState("Todos");
   const [milestoneFilter, setMilestoneFilter] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
@@ -1834,3 +1860,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RUTA_JSX_TEXTO_OSCURO_FINAL
+
+
+// FILTERSELECT_FIX_ENTREGABLES_EDUCACION_FINAL
