@@ -5336,3 +5336,114 @@ a.secondaryLink {
     width: 100%;
   }
 }
+
+
+/* ==========================================================
+   RUTA_ACORDEONES_DETALLE_FINAL
+   Descripción, Qué incluye y Entregables como desplegables.
+   ========================================================== */
+
+.timelineDetailed .routeAccordionDetails {
+  display: grid !important;
+  gap: 12px !important;
+  padding: 14px !important;
+  background: rgba(0, 184, 181, 0.045) !important;
+  border: 1px solid rgba(0, 184, 181, 0.16) !important;
+  border-radius: 24px !important;
+}
+
+.timelineDetailed .routeAccordionItem {
+  overflow: hidden;
+  border: 1px solid rgba(0, 184, 181, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.78);
+}
+
+.timelineDetailed .routeAccordionHeader {
+  width: 100%;
+  border: 0;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #003f3e !important;
+  -webkit-text-fill-color: #003f3e !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+}
+
+.timelineDetailed .routeAccordionHeader span,
+.timelineDetailed .routeAccordionHeader svg {
+  color: #003f3e !important;
+  -webkit-text-fill-color: #003f3e !important;
+}
+
+.timelineDetailed .routeAccordionHeader svg {
+  transition: transform 0.2s ease;
+}
+
+.timelineDetailed .routeAccordionHeader svg.open {
+  transform: rotate(90deg);
+}
+
+.timelineDetailed .routeAccordionBody {
+  padding: 0 18px 18px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: #315a60 !important;
+  -webkit-text-fill-color: #315a60 !important;
+  border: 0 !important;
+}
+
+.timelineDetailed .routeAccordionBody,
+.timelineDetailed .routeAccordionBody *,
+.timelineDetailed .routeAccordionBody p {
+  color: #315a60 !important;
+  -webkit-text-fill-color: #315a60 !important;
+  text-shadow: none !important;
+}
+
+.timelineDetailed .routeAccordionBody p {
+  margin: 0;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+
+.timelineDetailed .routeAccordionBody.miniList {
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.timelineDetailed .routeAccordionBody .miniListItem,
+.timelineDetailed .routeAccordionBody .routeMiniListItemFixed {
+  color: #003f3e !important;
+  -webkit-text-fill-color: #003f3e !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+}
+
+.timelineDetailed .routeSecondaryLinkFixed {
+  margin-top: 4px !important;
+}
+
+/* Elimina altura excesiva del detalle cuando todos están cerrados */
+.timelineDetailed .routeDetailsFixed.routeAccordionDetails {
+  min-height: 0 !important;
+}
+
+/* Móvil */
+@media (max-width: 720px) {
+  .timelineDetailed .routeAccordionHeader {
+    padding: 14px 15px;
+    font-size: 13px;
+  }
+
+  .timelineDetailed .routeAccordionBody {
+    padding: 0 15px 15px !important;
+  }
+}

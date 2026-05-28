@@ -841,6 +841,15 @@ function ProjectHero({ project, completedText }) {
 }
 
 function Timeline({ milestones, deliverables = [], detailed = false, setView, setSelectedDeliverable, selectedHito = "", setSelectedHito }) {
+  const [openRouteSections, setOpenRouteSections] = useState({});
+
+  const toggleRouteSection = (key) => {
+    setOpenRouteSections((current) => ({
+      ...current,
+      [key]: !current[key],
+    }));
+  };
+
   const goToRoute = (title) => {
     setSelectedHito?.(title);
     setView?.("ruta");
@@ -866,6 +875,9 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
           const titleText = formatSheetText(m.title);
           const descriptionText = formatSheetText(m.description);
           const includesText = formatSheetText(m.includes);
+          const descriptionKey = `${m.id}-${m.title}-descripcion`;
+          const includesKey = `${m.id}-${m.title}-incluye`;
+          const deliverablesKey = `${m.id}-${m.title}-entregables`;
 
           return (
             <div
@@ -906,38 +918,80 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
               <div className="milestoneStatus">{m.progress}% de avance</div>
 
               {detailed && (
-                <div className="milestoneDetails alwaysVisible routeDetailsFixed">
+                <div className="milestoneDetails alwaysVisible routeDetailsFixed routeAccordionDetails">
                   {descriptionText && (
-                    <div className="detailBlock routeDetailTextBlock">
-                      <strong>Descripción</strong>
-                      <p>{descriptionText}</p>
+                    <div className="routeAccordionItem">
+                      <button
+                        type="button"
+                        className="routeAccordionHeader"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleRouteSection(descriptionKey);
+                        }}
+                      >
+                        <span>Descripción</span>
+                        <ChevronRight className={openRouteSections[descriptionKey] ? "open" : ""} size={18} />
+                      </button>
+                      {openRouteSections[descriptionKey] && (
+                        <div className="routeAccordionBody routeDetailTextBlock">
+                          <p>{descriptionText}</p>
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {includesText && (
-                    <div className="detailBlock routeDetailTextBlock">
-                      <strong>Qué incluye</strong>
-                      <p>{includesText}</p>
+                    <div className="routeAccordionItem">
+                      <button
+                        type="button"
+                        className="routeAccordionHeader"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleRouteSection(includesKey);
+                        }}
+                      >
+                        <span>Qué incluye</span>
+                        <ChevronRight className={openRouteSections[includesKey] ? "open" : ""} size={18} />
+                      </button>
+                      {openRouteSections[includesKey] && (
+                        <div className="routeAccordionBody routeDetailTextBlock">
+                          <p>{includesText}</p>
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {relatedDeliverables.length > 0 && (
-                    <div className="miniList routeMiniListFixed">
-                      <strong>Entregables dentro de este hito:</strong>
-                      {relatedDeliverables.map((d) => (
-                        <button
-                          key={d.deliverable}
-                          className="miniListItem routeMiniListItemFixed"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedDeliverable?.(d.deliverable);
-                            setView?.("entregables");
-                          }}
-                        >
-                          {d.deliverable}
-                          <ChevronRight size={14} />
-                        </button>
-                      ))}
+                    <div className="routeAccordionItem">
+                      <button
+                        type="button"
+                        className="routeAccordionHeader"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleRouteSection(deliverablesKey);
+                        }}
+                      >
+                        <span>Entregables dentro de este hito</span>
+                        <ChevronRight className={openRouteSections[deliverablesKey] ? "open" : ""} size={18} />
+                      </button>
+                      {openRouteSections[deliverablesKey] && (
+                        <div className="routeAccordionBody miniList routeMiniListFixed">
+                          {relatedDeliverables.map((d) => (
+                            <button
+                              key={d.deliverable}
+                              className="miniListItem routeMiniListItemFixed"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedDeliverable?.(d.deliverable);
+                                setView?.("entregables");
+                              }}
+                            >
+                              {d.deliverable}
+                              <ChevronRight size={14} />
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -1863,3 +1917,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // FILTERSELECT_FIX_ENTREGABLES_EDUCACION_FINAL
+
+
+// RUTA_ACORDEONES_DETALLE_FINAL
