@@ -380,6 +380,10 @@ function mapPending(rows) {
     blocks: getRowValue(row, ["Qué bloquea", "Que bloquea", "Bloquea", "Impacto"]),
     description: getRowValue(row, ["Descripcion", "Descripción", "Detalle", "Explicacion", "Explicación"]),
     link: getRowValue(row, ["LinkPendiente", "Link Pendiente", "Link", "URL", "Enlace", "LinkDocumento", "Link Documento", "Documento", "Archivo"]),
+    validationClient: getRowValue(row, [
+      "ValidacionCliente", "ValidaciónCliente", "Validacion Cliente", "Validación Cliente",
+      "Validado", "AprobacionCliente", "AprobaciónCliente", "Aprobacion Cliente", "Aprobación Cliente"
+    ]),
   })).filter((x) => x.request);
 }
 
@@ -484,3 +488,5 @@ export async function loadSheetData() {
 }
 
 // SHEETSJS_SYNTAX_FIX_PENDIENTESCLIENTE_FINAL
+
+// PENDIENTES_VALIDACION_CLIENTE_FINAL

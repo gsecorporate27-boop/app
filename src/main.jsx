@@ -990,14 +990,86 @@ function Findings({ findings }) {
 
 function PendingClient({ pending, compact = false, setView }) {
   const [openPending, setOpenPending] = useState("");
+  const [pendingValidation, setPendingValidation] = useState({});
+  const [savingValidation, setSavingValidation] = useState({});
+  const [validationMessage, setValidationMessage] = useState({});
   const items = compact ? pending.slice(0, 4) : pending;
+  const pendingWebhookUrl = safeUrl(import.meta.env.VITE_PENDING_WEBHOOK_URL || import.meta.env.VITE_DOCUMENTS_WEBHOOK_URL || "");
+  const spreadsheetId = getActiveSpreadsheetId();
+
+  const getValidationStatus = (item) => {
+    const key = item.request || item.id || "";
+    return pendingValidation[key] ?? item.validationClient ?? "";
+  };
+
+  const handleValidatePending = async (item, value) => {
+    const key = item.request || item.id || "";
+    const previous = pendingValidation[key] ?? item.validationClient ?? "";
+
+    setPendingValidation((current) => ({ ...current, [key]: value }));
+    setSavingValidation((current) => ({ ...current, [key]: true }));
+    setValidationMessage((current) => ({ ...current, [key]: "Guardando validación..." }));
+
+    if (!pendingWebhookUrl) {
+      setPendingValidation((current) => ({ ...current, [key]: previous }));
+      setSavingValidation((current) => ({ ...current, [key]: false }));
+      setValidationMessage((current) => ({
+        ...current,
+        [key]: "Falta configurar VITE_PENDING_WEBHOOK_URL o VITE_DOCUMENTS_WEBHOOK_URL en Vercel."
+      }));
+      return;
+    }
+
+    try {
+      const response = await fetch(pendingWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "updatePending",
+          tipo: "pendiente",
+          spreadsheetId,
+          sheetName: "PendientesCliente",
+          pendiente: item.request,
+          responsable: item.owner,
+          fecha: item.dueDate,
+          campo: "ValidacionCliente",
+          valor: value,
+          validacionCliente: value,
+          fechaValidacion: new Date().toISOString(),
+        }),
+      });
+
+      const text = await response.text();
+      let result = {};
+      try {
+        result = JSON.parse(text);
+      } catch {
+        result = { ok: response.ok, message: text };
+      }
+
+      if (!response.ok || result.ok === false) {
+        throw new Error(result.message || "No se pudo registrar la validación.");
+      }
+
+      setValidationMessage((current) => ({ ...current, [key]: "Validación registrada" }));
+    } catch (error) {
+      console.error(error);
+      setPendingValidation((current) => ({ ...current, [key]: previous }));
+      setValidationMessage((current) => ({
+        ...current,
+        [key]: error.message || "No se pudo guardar la validación."
+      }));
+    } finally {
+      setSavingValidation((current) => ({ ...current, [key]: false }));
+    }
+  };
 
   return (
     <section className="card premiumSectionCard">
       <div className="sectionHeader">
         <div>
           <h2>Pendientes del cliente</h2>
-          <p>Acciones necesarias para avanzar sin retrasos. Haz clic para ver descripción y enlace de aprobación.</p>
+          <p>Acciones necesarias para avanzar sin retrasos. Haz clic para ver descripción, enlace y validación del cliente.</p>
         </div>
       </div>
       <div className="badgeRow"><Badge status="En validación">{pending.length} activos</Badge></div>
@@ -1006,10 +1078,13 @@ function PendingClient({ pending, compact = false, setView }) {
         {items.map((item) => {
           const isOpen = openPending === item.request;
           const link = safeUrl(item.link);
+          const validationStatus = getValidationStatus(item);
+          const isValidated = String(validationStatus || "").toLowerCase().includes("validado");
+          const key = item.request || item.id || `${item.owner}-${item.dueDate}`;
 
           return (
             <div
-              className={`pendingCard clickable ${isOpen ? "selected" : ""}`}
+              className={`pendingCard clickable ${isOpen ? "selected" : ""} ${isValidated ? "clientValidated" : ""}`}
               key={`${item.request}-${item.owner}`}
               onClick={() => {
                 if (compact) {
@@ -1034,6 +1109,7 @@ function PendingClient({ pending, compact = false, setView }) {
 
               <div className="badgeRow">
                 <Badge status={item.status}>{item.status}</Badge>
+                {isValidated && <Badge status="Finalizado">Validado por cliente</Badge>}
               </div>
 
               {!compact && isOpen && (
@@ -1044,6 +1120,20 @@ function PendingClient({ pending, compact = false, setView }) {
                       <p>{item.description}</p>
                     </div>
                   )}
+
+                  <div className="pendingValidationBox">
+                    <label htmlFor={`pending-validation-${key}`}>Validación del cliente</label>
+                    <select
+                      id={`pending-validation-${key}`}
+                      value={validationStatus}
+                      disabled={Boolean(savingValidation[key])}
+                      onChange={(event) => handleValidatePending(item, event.target.value)}
+                    >
+                      <option value="">Seleccionar</option>
+                      <option value="Validado">Validado</option>
+                    </select>
+                    {validationMessage[key] && <span>{validationMessage[key]}</span>}
+                  </div>
 
                   {link && (
                     <a className="secondaryLink" href={link} target="_blank" rel="noreferrer">
@@ -1067,18 +1157,6 @@ function PendingClient({ pending, compact = false, setView }) {
         </button>
       )}
     </section>
-  );
-}
-
-function FilterSelect({ label, value, onChange, options }) {
-  return (
-    <label className="filter">
-      <span>{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)}>
-        <option value="Todos">Todos</option>
-        {options.map((item) => <option key={item} value={item}>{item}</option>)}
-      </select>
-    </label>
   );
 }
 
@@ -1742,3 +1820,6 @@ createRoot(document.getElementById("root")).render(<App />);
 // PENDIENTESCLIENTE_FIX_FINAL
 
 // SHEETSJS_SYNTAX_FIX_PENDIENTESCLIENTE_FINAL
+
+
+// PENDIENTES_VALIDACION_CLIENTE_FINAL

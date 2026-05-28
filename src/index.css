@@ -4752,3 +4752,114 @@ a.secondaryLink {
 
 
 /* PENDIENTESCLIENTE_FIX_FINAL */
+
+
+/* ==========================================================
+   RUTA_TODAS_TARJETAS_BLANCAS_FINAL
+   Fuerza tarjetas blancas en Ruta del proyecto, incluyendo la primera.
+   ========================================================== */
+.timelineDetailed .milestone,
+.timelineDetailed .premiumMilestone,
+.timelineDetailed .milestone:nth-child(5n + 1),
+.timelineDetailed .premiumMilestone:nth-child(5n + 1),
+.timelineDetailed .milestone.selected,
+.timelineDetailed .premiumMilestone.selected,
+.timelineDetailed .milestone.selected:nth-child(5n + 1),
+.timelineDetailed .premiumMilestone.selected:nth-child(5n + 1) {
+  background:
+    radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem),
+    rgba(255, 255, 255, 0.96) !important;
+  color: #002f36 !important;
+  border: 1px solid rgba(0, 184, 181, 0.24) !important;
+  box-shadow: 0 18px 42px rgba(3, 54, 57, 0.06) !important;
+}
+
+.timelineDetailed .milestone:nth-child(5n + 1) *,
+.timelineDetailed .premiumMilestone:nth-child(5n + 1) *,
+.timelineDetailed .milestone.selected *,
+.timelineDetailed .premiumMilestone.selected * {
+  color: #002f36 !important;
+}
+
+.timelineDetailed .milestone .badge,
+.timelineDetailed .premiumMilestone .badge,
+.timelineDetailed .milestone:nth-child(5n + 1) .badge,
+.timelineDetailed .premiumMilestone:nth-child(5n + 1) .badge {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #007f7d 0%, #00b8b5 100%) !important;
+}
+
+.timelineDetailed .milestone .circle,
+.timelineDetailed .premiumMilestone .circle,
+.timelineDetailed .milestone:nth-child(5n + 1) .circle,
+.timelineDetailed .premiumMilestone:nth-child(5n + 1) .circle {
+  color: #ffffff !important;
+}
+
+.timelineDetailed .milestoneDetails,
+.timelineDetailed .milestoneDetails.alwaysVisible,
+.timelineDetailed .milestone:nth-child(5n + 1) .milestoneDetails,
+.timelineDetailed .premiumMilestone:nth-child(5n + 1) .milestoneDetails {
+  background: rgba(0, 184, 181, 0.06) !important;
+  color: #315a60 !important;
+  border: 1px solid rgba(0, 184, 181, 0.16) !important;
+}
+
+.timelineDetailed .milestoneDetails *,
+.timelineDetailed .milestoneDetails.alwaysVisible *,
+.timelineDetailed .milestone:nth-child(5n + 1) .milestoneDetails *,
+.timelineDetailed .premiumMilestone:nth-child(5n + 1) .milestoneDetails * {
+  color: #315a60 !important;
+}
+
+.timelineDetailed .secondaryLink,
+.timelineDetailed .milestone:nth-child(5n + 1) .secondaryLink,
+.timelineDetailed .premiumMilestone:nth-child(5n + 1) .secondaryLink {
+  color: #007f7d !important;
+  background: rgba(0, 184, 181, 0.10) !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+}
+
+/* ==========================================================
+   PENDIENTES_VALIDACION_CLIENTE_FINAL
+   Campo para que el cliente marque Validado y se guarde en Sheets.
+   ========================================================== */
+.pendingValidationBox {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(0, 184, 181, 0.07);
+  border: 1px solid rgba(0, 184, 181, 0.18);
+}
+
+.pendingValidationBox label {
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  color: #006f6d;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pendingValidationBox select {
+  width: 100%;
+  min-height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 184, 181, 0.24);
+  background: white;
+  color: #002f36;
+  padding: 0 12px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+}
+
+.pendingValidationBox span {
+  font-size: 12px;
+  color: #557176;
+}
+
+.pendingCard.clientValidated {
+  border-color: rgba(0, 184, 181, 0.34) !important;
+  box-shadow: 0 18px 38px rgba(0, 184, 181, 0.10) !important;
+}
