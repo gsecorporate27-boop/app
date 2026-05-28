@@ -1002,20 +1002,20 @@ function PendingClient({ pending, compact = false, setView }) {
     return pendingValidation[key] ?? item.validationClient ?? "";
   };
 
-  const handleValidatePending = async (item, value) => {
+  const handleValidatePending = async (item, value = "Validado") => {
     const key = item.request || item.id || "";
     const previous = pendingValidation[key] ?? item.validationClient ?? "";
 
     setPendingValidation((current) => ({ ...current, [key]: value }));
     setSavingValidation((current) => ({ ...current, [key]: true }));
-    setValidationMessage((current) => ({ ...current, [key]: "Guardando validación..." }));
+    setValidationMessage((current) => ({ ...current, [key]: "Guardando..." }));
 
     if (!pendingWebhookUrl) {
       setPendingValidation((current) => ({ ...current, [key]: previous }));
       setSavingValidation((current) => ({ ...current, [key]: false }));
       setValidationMessage((current) => ({
         ...current,
-        [key]: "Falta configurar VITE_PENDING_WEBHOOK_URL o VITE_DOCUMENTS_WEBHOOK_URL en Vercel."
+        [key]: "Falta configurar el webhook para guardar esta validación."
       }));
       return;
     }
@@ -1051,13 +1051,13 @@ function PendingClient({ pending, compact = false, setView }) {
         throw new Error(result.message || "No se pudo registrar la validación.");
       }
 
-      setValidationMessage((current) => ({ ...current, [key]: "Validación registrada" }));
+      setValidationMessage((current) => ({ ...current, [key]: "Registrado" }));
     } catch (error) {
       console.error(error);
       setPendingValidation((current) => ({ ...current, [key]: previous }));
       setValidationMessage((current) => ({
         ...current,
-        [key]: error.message || "No se pudo guardar la validación."
+        [key]: error.message || "No se pudo guardar."
       }));
     } finally {
       setSavingValidation((current) => ({ ...current, [key]: false }));
@@ -1069,7 +1069,7 @@ function PendingClient({ pending, compact = false, setView }) {
       <div className="sectionHeader">
         <div>
           <h2>Pendientes del cliente</h2>
-          <p>Acciones necesarias para avanzar sin retrasos. Haz clic para ver descripción, enlace y validación del cliente.</p>
+          <p>Acciones necesarias para avanzar sin retrasos. Haz clic para ver descripción y enlace de aprobación.</p>
         </div>
       </div>
       <div className="badgeRow"><Badge status="En validación">{pending.length} activos</Badge></div>
@@ -1107,9 +1107,25 @@ function PendingClient({ pending, compact = false, setView }) {
                 <span><strong>Fecha:</strong> {item.dueDate}</span>
               </div>
 
-              <div className="badgeRow">
+              <div className="badgeRow pendingActionRow" onClick={(e) => e.stopPropagation()}>
                 <Badge status={item.status}>{item.status}</Badge>
-                {isValidated && <Badge status="Finalizado">Validado por cliente</Badge>}
+
+                {isValidated ? (
+                  <Badge status="Finalizado">Validado</Badge>
+                ) : (
+                  <button
+                    className="pendingValidatePill"
+                    type="button"
+                    disabled={Boolean(savingValidation[key])}
+                    onClick={() => handleValidatePending(item, "Validado")}
+                  >
+                    {savingValidation[key] ? "Guardando..." : "Validar"}
+                  </button>
+                )}
+
+                {validationMessage[key] && (
+                  <span className="pendingSaveMessage">{validationMessage[key]}</span>
+                )}
               </div>
 
               {!compact && isOpen && (
@@ -1120,20 +1136,6 @@ function PendingClient({ pending, compact = false, setView }) {
                       <p>{item.description}</p>
                     </div>
                   )}
-
-                  <div className="pendingValidationBox">
-                    <label htmlFor={`pending-validation-${key}`}>Validación del cliente</label>
-                    <select
-                      id={`pending-validation-${key}`}
-                      value={validationStatus}
-                      disabled={Boolean(savingValidation[key])}
-                      onChange={(event) => handleValidatePending(item, event.target.value)}
-                    >
-                      <option value="">Seleccionar</option>
-                      <option value="Validado">Validado</option>
-                    </select>
-                    {validationMessage[key] && <span>{validationMessage[key]}</span>}
-                  </div>
 
                   {link && (
                     <a className="secondaryLink" href={link} target="_blank" rel="noreferrer">
@@ -1823,3 +1825,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // PENDIENTES_VALIDACION_CLIENTE_FINAL
+
+
+// PENDIENTES_VALIDAR_BOTON_SUPERIOR_FINAL

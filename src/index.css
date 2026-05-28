@@ -4863,3 +4863,138 @@ a.secondaryLink {
   border-color: rgba(0, 184, 181, 0.34) !important;
   box-shadow: 0 18px 38px rgba(0, 184, 181, 0.10) !important;
 }
+
+
+/* ==========================================================
+   RUTA_DETALLE_TEXTO_Y_LINK_COMPACTO_FINAL
+   Corrige texto blanco en descripción/qué incluye y botón de enlace gigante.
+   ========================================================== */
+
+.timelineDetailed .milestone,
+.timelineDetailed .premiumMilestone,
+.timelineDetailed .milestone:nth-child(1),
+.timelineDetailed .premiumMilestone:nth-child(1),
+.timelineDetailed .milestone.selected,
+.timelineDetailed .premiumMilestone.selected {
+  background:
+    radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem),
+    rgba(255, 255, 255, 0.96) !important;
+  color: #002f36 !important;
+}
+
+/* Forzar texto legible dentro del detalle del hito */
+.timelineDetailed .milestoneDetails,
+.timelineDetailed .milestoneDetails.alwaysVisible,
+.timelineDetailed .milestoneDetails.detailBox,
+.timelineDetailed .detailBox,
+.timelineDetailed .milestoneDetail {
+  background: rgba(0, 184, 181, 0.06) !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+  color: #315a60 !important;
+}
+
+.timelineDetailed .milestoneDetails *,
+.timelineDetailed .milestoneDetails.alwaysVisible *,
+.timelineDetailed .milestoneDetails.detailBox *,
+.timelineDetailed .detailBox *,
+.timelineDetailed .milestoneDetail *,
+.timelineDetailed .detailBlock,
+.timelineDetailed .detailBlock *,
+.timelineDetailed .detailTitle,
+.timelineDetailed .detailText {
+  color: #315a60 !important;
+}
+
+.timelineDetailed .milestoneDetails strong,
+.timelineDetailed .milestoneDetails h3,
+.timelineDetailed .milestoneDetails h4,
+.timelineDetailed .milestoneDetails .detailHeading,
+.timelineDetailed .detailBox strong,
+.timelineDetailed .detailBox h3,
+.timelineDetailed .detailBox h4 {
+  color: #003f3e !important;
+}
+
+/* Link compacto, sin bloque gigante */
+.timelineDetailed .secondaryLink,
+.timelineDetailed a.secondaryLink,
+.timelineDetailed .milestoneLink,
+.timelineDetailed a[href] {
+  display: inline-flex !important;
+  width: auto !important;
+  max-width: max-content !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin-top: 14px !important;
+  padding: 8px 12px !important;
+  border-radius: 12px !important;
+  background: rgba(0, 184, 181, 0.10) !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+  color: #007f7d !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+/* Evita que los contenedores vacíos crezcan cuando no hay descripción */
+.timelineDetailed .milestoneDetails:empty,
+.timelineDetailed .detailBox:empty,
+.timelineDetailed .milestoneDetail:empty {
+  display: none !important;
+}
+
+/* ==========================================================
+   PENDIENTES_VALIDAR_BOTON_SUPERIOR_FINAL
+   Botón Validar arriba, similar a la etiqueta de estado.
+   ========================================================== */
+
+.pendingActionRow {
+  align-items: center;
+  gap: 10px;
+}
+
+.pendingValidatePill {
+  border: 0;
+  min-height: 30px;
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #007f7d 0%, #00b8b5 100%);
+  color: #ffffff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 184, 181, 0.16);
+}
+
+.pendingValidatePill:hover {
+  transform: translateY(-1px);
+}
+
+.pendingValidatePill:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pendingSaveMessage {
+  font-size: 12px;
+  color: rgba(255,255,255,0.86);
+  font-weight: 700;
+}
+
+.pendingCard:not(.selected) .pendingSaveMessage {
+  color: #557176;
+}
+
+.pendingCard.clientValidated {
+  border-color: rgba(0, 184, 181, 0.34) !important;
+}
+
+/* Oculta la caja vieja de validación si quedara por caché de estilos */
+.pendingValidationBox {
+  display: none !important;
+}
