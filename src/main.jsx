@@ -112,6 +112,7 @@ function Sidebar({ view, setView, project }) {
     [Sparkles, "Portal del proyecto", "portal"],
     [BarChart3, "Resumen", "resumen"],
     [Target, "Ruta del proyecto", "ruta"],
+    [ClipboardCheck, "Lista Maestra de Procesos", "procesos"],
     [Search, "Hallazgos", "hallazgos"],
     [AlertTriangle, "Pendientes", "pendientes"],
     [FileText, "Entregables", "entregables"],
@@ -1051,6 +1052,149 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
   );
 }
 
+
+function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("Todos");
+  const [macroFilter, setMacroFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("Todos");
+
+  const allProcesses = [...processesAsIs, ...processesToBe];
+  const typeOptions = useMemo(() => allProcesses.map((item) => item.type).filter(Boolean), [allProcesses]);
+  const macroOptions = useMemo(() => allProcesses.map((item) => item.macroName).filter(Boolean), [allProcesses]);
+  const statusOptions = useMemo(() => processesToBe.map((item) => item.status).filter(Boolean), [processesToBe]);
+
+  const filterProcess = (item, source) => {
+    const query = normalizeSystemName(searchTerm);
+    const matchesType = typeFilter === "Todos" || item.type === typeFilter;
+    const matchesMacro = macroFilter === "Todos" || item.macroName === macroFilter;
+    const matchesStatus = source === "ASIS" || statusFilter === "Todos" || item.status === statusFilter;
+    const searchable = normalizeSystemName([
+      item.id,
+      item.type,
+      item.macroCode,
+      item.macroName,
+      item.processCode,
+      item.processName,
+      item.description,
+      item.changes,
+      item.status,
+    ].join(" "));
+    return matchesType && matchesMacro && matchesStatus && (!query || searchable.includes(query));
+  };
+
+  const filteredAsIs = useMemo(
+    () => processesAsIs.filter((item) => filterProcess(item, "ASIS")),
+    [processesAsIs, searchTerm, typeFilter, macroFilter, statusFilter]
+  );
+
+  const filteredToBe = useMemo(
+    () => processesToBe.filter((item) => filterProcess(item, "TOBE")),
+    [processesToBe, searchTerm, typeFilter, macroFilter, statusFilter]
+  );
+
+  const ProcessTable = ({ title, subtitle, rows, variant }) => (
+    <div className="processTableCard">
+      <div className="processTableHeader">
+        <div>
+          <h3>{title}</h3>
+          <p>{subtitle}</p>
+        </div>
+        <Badge status="En validación">{rows.length} visibles</Badge>
+      </div>
+
+      <div className="processTableWrap">
+        <table className="processTable">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Tipo</th>
+              <th>Cód. Macro</th>
+              <th>Macroproceso</th>
+              <th>Cód. Proceso</th>
+              <th>Proceso</th>
+              {variant === "asis" ? <th>Descripción</th> : <th>Cambios / Observaciones</th>}
+              {variant === "tobe" && <th>Status</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((item, index) => (
+              <tr key={`${variant}-${item.id}-${item.processCode}-${index}`}>
+                <td>{item.id}</td>
+                <td>{item.type}</td>
+                <td>{item.macroCode}</td>
+                <td>{item.macroName}</td>
+                <td>{item.processCode}</td>
+                <td><strong>{item.processName}</strong></td>
+                <td>{variant === "asis" ? item.description : item.changes}</td>
+                {variant === "tobe" && <td><Badge status={item.status}>{item.status || "Sin status"}</Badge></td>}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {rows.length === 0 && <div className="emptyState">No hay procesos que coincidan con los filtros seleccionados.</div>}
+    </div>
+  );
+
+  return (
+    <section className="card premiumSectionCard processMasterSection">
+      <div className="sectionHeader">
+        <div>
+          <h2>Lista Maestra de Procesos</h2>
+          <p>Consulta integrada de procesos AS IS y TO BE, con búsqueda y filtros por tipo, macroproceso y status.</p>
+        </div>
+      </div>
+
+      <div className="processSummaryGrid">
+        <article className="processSummaryCard">
+          <span>Total procesos AS IS</span>
+          <strong>{processesAsIs.length}</strong>
+          <p>Procesos levantados en situación actual.</p>
+        </article>
+        <article className="processSummaryCard">
+          <span>Total procesos TO BE</span>
+          <strong>{processesToBe.length}</strong>
+          <p>Procesos propuestos o ajustados.</p>
+        </article>
+      </div>
+
+      <div className="premiumFilters processFilters">
+        <label className="searchFilter processSearchFilter">
+          <span>Buscar proceso</span>
+          <div className="searchInputWrap">
+            <Search size={18} />
+            <input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar por código, proceso, macroproceso, descripción o cambios"
+            />
+          </div>
+        </label>
+        <FilterSelect label="Tipo de proceso" value={typeFilter} onChange={setTypeFilter} options={typeOptions} />
+        <FilterSelect label="Macroproceso" value={macroFilter} onChange={setMacroFilter} options={macroOptions} />
+        <FilterSelect label="Status TO BE" value={statusFilter} onChange={setStatusFilter} options={statusOptions} />
+      </div>
+
+      <div className="processTablesStack">
+        <ProcessTable
+          title="Procesos AS IS"
+          subtitle="Situación actual documentada en la lista maestra."
+          rows={filteredAsIs}
+          variant="asis"
+        />
+        <ProcessTable
+          title="Procesos TO BE"
+          subtitle="Procesos propuestos, modificados o diseñados para la operación objetivo."
+          rows={filteredToBe}
+          variant="tobe"
+        />
+      </div>
+    </section>
+  );
+}
+
 function Findings({ findings = [] }) {
   const [open, setOpen] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -1945,7 +2089,7 @@ function App() {
       });
   }, []);
 
-  const { project, milestones, findings, pending, deliverables, updates, education, documents = [] } = data;
+  const { project, milestones, findings, pending, deliverables, updates, education, documents = [], processesAsIs = [], processesToBe = [] } = data;
 
   const completedText = useMemo(() => {
     const completed = milestones.filter((m) => m.status === "Finalizado" || m.status === "Aprobado").length;
@@ -1965,6 +2109,7 @@ function App() {
               ["portal", "Portal"],
               ["resumen", "Resumen"],
               ["ruta", "Ruta"],
+              ["procesos", "Procesos"],
               ["hallazgos", "Hallazgos"],
               ["pendientes", "Pendientes"],
               ["entregables", "Entregables"],
@@ -2004,6 +2149,7 @@ function App() {
           )}
 
           {view === "ruta" && <Timeline milestones={milestones} deliverables={deliverables} detailed setView={setView} setSelectedDeliverable={setSelectedDeliverable} selectedHito={selectedHito} setSelectedHito={setSelectedHito} />}
+          {view === "procesos" && <ProcessesMasterList processesAsIs={processesAsIs} processesToBe={processesToBe} />}
           {view === "hallazgos" && <Findings findings={findings} />}
           {view === "pendientes" && <PendingClient pending={pending} />}
           {view === "entregables" && <Deliverables deliverables={deliverables} selectedDeliverable={selectedDeliverable} setSelectedDeliverable={setSelectedDeliverable} />}
@@ -2045,3 +2191,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_MATRIZ_FIX_FINAL
+
+
+// LISTA_MAESTRA_PROCESOS_FINAL

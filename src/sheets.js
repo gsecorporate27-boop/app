@@ -37,6 +37,8 @@ export const demoData = {
   deliverables: [],
   updates: [],
   education: [],
+  processesAsIs: [],
+  processesToBe: [],
   documents: [
     {
       id: "1",
@@ -476,6 +478,34 @@ function mapDocuments(rows) {
   }).filter((x) => x.item || x.title || x.description || x.detail || x.category);
 }
 
+
+function mapProcessesAsIs(rows) {
+  return rows.map((row, index) => ({
+    id: getRowValue(row, ["N°", "N", "No", "Numero", "Número", "ID", "Id"]) || String(index + 1),
+    type: getRowValue(row, ["TipoProceso", "Tipo de Proceso", "Tipo Proceso", "Tipo"]),
+    macroCode: getRowValue(row, ["CodigoMacroproceso", "Código Macroproceso", "Cód. Macroproceso", "Cod Macroproceso", "Codigo Macroproceso"]),
+    macroName: getRowValue(row, ["NombreMacroproceso", "Nombre del Macroproceso", "Nombre Macroproceso", "Macroproceso"]),
+    processCode: getRowValue(row, ["CodigoProceso", "Código Proceso", "Cód. Proceso", "Cod Proceso", "Codigo Proceso"]),
+    processName: getRowValue(row, ["NombreProceso", "Nombre del Proceso", "Nombre Proceso", "Proceso"]),
+    description: getRowValue(row, ["DescripcionProceso", "Descripción del Proceso", "Descripcion del Proceso", "Descripcion", "Descripción"]),
+  })).filter((x) => x.processName || x.processCode || x.macroName || x.description);
+}
+
+function mapProcessesToBe(rows) {
+  return rows.map((row, index) => ({
+    id: getRowValue(row, ["N°", "N", "No", "Numero", "Número", "ID", "Id"]) || String(index + 1),
+    type: getRowValue(row, ["TipoProceso", "Tipo de Proceso", "Tipo Proceso", "Tipo"]),
+    macroCode: getRowValue(row, ["CodigoMacroproceso", "Código Macroproceso", "Cód. Macroproceso", "Cod Macroproceso", "Codigo Macroproceso"]),
+    macroName: getRowValue(row, ["NombreMacroproceso", "Nombre del Macroproceso", "Nombre Macroproceso", "Macroproceso"]),
+    processCode: getRowValue(row, ["CodigoProceso", "Código Proceso", "Cód. Proceso", "Cod Proceso", "Codigo Proceso"]),
+    processName: getRowValue(row, ["NombreProceso", "Nombre del Proceso", "Nombre Proceso", "Proceso"]),
+    changes: getRowValue(row, ["CambiosObservaciones", "Cambios y Observaciones", "Cambios Observaciones", "Cambios", "Observaciones"]),
+    status: getRowValue(row, ["Status", "Estado"]),
+    consultant: getRowValue(row, ["Consultor"]),
+    responsible: getRowValue(row, ["Responsable"]),
+  })).filter((x) => x.processName || x.processCode || x.macroName || x.changes);
+}
+
 function mapEducation(rows) {
   return rows.map((row) => ({
     system: getRowValue(row, ["Sistema"]),
@@ -495,7 +525,7 @@ export async function loadSheetData() {
     throw new Error("Falta configurar VITE_SPREADSHEET_ID o usar ?sheet=ID");
   }
 
-  const [projectRawRows, milestoneRows, findingRows, pendingRows, deliverableRows, updateRows, educationRows, documentRows] = await Promise.all([
+  const [projectRawRows, milestoneRows, findingRows, pendingRows, deliverableRows, updateRows, educationRows, documentRows, processesAsIsRows, processesToBeRows] = await Promise.all([
     fetchCsvRows("Proyecto"),
     fetchCsvSheet("Hitos"),
     fetchCsvSheet("Hallazgos"),
@@ -504,6 +534,8 @@ export async function loadSheetData() {
     fetchCsvSheet("Actualizaciones", false),
     fetchFirstAvailableSheet(["Educacion", "Educación", "Lo que vas a recibir", "Educacion Cliente"]),
     fetchFirstAvailableSheet(["Documentos", "CargaDocumentos", "Carga de documentos", "Carga Documentos", "ChecklistDocumentos", "Checklist Documentos", "Checklist"]),
+    fetchFirstAvailableSheet(["ProcesosASIS", "Procesos AS IS", "ListaASIS", "Lista AS IS", "ASIS"]),
+    fetchFirstAvailableSheet(["ProcesosTOBE", "Procesos TO BE", "ListaTOBE", "Lista TO BE", "TOBE"]),
   ]);
 
   return {
@@ -527,3 +559,5 @@ export async function loadSheetData() {
 // GRAFICOS_ESTADOS_TERMINADO_RADAR_S_FIX_FINAL
 
 // HALLAZGOS_MATRIZ_FIX_FINAL
+
+// LISTA_MAESTRA_PROCESOS_FINAL

@@ -5731,3 +5731,151 @@ a.secondaryLink {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ==========================================================
+   LISTA_MAESTRA_PROCESOS_FINAL
+   Nueva pestaña: Lista Maestra de Procesos AS IS / TO BE.
+   ========================================================== */
+.processMasterSection {
+  border-radius: 30px;
+}
+
+.processSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 22px 0;
+}
+
+.processSummaryCard {
+  background:
+    radial-gradient(circle at top left, rgba(0, 184, 181, 0.10), transparent 18rem),
+    rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 184, 181, 0.20);
+  border-radius: 26px;
+  padding: 24px;
+  box-shadow: 0 18px 42px rgba(3, 54, 57, 0.07);
+}
+
+.processSummaryCard span {
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  color: #557176;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.processSummaryCard strong {
+  display: block;
+  margin-top: 8px;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 0.95;
+  color: #007f7d;
+  letter-spacing: -0.06em;
+}
+
+.processSummaryCard p {
+  margin: 10px 0 0;
+  color: #557176;
+}
+
+.processFilters {
+  align-items: end;
+  margin: 18px 0 24px;
+}
+
+.processSearchFilter {
+  min-width: min(100%, 420px);
+  flex: 1 1 380px;
+}
+
+.processTablesStack {
+  display: grid;
+  gap: 24px;
+}
+
+.processTableCard {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 184, 181, 0.18);
+  border-radius: 26px;
+  padding: 22px;
+  box-shadow: 0 18px 42px rgba(3, 54, 57, 0.06);
+}
+
+.processTableHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.processTableHeader h3 {
+  margin: 0;
+  color: #002f36;
+  font-size: 1.25rem;
+}
+
+.processTableHeader p {
+  margin: 6px 0 0;
+  color: #557176;
+}
+
+.processTableWrap {
+  overflow: auto;
+  max-height: 520px;
+  border: 1px solid rgba(0, 184, 181, 0.14);
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.processTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px;
+}
+
+.processTable th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f1fbfb;
+  color: #003f3e;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 184, 181, 0.18);
+}
+
+.processTable td {
+  padding: 14px 16px;
+  color: #315a60;
+  border-bottom: 1px solid rgba(0, 184, 181, 0.10);
+  vertical-align: top;
+  line-height: 1.45;
+}
+
+.processTable td strong {
+  color: #002f36;
+}
+
+.processTable tr:last-child td {
+  border-bottom: 0;
+}
+
+@media (max-width: 860px) {
+  .processSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .processTableHeader {
+    flex-direction: column;
+  }
+}
