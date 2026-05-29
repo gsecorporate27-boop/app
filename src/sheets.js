@@ -482,24 +482,24 @@ function mapDocuments(rows) {
 function mapProcessesAsIs(rows) {
   return rows.map((row, index) => ({
     id: getRowValue(row, ["N°", "N", "No", "Numero", "Número", "ID", "Id"]) || String(index + 1),
-    type: getRowValue(row, ["TipoProceso", "Tipo de Proceso", "Tipo Proceso", "Tipo"]),
+    type: getRowValue(row, ["TipoProceso", "Tipo de Proceso", "Tipo Proceso", "Tipo de proceso", "Tipo"]),
     macroCode: getRowValue(row, ["CodigoMacroproceso", "Código Macroproceso", "Cód. Macroproceso", "Cod Macroproceso", "Codigo Macroproceso"]),
     macroName: getRowValue(row, ["NombreMacroproceso", "Nombre del Macroproceso", "Nombre Macroproceso", "Macroproceso"]),
     processCode: getRowValue(row, ["CodigoProceso", "Código Proceso", "Cód. Proceso", "Cod Proceso", "Codigo Proceso"]),
     processName: getRowValue(row, ["NombreProceso", "Nombre del Proceso", "Nombre Proceso", "Proceso"]),
-    description: getRowValue(row, ["DescripcionProceso", "Descripción del Proceso", "Descripcion del Proceso", "Descripcion", "Descripción"]),
+    description: getRowValue(row, ["DescripcionProceso", "Descripción del Proceso", "Descripcion del Proceso", "Descripción Proceso", "Descripcion Proceso", "Descripcion", "Descripción"]),
   })).filter((x) => x.processName || x.processCode || x.macroName || x.description);
 }
 
 function mapProcessesToBe(rows) {
   return rows.map((row, index) => ({
     id: getRowValue(row, ["N°", "N", "No", "Numero", "Número", "ID", "Id"]) || String(index + 1),
-    type: getRowValue(row, ["TipoProceso", "Tipo de Proceso", "Tipo Proceso", "Tipo"]),
+    type: getRowValue(row, ["TipoProceso", "Tipo de Proceso", "Tipo Proceso", "Tipo de proceso", "Tipo"]),
     macroCode: getRowValue(row, ["CodigoMacroproceso", "Código Macroproceso", "Cód. Macroproceso", "Cod Macroproceso", "Codigo Macroproceso"]),
     macroName: getRowValue(row, ["NombreMacroproceso", "Nombre del Macroproceso", "Nombre Macroproceso", "Macroproceso"]),
     processCode: getRowValue(row, ["CodigoProceso", "Código Proceso", "Cód. Proceso", "Cod Proceso", "Codigo Proceso"]),
     processName: getRowValue(row, ["NombreProceso", "Nombre del Proceso", "Nombre Proceso", "Proceso"]),
-    changes: getRowValue(row, ["CambiosObservaciones", "Cambios y Observaciones", "Cambios Observaciones", "Cambios", "Observaciones"]),
+    changes: getRowValue(row, ["CambiosObservaciones", "Cambios y Observaciones", "Cambios y observaciones", "Cambios Observaciones", "Cambios", "Observaciones", "Observacion", "Observación"]),
     status: getRowValue(row, ["Status", "Estado"]),
     consultant: getRowValue(row, ["Consultor"]),
     responsible: getRowValue(row, ["Responsable"]),
@@ -534,8 +534,8 @@ export async function loadSheetData() {
     fetchCsvSheet("Actualizaciones", false),
     fetchFirstAvailableSheet(["Educacion", "Educación", "Lo que vas a recibir", "Educacion Cliente"]),
     fetchFirstAvailableSheet(["Documentos", "CargaDocumentos", "Carga de documentos", "Carga Documentos", "ChecklistDocumentos", "Checklist Documentos", "Checklist"]),
-    fetchFirstAvailableSheet(["ProcesosASIS", "Procesos AS IS", "ListaASIS", "Lista AS IS", "ASIS"]),
-    fetchFirstAvailableSheet(["ProcesosTOBE", "Procesos TO BE", "ListaTOBE", "Lista TO BE", "TOBE"]),
+    fetchFirstAvailableSheet(["ProcesosASIS", "Procesos AS IS", "Procesos As Is", "Procesos AS-IS", "Procesos AS_IS", "ListaASIS", "Lista AS IS", "Lista AS-IS", "ASIS", "AS IS"]),
+    fetchFirstAvailableSheet(["ProcesosTOBE", "Procesos TO BE", "Procesos To Be", "Procesos TO-BE", "Procesos TO_BE", "ListaTOBE", "Lista TO BE", "Lista TO-BE", "TOBE", "TO BE"]),
   ]);
 
   return {
@@ -547,6 +547,8 @@ export async function loadSheetData() {
     updates: mapUpdates(updateRows),
     education: mapEducation(educationRows),
     documents: mapDocuments(documentRows),
+    processesAsIs: mapProcessesAsIs(processesAsIsRows),
+    processesToBe: mapProcessesToBe(processesToBeRows),
   };
 }
 
@@ -561,3 +563,5 @@ export async function loadSheetData() {
 // HALLAZGOS_MATRIZ_FIX_FINAL
 
 // LISTA_MAESTRA_PROCESOS_FINAL
+
+// LISTA_MAESTRA_PROCESOS_LECTURA_FIX_FINAL
