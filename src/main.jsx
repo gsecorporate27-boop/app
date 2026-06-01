@@ -1164,7 +1164,7 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
         <Badge status="En validación">{rows.length} visibles</Badge>
       </div>
 
-      <div className="processTableWrap fixedMatrixWrap">
+      <div className="processTableWrap individualMatrixScroll">
         <table className="processTable fixedMatrixTable">
           <thead>
             <tr>
@@ -2483,3 +2483,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // MATRICES_SCROLL_FIJO_FINAL
+
+
+// SCROLL_INDIVIDUAL_ASIS_TOBE_MATRICES_FINAL

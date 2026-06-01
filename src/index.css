@@ -6384,3 +6384,355 @@ table.coeTable {
   overflow: auto !important;
   border-radius: 22px !important;
 }
+
+
+/* ==========================================================
+   SCROLL_INDIVIDUAL_ASIS_TOBE_MATRICES_FINAL
+   AS IS y TO BE visibles al mismo tiempo, con scroll independiente
+   en cada matriz de Lista Maestra y COE.
+   ========================================================== */
+
+/* El contenedor de toda la sección NO debe hacer scroll compartido */
+.processesSection,
+.masterProcessesSection,
+.coeSection,
+.listaMaestraSection,
+.processesPage,
+.coePage,
+.processMasterPage {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+/* Las cards que contienen AS IS y TO BE se ven apiladas, no encerradas en un solo scroll */
+.processesSection .card,
+.masterProcessesSection .card,
+.coeSection .card,
+.listaMaestraSection .card,
+.processesPage .card,
+.coePage .card,
+.processMasterPage .card {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+/* Cada matriz individual tiene SU propio scroll */
+.individualMatrixScroll,
+.processTableWrap,
+.coeTableWrap,
+.masterProcessTableWrap,
+.matrixScrollWrap,
+.processMatrixWrap,
+.coeMatrixWrap,
+.processesTableWrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 380px !important;
+  max-height: 380px !important;
+  min-height: 260px !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+  border-radius: 22px !important;
+  background: #ffffff !important;
+  position: relative !important;
+  display: block !important;
+  margin-top: 16px !important;
+}
+
+/* Refuerzo: si un div contiene directamente una tabla de procesos/COE, ese div es el scroll individual */
+div:has(> table.processTable),
+div:has(> table.masterProcessTable),
+div:has(> table.coeTable),
+div:has(> table.coeMatrixTable),
+div:has(> table.processesTable) {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 380px !important;
+  max-height: 380px !important;
+  min-height: 260px !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+  border-radius: 22px !important;
+  background: #ffffff !important;
+  display: block !important;
+}
+
+/* Evita que una envoltura padre capture las dos matrices juntas */
+.card:has(.processTableWrap),
+.card:has(.coeTableWrap),
+.card:has(.masterProcessTableWrap),
+.card:has(.individualMatrixScroll) {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* Las tablas mantienen ancho mínimo; el scroll horizontal ocurre dentro de cada matriz */
+.processTable,
+.masterProcessTable,
+.coeTable,
+.coeMatrixTable,
+.processesTable,
+.fixedMatrixTable,
+table.processTable,
+table.masterProcessTable,
+table.coeTable,
+table.coeMatrixTable,
+table.processesTable {
+  width: max-content !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  table-layout: fixed !important;
+}
+
+/* Lista Maestra: ancho suficiente para ver datos sin romper página */
+.processTable,
+.masterProcessTable,
+.processesTable,
+table.processTable,
+table.masterProcessTable,
+table.processesTable {
+  min-width: 1450px !important;
+}
+
+/* COE: ancho suficiente para los 8 campos */
+.coeTable,
+.coeMatrixTable,
+table.coeTable,
+table.coeMatrixTable {
+  min-width: 1320px !important;
+}
+
+/* Encabezados fijos dentro de cada scroll */
+.processTable th,
+.masterProcessTable th,
+.coeTable th,
+.coeMatrixTable th,
+.processesTable th,
+.fixedMatrixTable th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 4 !important;
+  background: #f2fbfb !important;
+  color: #004f4e !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.02em !important;
+  border-bottom: 1px solid rgba(0, 184, 181, 0.22) !important;
+}
+
+/* Celdas controladas */
+.processTable th,
+.processTable td,
+.masterProcessTable th,
+.masterProcessTable td,
+.coeTable th,
+.coeTable td,
+.coeMatrixTable th,
+.coeMatrixTable td,
+.processesTable th,
+.processesTable td,
+.fixedMatrixTable th,
+.fixedMatrixTable td {
+  padding: 12px 14px !important;
+  vertical-align: top !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  color: #173f46 !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(0, 184, 181, 0.10) !important;
+}
+
+/* Lista Maestra: anchos por columna */
+.processTable th:nth-child(1),
+.processTable td:nth-child(1),
+.masterProcessTable th:nth-child(1),
+.masterProcessTable td:nth-child(1) {
+  min-width: 70px !important;
+  max-width: 80px !important;
+}
+
+.processTable th:nth-child(2),
+.processTable td:nth-child(2),
+.masterProcessTable th:nth-child(2),
+.masterProcessTable td:nth-child(2) {
+  min-width: 150px !important;
+  max-width: 180px !important;
+}
+
+.processTable th:nth-child(3),
+.processTable td:nth-child(3),
+.processTable th:nth-child(5),
+.processTable td:nth-child(5),
+.masterProcessTable th:nth-child(3),
+.masterProcessTable td:nth-child(3),
+.masterProcessTable th:nth-child(5),
+.masterProcessTable td:nth-child(5) {
+  min-width: 150px !important;
+  max-width: 180px !important;
+}
+
+.processTable th:nth-child(4),
+.processTable td:nth-child(4),
+.processTable th:nth-child(6),
+.processTable td:nth-child(6),
+.masterProcessTable th:nth-child(4),
+.masterProcessTable td:nth-child(4),
+.masterProcessTable th:nth-child(6),
+.masterProcessTable td:nth-child(6) {
+  min-width: 260px !important;
+  max-width: 340px !important;
+}
+
+.processTable th:nth-child(7),
+.processTable td:nth-child(7),
+.masterProcessTable th:nth-child(7),
+.masterProcessTable td:nth-child(7) {
+  min-width: 320px !important;
+  max-width: 420px !important;
+}
+
+/* Imagen Proceso y Ficha Técnica separadas y compactas */
+.processTable th:nth-last-child(2),
+.processTable td:nth-last-child(2),
+.processTable th:last-child,
+.processTable td:last-child,
+.masterProcessTable th:nth-last-child(2),
+.masterProcessTable td:nth-last-child(2),
+.masterProcessTable th:last-child,
+.masterProcessTable td:last-child {
+  min-width: 155px !important;
+  max-width: 170px !important;
+  text-align: center !important;
+}
+
+/* COE: anchos exactos para los 8 campos */
+.coeTable th:nth-child(1),
+.coeTable td:nth-child(1),
+.coeMatrixTable th:nth-child(1),
+.coeMatrixTable td:nth-child(1) {
+  min-width: 150px !important;
+  max-width: 170px !important;
+}
+
+.coeTable th:nth-child(2),
+.coeTable td:nth-child(2),
+.coeMatrixTable th:nth-child(2),
+.coeMatrixTable td:nth-child(2) {
+  min-width: 260px !important;
+  max-width: 350px !important;
+}
+
+.coeTable th:nth-child(3),
+.coeTable td:nth-child(3),
+.coeMatrixTable th:nth-child(3),
+.coeMatrixTable td:nth-child(3) {
+  min-width: 320px !important;
+  max-width: 420px !important;
+}
+
+.coeTable th:nth-child(4),
+.coeTable td:nth-child(4),
+.coeMatrixTable th:nth-child(4),
+.coeMatrixTable td:nth-child(4) {
+  min-width: 190px !important;
+  max-width: 240px !important;
+}
+
+.coeTable th:nth-child(5),
+.coeTable td:nth-child(5),
+.coeMatrixTable th:nth-child(5),
+.coeMatrixTable td:nth-child(5) {
+  min-width: 300px !important;
+  max-width: 420px !important;
+}
+
+.coeTable th:nth-child(6),
+.coeTable td:nth-child(6),
+.coeTable th:nth-child(7),
+.coeTable td:nth-child(7),
+.coeTable th:nth-child(8),
+.coeTable td:nth-child(8),
+.coeMatrixTable th:nth-child(6),
+.coeMatrixTable td:nth-child(6),
+.coeMatrixTable th:nth-child(7),
+.coeMatrixTable td:nth-child(7),
+.coeMatrixTable th:nth-child(8),
+.coeMatrixTable td:nth-child(8) {
+  min-width: 130px !important;
+  max-width: 150px !important;
+  text-align: right !important;
+}
+
+/* Scrollbar visible por cada matriz */
+.individualMatrixScroll::-webkit-scrollbar,
+.processTableWrap::-webkit-scrollbar,
+.coeTableWrap::-webkit-scrollbar,
+.masterProcessTableWrap::-webkit-scrollbar,
+.matrixScrollWrap::-webkit-scrollbar,
+div:has(> table.processTable)::-webkit-scrollbar,
+div:has(> table.masterProcessTable)::-webkit-scrollbar,
+div:has(> table.coeTable)::-webkit-scrollbar,
+div:has(> table.coeMatrixTable)::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+.individualMatrixScroll::-webkit-scrollbar-thumb,
+.processTableWrap::-webkit-scrollbar-thumb,
+.coeTableWrap::-webkit-scrollbar-thumb,
+.masterProcessTableWrap::-webkit-scrollbar-thumb,
+.matrixScrollWrap::-webkit-scrollbar-thumb,
+div:has(> table.processTable)::-webkit-scrollbar-thumb,
+div:has(> table.masterProcessTable)::-webkit-scrollbar-thumb,
+div:has(> table.coeTable)::-webkit-scrollbar-thumb,
+div:has(> table.coeMatrixTable)::-webkit-scrollbar-thumb {
+  background: rgba(0, 184, 181, 0.48);
+  border-radius: 999px;
+}
+
+.individualMatrixScroll::-webkit-scrollbar-track,
+.processTableWrap::-webkit-scrollbar-track,
+.coeTableWrap::-webkit-scrollbar-track,
+.masterProcessTableWrap::-webkit-scrollbar-track,
+.matrixScrollWrap::-webkit-scrollbar-track,
+div:has(> table.processTable)::-webkit-scrollbar-track,
+div:has(> table.masterProcessTable)::-webkit-scrollbar-track,
+div:has(> table.coeTable)::-webkit-scrollbar-track,
+div:has(> table.coeMatrixTable)::-webkit-scrollbar-track {
+  background: rgba(0, 184, 181, 0.08);
+  border-radius: 999px;
+}
+
+/* Mantener AS IS y TO BE visibles uno debajo del otro */
+.processesSection .tableSection,
+.coeSection .tableSection,
+.processTableSection,
+.coeTableSection,
+.matrixSection {
+  margin-bottom: 28px !important;
+  overflow: visible !important;
+}
+
+/* Móvil */
+@media (max-width: 900px) {
+  .individualMatrixScroll,
+  .processTableWrap,
+  .coeTableWrap,
+  .masterProcessTableWrap,
+  .matrixScrollWrap,
+  div:has(> table.processTable),
+  div:has(> table.masterProcessTable),
+  div:has(> table.coeTable),
+  div:has(> table.coeMatrixTable) {
+    height: 340px !important;
+    max-height: 340px !important;
+  }
+}
