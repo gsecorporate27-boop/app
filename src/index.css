@@ -5921,3 +5921,44 @@ a.secondaryLink {
 .processTable td:nth-child(8) {
   min-width: 120px;
 }
+
+
+/* ==========================================================
+   LISTA_MAESTRA_IMAGEN_PROCESO_FICHA_TECNICA_FINAL
+   Recursos por proceso: ImagenProceso + FichaTecnica.
+   ========================================================== */
+.processResourceButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.processResourceButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(0, 184, 181, 0.10);
+  border: 1px solid rgba(0, 184, 181, 0.22);
+  color: #007f7d !important;
+  -webkit-text-fill-color: #007f7d !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.processResourceButton.secondary {
+  background: rgba(0, 127, 125, 0.09);
+  border-color: rgba(0, 127, 125, 0.20);
+}
+
+.processEmptyLink {
+  color: #8aa0a4;
+  font-size: 12px;
+  font-weight: 700;
+}

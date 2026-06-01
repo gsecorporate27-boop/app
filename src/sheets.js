@@ -356,6 +356,8 @@ function mapMilestones(rows) {
     description: getRowValue(row, ["Descripcion", "Descripción", "Detalle"]),
     includes: getRowValue(row, ["Qué incluye", "Que incluye", "QueIncluye", "Incluye", "Contenido", "Dentro", "Actividades"]),
     link: getRowValue(row, ["Link", "URL", "Enlace", "LinkHito"]),
+    imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
+    technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
     targetDate: getRowValue(row, ["FechaObjetivo", "Fecha Objetivo", "Fecha objetivo", "Fecha", "FechaMeta"]),
   })).filter((x) => x.title);
 }
@@ -398,6 +400,8 @@ function mapFindings(rows) {
       owner,
       status: getRowValue(row, ["Estado"]),
       link: getRowValue(row, ["Link", "URL", "Enlace", "Documento", "Archivo", "Carpeta", "LinkHallazgo"]),
+    imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
+    technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
       impact: getRowValue(row, ["Impacto"]),
       image: getRowValue(row, ["Imagen", "ImagenPreview", "Imagen previa", "URLImagen"]),
     };
@@ -413,6 +417,8 @@ function mapPending(rows) {
     blocks: getRowValue(row, ["Qué bloquea", "Que bloquea", "Bloquea", "Impacto"]),
     description: getRowValue(row, ["Descripcion", "Descripción", "Detalle", "Explicacion", "Explicación"]),
     link: getRowValue(row, ["LinkPendiente", "Link Pendiente", "Link", "URL", "Enlace", "LinkDocumento", "Link Documento", "Documento", "Archivo"]),
+    imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
+    technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
     validationClient: getRowValue(row, [
       "ValidacionCliente", "ValidaciónCliente", "Validacion Cliente", "Validación Cliente",
       "Validado", "AprobacionCliente", "AprobaciónCliente", "Aprobacion Cliente", "Aprobación Cliente"
@@ -431,6 +437,8 @@ function mapDeliverables(rows) {
       "LinkEntregable", "Link Entregable", "Link entregable", "Link", "URL", "Enlace",
       "EnlaceEntregable", "Enlace Entregable", "Documento", "Archivo"
     ]),
+    imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
+    technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
     observation: getRowValue(row, ["Observacion", "Observación", "Notas", "Comentario"]),
   })).filter((x) => x.deliverable);
 }
@@ -489,6 +497,8 @@ function mapProcessesAsIs(rows) {
     processName: getRowValue(row, ["NombreProceso", "Nombre del Proceso", "Nombre Proceso", "Proceso"]),
     description: getRowValue(row, ["DescripcionProceso", "Descripción del Proceso", "Descripcion del Proceso", "Descripción Proceso", "Descripcion Proceso", "Descripcion", "Descripción"]),
     link: getRowValue(row, ["Link", "link", "URL", "Url", "Enlace", "Imagen", "ImagenPreview", "Imagen Preview", "VistaPrevia", "Vista Previa", "LinkImagen", "Link Imagen"]),
+    imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
+    technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
   })).filter((x) => x.processName || x.processCode || x.macroName || x.description);
 }
 
@@ -502,6 +512,8 @@ function mapProcessesToBe(rows) {
     processName: getRowValue(row, ["NombreProceso", "Nombre del Proceso", "Nombre Proceso", "Proceso"]),
     changes: getRowValue(row, ["CambiosObservaciones", "Cambios y Observaciones", "Cambios y observaciones", "Cambios Observaciones", "Cambios", "Observaciones", "Observacion", "Observación"]),
     link: getRowValue(row, ["Link", "link", "URL", "Url", "Enlace", "Imagen", "ImagenPreview", "Imagen Preview", "VistaPrevia", "Vista Previa", "LinkImagen", "Link Imagen"]),
+    imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
+    technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
     status: getRowValue(row, ["Status", "Estado"]),
     consultant: getRowValue(row, ["Consultor"]),
     responsible: getRowValue(row, ["Responsable"]),
@@ -518,6 +530,8 @@ function mapEducation(rows) {
     howToRead: getRowValue(row, ["ComoLeerlo", "Cómo leerlo", "Como leerlo"]),
     imagePreview: getRowValue(row, ["ImagenPreview", "Imagen previa", "Imagen"]),
     link: getRowValue(row, ["LinkEntregable", "Link Entregable", "Link", "URL", "Enlace", "Documento", "Archivo"]),
+    imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
+    technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
     status: getRowValue(row, ["Estado"]),
   })).filter((x) => x.deliverable || x.whatIs || x.purpose);
 }
@@ -567,3 +581,5 @@ export async function loadSheetData() {
 // LISTA_MAESTRA_PROCESOS_FINAL
 
 // LISTA_MAESTRA_PROCESOS_LECTURA_FIX_FINAL
+
+// LISTA_MAESTRA_IMAGEN_PROCESO_FICHA_TECNICA_FINAL

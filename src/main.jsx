@@ -1053,6 +1053,65 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
 }
 
 
+
+function getProcessImageLink(process = {}) {
+  return safeUrl(
+    process.imageProcess ||
+    process.imagenProceso ||
+    process.ImagenProceso ||
+    process["ImagenProceso"] ||
+    process["Imagen Proceso"] ||
+    process["Imagen del Proceso"] ||
+    process.link || process.imageProcess || process.technicalSheetImage ||
+    process.link || process.imageProcess || process.technicalSheetImagen ||
+    process.image ||
+    process.imagen ||
+    process.link || process.imageProcess || process.technicalSheet ||
+    process.Link ||
+    ""
+  );
+}
+
+function getProcessTechnicalSheetLink(process = {}) {
+  return safeUrl(
+    process.technicalSheet ||
+    process.fichaTecnica ||
+    process.FichaTecnica ||
+    process["FichaTecnica"] ||
+    process["Ficha Técnica"] ||
+    process["Ficha Tecnica"] ||
+    process["LinkFichaTecnica"] ||
+    process["Link Ficha Tecnica"] ||
+    process["Link Ficha Técnica"] ||
+    ""
+  );
+}
+
+
+function renderProcessResourceButtons(process = {}) {
+  const imageLink = getProcessImageLink(process);
+  const technicalSheetLink = getProcessTechnicalSheetLink(process);
+
+  if (!imageLink && !technicalSheetLink) {
+    return <span className="processEmptyLink">Sin recursos</span>;
+  }
+
+  return (
+    <div className="processResourceButtons">
+      {imageLink && (
+        <a className="processResourceButton" href={imageLink} target="_blank" rel="noreferrer">
+          Ver imagen
+        </a>
+      )}
+      {technicalSheetLink && (
+        <a className="processResourceButton secondary" href={technicalSheetLink} target="_blank" rel="noreferrer">
+          Ver ficha técnica
+        </a>
+      )}
+    </div>
+  );
+}
+
 function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("Todos");
@@ -1115,7 +1174,7 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
               <th>Cód. Proceso</th>
               <th>Proceso</th>
               {variant === "asis" ? <th>Descripción</th> : <th>Cambios / Observaciones</th>}
-              <th>Imagen previa</th>
+              <th>Recursos</th>
               {variant === "tobe" && <th>Status</th>}
             </tr>
           </thead>
@@ -1738,9 +1797,9 @@ function Education({ education = [] }) {
     return (
       <article className="educationCard premiumEducationCard" key={`${prefix}${item.deliverable}-${index}`}>
         {image ? (
-          <img className="previewImage" src={image} alt={item.deliverable || "Imagen previa"} />
+          <img className="previewImage" src={image} alt={item.deliverable || "Imagen proceso"} />
         ) : (
-          <div className="previewPlaceholder"><Monitor size={34} />Imagen previa</div>
+          <div className="previewPlaceholder"><Monitor size={34} />Imagen proceso</div>
         )}
 
         <div className="educationContent">
@@ -2208,3 +2267,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // LISTA_MAESTRA_PROCESOS_LECTURA_FIX_FINAL
+
+
+// LISTA_MAESTRA_IMAGEN_PROCESO_FICHA_TECNICA_FINAL
