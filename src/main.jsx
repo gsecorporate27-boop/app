@@ -587,6 +587,86 @@ function DashboardRadar({ systemScores = [] }) {
   );
 }
 
+
+function SummaryInsightCards({ project, milestones = [], deliverables = [], findings = [], processesAsIs = [], processesToBe = [], coeAsIs = [], coeToBe = [] }) {
+  const systemScores = getSystemScores({ milestones, deliverables, projectProgress: Number(project?.progress) || 0 });
+
+  const totalCost = (rows = []) => rows.reduce((sum, item) => {
+    const cost = parseNumericValue(item.cost ?? item.costo ?? item["COSTO (xmin)"] ?? 0);
+    const frequency = parseNumericValue(item.frequency ?? item.frecuencia ?? item.FRECUENCIA ?? 1) || 1;
+    return sum + (cost * frequency);
+  }, 0);
+
+  const asIsCOE = totalCost(coeAsIs);
+  const toBeCOE = totalCost(coeToBe);
+  const coeDelta = Math.max(0, asIsCOE - toBeCOE);
+
+  return (
+    <div className="summaryInsightGrid">
+      <article className="summaryInsightCard radarSummaryCard">
+        <div className="summaryInsightHeader">
+          <div>
+            <span>Radar</span>
+            <h3>Avance por sistemas</h3>
+          </div>
+          <Badge status="En validación">5 sistemas</Badge>
+        </div>
+        <div className="summaryRadarMini">
+          <DashboardRadar systemScores={systemScores} />
+        </div>
+      </article>
+
+      <article className="summaryInsightCard">
+        <div className="summaryInsightHeader">
+          <div>
+            <span>Procesos y hallazgos</span>
+            <h3>Resumen técnico</h3>
+          </div>
+          <Badge status="En revisión">Proyecto</Badge>
+        </div>
+        <div className="summaryMetricStack">
+          <div className="summaryMetricLine primary">
+            <span>Total hallazgos encontrados</span>
+            <strong>{findings.length}</strong>
+          </div>
+          <div className="summaryMetricLine">
+            <span>Procesos AS IS</span>
+            <strong>{processesAsIs.length}</strong>
+          </div>
+          <div className="summaryMetricLine">
+            <span>Procesos TO BE</span>
+            <strong>{processesToBe.length}</strong>
+          </div>
+        </div>
+      </article>
+
+      <article className="summaryInsightCard">
+        <div className="summaryInsightHeader">
+          <div>
+            <span>COE</span>
+            <h3>Costo operativo estimado</h3>
+          </div>
+          <Badge status="En validación">AS IS / TO BE</Badge>
+        </div>
+        <div className="summaryMetricStack coeSummaryStack">
+          <div className="summaryMetricLine primary">
+            <span>Total COE AS IS</span>
+            <strong>${formatCurrency(asIsCOE)}</strong>
+          </div>
+          <div className="summaryMetricLine">
+            <span>Total COE TO BE</span>
+            <strong>${formatCurrency(toBeCOE)}</strong>
+          </div>
+          <div className="summaryMetricLine saved">
+            <span>Diferencia estimada</span>
+            <strong>${formatCurrency(coeDelta)}</strong>
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
 function KpiCards({ project, milestones, pending, setView }) {
   const activePending = pending.filter(isPendingActive).length;
   const completedPending = pending.filter(isPendingCompleted).length;
@@ -2416,7 +2496,16 @@ function App() {
                     selectedHito={selectedHito}
                     setSelectedHito={setSelectedHito}
                   />
-                  <DisorderInsightsCard project={project} milestones={milestones} deliverables={deliverables} />
+                  <SummaryInsightCards
+                    project={project}
+                    milestones={milestones}
+                    deliverables={deliverables}
+                    findings={findings}
+                    processesAsIs={processesAsIs}
+                    processesToBe={processesToBe}
+                    coeAsIs={coeAsIs}
+                    coeToBe={coeToBe}
+                  />
                 </div>
 
                 <UpdatesPanel project={project} updates={updates} pending={pending} setView={setView} />
@@ -2496,3 +2585,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // MATRICES_SCROLL_SIN_DESBORDE_REAL_SYNTAX_FIX_FINAL
+
+
+// RESUMEN_TRES_TARJETAS_FINAL

@@ -7500,3 +7500,149 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 
 
 /* MATRICES_SCROLL_SIN_DESBORDE_REAL_SYNTAX_FIX_FINAL */
+
+
+/* ==========================================================
+   RESUMEN_TRES_TARJETAS_FINAL
+   Tres tarjetas simétricas debajo de Hitos: radar, procesos/hallazgos y COE.
+   ========================================================== */
+.summaryInsightGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+.summaryInsightCard {
+  min-height: 290px;
+  height: 100%;
+  border-radius: 28px;
+  padding: 22px;
+  background: linear-gradient(180deg, rgba(248,252,252,0.98), rgba(242,248,248,0.98));
+  border: 1px solid rgba(0,184,181,0.20);
+  box-shadow: 0 16px 42px rgba(3,54,57,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.summaryInsightHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.summaryInsightHeader span {
+  display: block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  color: #007f7d;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 4px;
+}
+
+.summaryInsightHeader h3 {
+  margin: 0;
+  color: #002f36;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.16;
+}
+
+.summaryRadarMini {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 210px;
+}
+
+.summaryRadarMini .dashboardRadarWrap {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.summaryRadarMini .dashboardRadarSvg {
+  max-height: 175px;
+}
+
+.summaryRadarMini .radarSystemLegend {
+  margin-top: 4px !important;
+  gap: 5px !important;
+}
+
+.summaryRadarMini .radarSystemItem {
+  padding: 6px 4px !important;
+  border-radius: 12px !important;
+}
+
+.summaryRadarMini .radarLegend {
+  margin-top: 8px !important;
+}
+
+.summaryMetricStack {
+  display: grid;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.summaryMetricLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(0,184,181,0.07);
+  border: 1px solid rgba(0,184,181,0.16);
+}
+
+.summaryMetricLine span {
+  color: #557176;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.summaryMetricLine strong {
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: #007f7d;
+  white-space: nowrap;
+}
+
+.summaryMetricLine.primary {
+  background: linear-gradient(135deg, rgba(0,127,125,0.12), rgba(0,184,181,0.10));
+}
+
+.summaryMetricLine.saved strong {
+  color: #003f3e;
+}
+
+.coeSummaryStack .summaryMetricLine strong {
+  font-size: 1.35rem;
+}
+
+/* Oculta el gráfico anterior de desorden si alguna versión lo deja montado accidentalmente en resumen */
+.executiveSummaryMain > .disorderInsightsCard .dashboardSplitGrid > .dashboardChartCard:first-child {
+  display: none !important;
+}
+.executiveSummaryMain > .disorderInsightsCard .dashboardSplitGrid {
+  grid-template-columns: 1fr !important;
+}
+
+@media (max-width: 1180px) {
+  .summaryInsightGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .summaryInsightCard {
+    min-height: auto;
+  }
+}
