@@ -1079,6 +1079,7 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
       item.description,
       item.changes,
       item.status,
+      item.link,
     ].join(" "));
     return matchesType && matchesMacro && matchesStatus && (!query || searchable.includes(query));
   };
@@ -1114,6 +1115,7 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
               <th>Cód. Proceso</th>
               <th>Proceso</th>
               {variant === "asis" ? <th>Descripción</th> : <th>Cambios / Observaciones</th>}
+              <th>Imagen previa</th>
               {variant === "tobe" && <th>Status</th>}
             </tr>
           </thead>
@@ -1127,6 +1129,15 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
                 <td>{item.processCode}</td>
                 <td><strong>{item.processName}</strong></td>
                 <td>{variant === "asis" ? item.description : item.changes}</td>
+                <td>
+                  {safeUrl(item.link) ? (
+                    <a className="processPreviewLink" href={safeUrl(item.link)} target="_blank" rel="noreferrer">
+                      Ver imagen <ExternalLink size={14} />
+                    </a>
+                  ) : (
+                    <span className="processNoPreview">Sin imagen</span>
+                  )}
+                </td>
                 {variant === "tobe" && <td><Badge status={item.status}>{item.status || "Sin status"}</Badge></td>}
               </tr>
             ))}

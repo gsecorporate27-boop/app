@@ -5882,3 +5882,42 @@ a.secondaryLink {
 
 
 /* LISTA_MAESTRA_PROCESOS_LECTURA_FIX_FINAL */
+
+
+/* ==========================================================
+   LISTA_MAESTRA_PROCESOS_LINK_IMAGEN_FINAL
+   Link de imagen previa en AS IS y TO BE.
+   ========================================================== */
+.processPreviewLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(0, 184, 181, 0.10);
+  border: 1px solid rgba(0, 184, 181, 0.22);
+  color: #007f7d !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.processPreviewLink svg {
+  color: #007f7d !important;
+}
+.processPreviewLink:hover {
+  background: rgba(0, 184, 181, 0.16);
+  transform: translateY(-1px);
+}
+.processNoPreview {
+  color: #8ba0a5;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.processTable th:nth-child(8),
+.processTable td:nth-child(8) {
+  min-width: 120px;
+}
