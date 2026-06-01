@@ -39,6 +39,8 @@ export const demoData = {
   education: [],
   processesAsIs: [],
   processesToBe: [],
+  coeAsIs: [],
+  coeToBe: [],
   documents: [
     {
       id: "1",
@@ -520,6 +522,20 @@ function mapProcessesToBe(rows) {
   })).filter((x) => x.processName || x.processCode || x.macroName || x.changes);
 }
 
+function mapCOERows(rows) {
+  return rows.map((row, index) => ({
+    id: getRowValue(row, ["N°", "N", "No", "Numero", "Número", "ID", "Id"]) || String(index + 1),
+    code: getRowValue(row, ["CÓDIGO", "Codigo", "Código", "CODIGO", "Code", "Cod", "Cód."]),
+    process: getRowValue(row, ["PROCESO", "Proceso", "process"]),
+    activity: getRowValue(row, ["ACTIVIDAD", "Actividad", "activity"]),
+    participant: getRowValue(row, ["INTERVINIENTE", "Interviniente", "Interviente", "Responsable", "Participante"]),
+    observation: getRowValue(row, ["OBSERVACIÓN", "Observación", "OBSERVACION", "Observacion", "ObservacionTecnica", "Comentario"]),
+    time: getRowValue(row, ["TIEMPO (xmin)", "Tiempo (xmin)", "Tiempo", "TIEMPO", "TiempoXmin", "Tiempo xmin"]),
+    cost: getRowValue(row, ["COSTO (xmin)", "Costo (xmin)", "Costo", "COSTO", "CostoXmin", "Costo xmin"]),
+    frequency: getRowValue(row, ["FRECUENCIA", "Frecuencia", "frequency"]),
+  })).filter((x) => x.code || x.process || x.activity || x.participant || x.observation);
+}
+
 function mapEducation(rows) {
   return rows.map((row) => ({
     system: getRowValue(row, ["Sistema"]),
@@ -541,7 +557,7 @@ export async function loadSheetData() {
     throw new Error("Falta configurar VITE_SPREADSHEET_ID o usar ?sheet=ID");
   }
 
-  const [projectRawRows, milestoneRows, findingRows, pendingRows, deliverableRows, updateRows, educationRows, documentRows, processesAsIsRows, processesToBeRows] = await Promise.all([
+  const [projectRawRows, milestoneRows, findingRows, pendingRows, deliverableRows, updateRows, educationRows, documentRows, processesAsIsRows, processesToBeRows, coeAsIsRows, coeToBeRows] = await Promise.all([
     fetchCsvRows("Proyecto"),
     fetchCsvSheet("Hitos"),
     fetchCsvSheet("Hallazgos"),
@@ -552,6 +568,8 @@ export async function loadSheetData() {
     fetchFirstAvailableSheet(["Documentos", "CargaDocumentos", "Carga de documentos", "Carga Documentos", "ChecklistDocumentos", "Checklist Documentos", "Checklist"]),
     fetchFirstAvailableSheet(["ProcesosASIS", "Procesos AS IS", "Procesos As Is", "Procesos AS-IS", "Procesos AS_IS", "ListaASIS", "Lista AS IS", "Lista AS-IS", "ASIS", "AS IS"]),
     fetchFirstAvailableSheet(["ProcesosTOBE", "Procesos TO BE", "Procesos To Be", "Procesos TO-BE", "Procesos TO_BE", "ListaTOBE", "Lista TO BE", "Lista TO-BE", "TOBE", "TO BE"]),
+    fetchFirstAvailableSheet(["COEASIS", "COE AS IS", "COE AS-IS", "COE AS_IS", "COEAsIs", "COE As Is", "ASIS COE", "AS IS COE"]),
+    fetchFirstAvailableSheet(["COETOBE", "COE TO BE", "COE TO-BE", "COE TO_BE", "COEToBe", "COE To Be", "TOBE COE", "TO BE COE"]),
   ]);
 
   return {
@@ -565,6 +583,8 @@ export async function loadSheetData() {
     documents: mapDocuments(documentRows),
     processesAsIs: mapProcessesAsIs(processesAsIsRows),
     processesToBe: mapProcessesToBe(processesToBeRows),
+    coeAsIs: mapCOERows(coeAsIsRows),
+    coeToBe: mapCOERows(coeToBeRows),
   };
 }
 
@@ -583,3 +603,7 @@ export async function loadSheetData() {
 // LISTA_MAESTRA_PROCESOS_LECTURA_FIX_FINAL
 
 // LISTA_MAESTRA_IMAGEN_PROCESO_FICHA_TECNICA_FINAL
+
+// LISTA_MAESTRA_COLUMNAS_SEPARADAS_FINAL
+
+// COE_LISTA_MAESTRA_RECURSOS_FINAL
