@@ -1139,8 +1139,7 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
       item.description,
       item.changes,
       item.status,
-      item.imageProcess,
-      item.technicalSheet,
+      item.link,
     ].join(" "));
     return matchesType && matchesMacro && matchesStatus && (!query || searchable.includes(query));
   };
@@ -1182,40 +1181,36 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((item, index) => {
-              const imageLink = safeUrl(item.imageProcess || item.link);
-              const fichaLink = safeUrl(item.technicalSheet);
-              return (
-                <tr key={`${variant}-${item.id}-${item.processCode}-${index}`}>
-                  <td>{item.id}</td>
-                  <td>{item.type}</td>
-                  <td>{item.macroCode}</td>
-                  <td>{item.macroName}</td>
-                  <td>{item.processCode}</td>
-                  <td><strong>{item.processName}</strong></td>
-                  <td>{variant === "asis" ? item.description : item.changes}</td>
-                  {variant === "tobe" && <td><Badge status={item.status}>{item.status || "Sin status"}</Badge></td>}
-                  <td className="imageProcessCell">
-                    {imageLink ? (
-                      <a className="processPreviewLink" href={imageLink} target="_blank" rel="noreferrer">
-                        Ver imagen <ExternalLink size={14} />
-                      </a>
-                    ) : (
-                      <span className="processNoPreview">Sin imagen</span>
-                    )}
-                  </td>
-                  <td className="techSheetCell">
-                    {fichaLink ? (
-                      <a className="processPreviewLink" href={fichaLink} target="_blank" rel="noreferrer">
-                        Ver ficha <ExternalLink size={14} />
-                      </a>
-                    ) : (
-                      <span className="processNoPreview">Sin ficha</span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
+            {rows.map((item, index) => (
+              <tr key={`${variant}-${item.id}-${item.processCode}-${index}`}>
+                <td>{item.id}</td>
+                <td>{item.type}</td>
+                <td>{item.macroCode}</td>
+                <td>{item.macroName}</td>
+                <td>{item.processCode}</td>
+                <td><strong>{item.processName}</strong></td>
+                <td>{variant === "asis" ? item.description : item.changes}</td>
+                {variant === "tobe" && <td><Badge status={item.status}>{item.status || "Sin status"}</Badge></td>}
+                <td className="imageProcessCell">
+                  {safeUrl(item.imageProcess || item.link) ? (
+                    <a className="processPreviewLink" href={safeUrl(item.imageProcess || item.link)} target="_blank" rel="noreferrer">
+                      Ver imagen <ExternalLink size={14} />
+                    </a>
+                  ) : (
+                    <span className="processNoPreview">Sin imagen</span>
+                  )}
+                </td>
+                <td className="techSheetCell">
+                  {safeUrl(item.technicalSheet) ? (
+                    <a className="processPreviewLink" href={safeUrl(item.technicalSheet)} target="_blank" rel="noreferrer">
+                      Ver ficha <ExternalLink size={14} />
+                    </a>
+                  ) : (
+                    <span className="processNoPreview">Sin ficha</span>
+                  )}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -1272,7 +1267,7 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
         />
         <ProcessTable
           title="Procesos TO BE"
-          subtitle="Procesos propuestos o ajustados."
+          subtitle="Procesos propuestos, modificados o diseñados para la operación objetivo."
           rows={filteredToBe}
           variant="tobe"
         />
@@ -1282,17 +1277,22 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
 }
 
 function parseNumericValue(value) {
-  const raw = String(value ?? "").replace(/\$/g, "").replace(/,/g, ".").replace(/[^0-9.-]/g, "");
+  const raw = String(value ?? "")
+    .replace(/\$/g, "")
+    .replace(/,/g, ".")
+    .replace(/[^0-9.-]/g, "");
   const number = Number(raw);
   return Number.isFinite(number) ? number : 0;
+}
+
+function formatCurrency(value) {
+  const number = Number(value) || 0;
+  return number.toLocaleString("es-EC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [processFilter, setProcessFilter] = useState("Todos");
-
-  const allRows = [...coeAsIs, ...coeToBe];
-  const processOptions = useMemo(() => allRows.map((item) => item.process).filter(Boolean), [allRows]);
 
   const enrichRows = (rows) => rows.map((item) => {
     const time = parseNumericValue(item.time);
@@ -1309,6 +1309,8 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
 
   const asIsRows = useMemo(() => enrichRows(coeAsIs), [coeAsIs]);
   const toBeRows = useMemo(() => enrichRows(coeToBe), [coeToBe]);
+  const allRows = useMemo(() => [...asIsRows, ...toBeRows], [asIsRows, toBeRows]);
+  const processOptions = useMemo(() => allRows.map((item) => item.process).filter(Boolean), [allRows]);
 
   const filterRow = (item) => {
     const query = normalizeSystemName(searchTerm);
@@ -1330,57 +1332,60 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const filteredToBe = useMemo(() => toBeRows.filter(filterRow), [toBeRows, searchTerm, processFilter]);
 
   const totalsByProcess = (rows) => {
-    const map = new Map();
+    const totals = new Map();
     rows.forEach((item) => {
       const key = item.process || "Sin proceso";
-      map.set(key, (map.get(key) || 0) + item.totalCost);
+      totals.set(key, (totals.get(key) || 0) + item.totalCost);
     });
-    return Array.from(map.entries())
+    return Array.from(totals.entries())
       .map(([process, total]) => ({ process, total }))
       .sort((a, b) => b.total - a.total)
       .slice(0, 10);
   };
 
-  const asIsTotals = useMemo(() => totalsByProcess(asIsRows), [asIsRows]);
-  const toBeTotals = useMemo(() => totalsByProcess(toBeRows), [toBeRows]);
-  const maxCost = Math.max(1, ...asIsTotals.map((x) => x.total), ...toBeTotals.map((x) => x.total));
-  const totalAsIs = asIsRows.reduce((sum, item) => sum + item.totalCost, 0);
-  const totalToBe = toBeRows.reduce((sum, item) => sum + item.totalCost, 0);
+  const asIsTop = useMemo(() => totalsByProcess(asIsRows), [asIsRows]);
+  const toBeTop = useMemo(() => totalsByProcess(toBeRows), [toBeRows]);
+  const asIsTotal = useMemo(() => asIsRows.reduce((sum, row) => sum + row.totalCost, 0), [asIsRows]);
+  const toBeTotal = useMemo(() => toBeRows.reduce((sum, row) => sum + row.totalCost, 0), [toBeRows]);
+  const maxTopCost = Math.max(1, ...asIsTop.map((item) => item.total), ...toBeTop.map((item) => item.total));
 
-  const formatMoney = (value) => `$${Number(value || 0).toLocaleString("es-EC", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-
-  const COEChart = ({ title, rows, variant }) => (
-    <div className="coeChartCard">
+  const TopCostChart = ({ title, subtitle, rows }) => (
+    <article className="coeChartCard">
       <div className="coeChartHeader">
-        <h3>{title}</h3>
-        <Badge status={variant === "asis" ? "Bloqueado" : "En validación"}>{rows.length} procesos</Badge>
+        <div>
+          <h3>{title}</h3>
+          <p>{subtitle}</p>
+        </div>
+        <Badge status="En validación">Top 10</Badge>
       </div>
-      <div className="coeBars">
-        {rows.length === 0 && <div className="emptyState compact">Sin datos para graficar.</div>}
+      <div className="coeBarsList">
         {rows.map((item) => (
-          <div className="coeBarRow" key={`${variant}-${item.process}`}>
-            <span title={item.process}>{item.process}</span>
-            <div className="coeBarTrack">
-              <div className="coeBarFill" style={{ width: `${Math.max(4, (item.total / maxCost) * 100)}%` }} />
+          <div className="coeBarRow" key={`${title}-${item.process}`}>
+            <div className="coeBarInfo">
+              <span>{item.process}</span>
+              <strong>${formatCurrency(item.total)}</strong>
             </div>
-            <strong>{formatMoney(item.total)}</strong>
+            <div className="coeBarTrack">
+              <div className="coeBarFill" style={{ width: `${Math.max(4, (item.total / maxTopCost) * 100)}%` }} />
+            </div>
           </div>
         ))}
+        {!rows.length && <div className="emptyState compact">No hay datos para graficar.</div>}
       </div>
-    </div>
+    </article>
   );
 
-  const COETable = ({ title, rows, variant }) => (
+  const COETable = ({ title, subtitle, rows }) => (
     <div className="processTableCard coeTableCard">
       <div className="processTableHeader">
         <div>
           <h3>{title}</h3>
-          <p>Matriz de actividades, tiempos, costos y frecuencia.</p>
+          <p>{subtitle}</p>
         </div>
         <Badge status="En validación">{rows.length} visibles</Badge>
       </div>
-      <div className="processTableWrap">
-        <table className="processTable coeMatrixTable">
+      <div className="processTableWrap coeTableWrap">
+        <table className="processTable coeTable">
           <thead>
             <tr>
               <th>Código</th>
@@ -1391,12 +1396,12 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
               <th>Tiempo (xmin)</th>
               <th>Costo (xmin)</th>
               <th>Frecuencia</th>
-              <th>Total costo</th>
+              <th>Total</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((item, index) => (
-              <tr key={`${variant}-${item.code}-${item.activity}-${index}`}>
+              <tr key={`${title}-${item.code}-${item.activity}-${index}`}>
                 <td>{item.code}</td>
                 <td><strong>{item.process}</strong></td>
                 <td>{item.activity}</td>
@@ -1405,13 +1410,13 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
                 <td>{item.time}</td>
                 <td>{item.cost}</td>
                 <td>{item.frequency}</td>
-                <td><strong>{formatMoney(item.totalCost)}</strong></td>
+                <td><strong>${formatCurrency(item.totalCost)}</strong></td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {rows.length === 0 && <div className="emptyState">No hay actividades que coincidan con los filtros seleccionados.</div>}
+      {!rows.length && <div className="emptyState">No hay actividades que coincidan con los filtros seleccionados.</div>}
     </div>
   );
 
@@ -1420,26 +1425,26 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       <div className="sectionHeader">
         <div>
           <h2>COE</h2>
-          <p>Comparativo de costo operativo estructural por proceso, separando la situación AS IS y la propuesta TO BE.</p>
+          <p>Comparativo de costo operativo estructural por proceso, separando AS IS y TO BE.</p>
         </div>
       </div>
 
       <div className="processSummaryGrid coeSummaryGrid">
         <article className="processSummaryCard">
           <span>Total COE AS IS</span>
-          <strong>{formatMoney(totalAsIs)}</strong>
-          <p>Costo total estimado de la situación actual.</p>
+          <strong>${formatCurrency(asIsTotal)}</strong>
+          <p>Costo total actual según actividades registradas.</p>
         </article>
         <article className="processSummaryCard">
           <span>Total COE TO BE</span>
-          <strong>{formatMoney(totalToBe)}</strong>
-          <p>Costo total estimado de la propuesta ajustada.</p>
+          <strong>${formatCurrency(toBeTotal)}</strong>
+          <p>Costo total propuesto según actividades registradas.</p>
         </article>
       </div>
 
       <div className="coeChartsGrid">
-        <COEChart title="Costo total por proceso · AS IS" rows={asIsTotals} variant="asis" />
-        <COEChart title="Costo total por proceso · TO BE" rows={toBeTotals} variant="tobe" />
+        <TopCostChart title="Top 10 procesos más costosos AS IS" subtitle="Costo total por proceso actual." rows={asIsTop} />
+        <TopCostChart title="Top 10 procesos más costosos TO BE" subtitle="Costo total por proceso propuesto." rows={toBeTop} />
       </div>
 
       <div className="premiumFilters processFilters">
@@ -1458,10 +1463,486 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       </div>
 
       <div className="processTablesStack">
-        <COETable title="Matriz COE AS IS" rows={filteredAsIs} variant="asis" />
-        <COETable title="Matriz COE TO BE" rows={filteredToBe} variant="tobe" />
+        <COETable title="Matriz COE AS IS" subtitle="Actividades levantadas en la situación actual." rows={filteredAsIs} />
+        <COETable title="Matriz COE TO BE" subtitle="Actividades propuestas para la operación objetivo." rows={filteredToBe} />
       </div>
     </section>
+  );
+}
+
+function Findings({ findings = [] }) {
+  const [open, setOpen] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [priorityFilter, setPriorityFilter] = useState("Todos");
+  const [areaFilter, setAreaFilter] = useState("Todos");
+
+  const priorities = useMemo(() => findings.map((item) => item.priority).filter(Boolean), [findings]);
+  const areas = useMemo(() => findings.map((item) => item.processArea || item.area).filter(Boolean), [findings]);
+
+  const filteredFindings = useMemo(() => {
+    const query = normalizeSystemName(searchTerm);
+    return findings.filter((item) => {
+      const area = item.processArea || item.area || "";
+      const priority = item.priority || "";
+      const matchesPriority = priorityFilter === "Todos" || priority === priorityFilter;
+      const matchesArea = areaFilter === "Todos" || area === areaFilter;
+      const searchable = normalizeSystemName([
+        item.id,
+        area,
+        item.finding,
+        item.description,
+        item.recommendation || item.solution,
+        item.solutionType || item.system,
+        item.owner,
+        item.status,
+        item.priority,
+      ].join(" "));
+      return matchesPriority && matchesArea && (!query || searchable.includes(query));
+    });
+  }, [findings, searchTerm, priorityFilter, areaFilter]);
+
+  return (
+    <section className="card premiumSectionCard findingsPremiumSection">
+      <div className="sectionHeader">
+        <div>
+          <h2>Hallazgos encontrados</h2>
+          <p>Busca, filtra y revisa los hallazgos críticos de la matriz técnica.</p>
+        </div>
+        <Badge status="En validación">{filteredFindings.length} visibles</Badge>
+      </div>
+
+      <div className="premiumFilters findingsFilters">
+        <label className="searchFilter">
+          <span>Buscar</span>
+          <div className="searchInputWrap">
+            <Search size={18} />
+            <input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar por hallazgo, área, responsable o recomendación"
+            />
+          </div>
+        </label>
+        <FilterSelect label="Prioridad" value={priorityFilter} onChange={setPriorityFilter} options={priorities} />
+        <FilterSelect label="Área" value={areaFilter} onChange={setAreaFilter} options={areas} />
+      </div>
+
+      <div className="findingsGridWhite">
+        {filteredFindings.map((item) => {
+          const area = item.processArea || item.area || "Área no definida";
+          const recommendation = item.recommendation || item.solution;
+          const solutionType = item.solutionType || item.system;
+          const link = safeUrl(item.link || item.image);
+          const key = `${item.id}-${item.finding || item.description}`;
+          const isOpen = open === key;
+          const status = item.status || "Pendiente";
+
+          return (
+            <article key={key} className={`findingWhiteCard ${isOpen ? "selected" : ""}`}>
+              <button className="findingWhiteHeader" onClick={() => setOpen(isOpen ? "" : key)}>
+                <div>
+                  <div className="findingMetaLine">
+                    <span>ID {item.id}</span>
+                    <span>{area}</span>
+                  </div>
+                  <h3>{item.finding || "Hallazgo sin título"}</h3>
+                  <div className="badgeRow">
+                    {item.priority && <Badge status={item.priority === "Alta" ? "Bloqueado" : "En validación"}>Prioridad: {item.priority}</Badge>}
+                    <Badge status={status}>{status}</Badge>
+                  </div>
+                </div>
+                <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={20} />
+              </button>
+
+              {isOpen && (
+                <div className="findingFixedExpanded">
+                  <div className="findingFixedScroll">
+                    {item.description && (
+                      <div className="findingDetailBlock">
+                        <strong>Descripción técnica del hallazgo</strong>
+                        <p>{item.description}</p>
+                      </div>
+                    )}
+                    {recommendation && (
+                      <div className="findingDetailBlock">
+                        <strong>Recomendación técnica</strong>
+                        <p>{recommendation}</p>
+                      </div>
+                    )}
+                    <div className="findingDetailGrid">
+                      {solutionType && (
+                        <div>
+                          <strong>Tipo de solución</strong>
+                          <span>{solutionType}</span>
+                        </div>
+                      )}
+                      {item.owner && (
+                        <div>
+                          <strong>Responsable sugerido</strong>
+                          <span>{item.owner}</span>
+                        </div>
+                      )}
+                    </div>
+                    {link && (
+                      <a className="secondaryLink findingLink" href={link} target="_blank" rel="noreferrer">
+                        Abrir evidencia o carpeta <ExternalLink size={15} />
+                      </a>
+                    )}
+                    {!item.description && !recommendation && !solutionType && !item.owner && !link && (
+                      <p className="muted">Agrega descripción, recomendación, responsable o link en la pestaña Hallazgos para mostrar más detalle.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+            </article>
+          );
+        })}
+      </div>
+
+      {filteredFindings.length === 0 && (
+        <div className="emptyState">No hay hallazgos que coincidan con los filtros seleccionados.</div>
+      )}
+    </section>
+  );
+}
+
+function PendingClient({ pending, compact = false, setView }) {
+  const [openPending, setOpenPending] = useState("");
+  const [pendingValidation, setPendingValidation] = useState({});
+  const [savingValidation, setSavingValidation] = useState({});
+  const [validationMessage, setValidationMessage] = useState({});
+  const items = compact ? pending.slice(0, 4) : pending;
+  const pendingWebhookUrl = safeUrl(import.meta.env.VITE_PENDING_WEBHOOK_URL || import.meta.env.VITE_DOCUMENTS_WEBHOOK_URL || "");
+  const spreadsheetId = getActiveSpreadsheetId();
+
+  const getValidationStatus = (item) => {
+    const key = item.request || item.id || "";
+    return pendingValidation[key] ?? item.validationClient ?? "";
+  };
+
+  const handleValidatePending = async (item, value = "Validado") => {
+    const key = item.request || item.id || "";
+    const previous = pendingValidation[key] ?? item.validationClient ?? "";
+
+    setPendingValidation((current) => ({ ...current, [key]: value }));
+    setSavingValidation((current) => ({ ...current, [key]: true }));
+    setValidationMessage((current) => ({ ...current, [key]: "Guardando..." }));
+
+    if (!pendingWebhookUrl) {
+      setPendingValidation((current) => ({ ...current, [key]: previous }));
+      setSavingValidation((current) => ({ ...current, [key]: false }));
+      setValidationMessage((current) => ({
+        ...current,
+        [key]: "Falta configurar el webhook para guardar esta validación."
+      }));
+      return;
+    }
+
+    try {
+      const response = await fetch(pendingWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "updatePending",
+          tipo: "pendiente",
+          spreadsheetId,
+          sheetName: "PendientesCliente",
+          pendiente: item.request,
+          responsable: item.owner,
+          fecha: item.dueDate,
+          campo: "ValidacionCliente",
+          valor: value,
+          validacionCliente: value,
+          fechaValidacion: new Date().toISOString(),
+        }),
+      });
+
+      const text = await response.text();
+      let result = {};
+      try {
+        result = JSON.parse(text);
+      } catch {
+        result = { ok: response.ok, message: text };
+      }
+
+      if (!response.ok || result.ok === false) {
+        throw new Error(result.message || "No se pudo registrar la validación.");
+      }
+
+      setValidationMessage((current) => ({ ...current, [key]: "Registrado" }));
+    } catch (error) {
+      console.error(error);
+      setPendingValidation((current) => ({ ...current, [key]: previous }));
+      setValidationMessage((current) => ({
+        ...current,
+        [key]: error.message || "No se pudo guardar."
+      }));
+    } finally {
+      setSavingValidation((current) => ({ ...current, [key]: false }));
+    }
+  };
+
+  return (
+    <section className="card premiumSectionCard">
+      <div className="sectionHeader">
+        <div>
+          <h2>Pendientes del cliente</h2>
+          <p>Acciones necesarias para avanzar sin retrasos. Haz clic para ver descripción y enlace de aprobación.</p>
+        </div>
+      </div>
+      <div className="badgeRow"><Badge status="En validación">{pending.length} activos</Badge></div>
+
+      <div className="pendingList">
+        {items.map((item) => {
+          const isOpen = openPending === item.request;
+          const link = safeUrl(item.link);
+          const validationStatus = getValidationStatus(item);
+          const isValidated = String(validationStatus || "").toLowerCase().includes("validado");
+          const key = item.request || item.id || `${item.owner}-${item.dueDate}`;
+
+          return (
+            <div
+              className={`pendingCard clickable ${isOpen ? "selected" : ""} ${isValidated ? "clientValidated" : ""}`}
+              key={`${item.request}-${item.owner}`}
+              onClick={() => {
+                if (compact) {
+                  setView?.("pendientes");
+                  return;
+                }
+                setOpenPending(isOpen ? "" : item.request);
+              }}
+            >
+              <div className="pendingHeader">
+                <div>
+                  <div className="itemTitle">{item.request}</div>
+                  <div className="muted">Bloquea: {item.blocks}</div>
+                </div>
+                <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={18} />
+              </div>
+
+              <div className="pendingMeta">
+                <span><strong>Responsable:</strong> {item.owner}</span>
+                <span><strong>Fecha:</strong> {item.dueDate}</span>
+              </div>
+
+              <div className="badgeRow pendingActionRow" onClick={(e) => e.stopPropagation()}>
+                <Badge status={item.status}>{item.status}</Badge>
+
+                {isValidated ? (
+                  <Badge status="Finalizado">Validado</Badge>
+                ) : (
+                  <button
+                    className="pendingValidatePill"
+                    type="button"
+                    disabled={Boolean(savingValidation[key])}
+                    onClick={() => handleValidatePending(item, "Validado")}
+                  >
+                    {savingValidation[key] ? "Guardando..." : "Validar"}
+                  </button>
+                )}
+
+                {validationMessage[key] && (
+                  <span className="pendingSaveMessage">{validationMessage[key]}</span>
+                )}
+              </div>
+
+              {!compact && isOpen && (
+                <div className="pendingDetails" onClick={(e) => e.stopPropagation()}>
+                  {item.description && (
+                    <div className="detailBlock routeDetailTextBlock">
+                      <strong>Descripción</strong>
+                      <p>{item.description}</p>
+                    </div>
+                  )}
+
+                  {link && (
+                    <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer">
+                      Abrir documento para aprobación <ExternalLink size={15} />
+                    </a>
+                  )}
+
+                  {!item.description && !link && (
+                    <p className="muted">Agrega Descripcion y Link en la pestaña PendientesCliente para mostrar más detalle.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {compact && pending.length > 4 && (
+        <button className="plainAction" onClick={() => setView?.("pendientes")}>
+          Ver todos los pendientes <ChevronRight size={16} />
+        </button>
+      )}
+    </section>
+  );
+}
+
+function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliverable, compact = false, setView }) {
+  const [systemFilter, setSystemFilter] = useState("Todos");
+  const [milestoneFilter, setMilestoneFilter] = useState("Todos");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const systems = [...new Set(deliverables.map((d) => d.system).filter(Boolean))];
+  const milestones = [...new Set(deliverables.map((d) => d.milestone).filter(Boolean))];
+  const search = String(searchTerm || "").trim().toLowerCase();
+
+  const filtered = deliverables.filter((item) => {
+    const systemOk = systemFilter === "Todos" || item.system === systemFilter;
+    const milestoneOk = milestoneFilter === "Todos" || item.milestone === milestoneFilter;
+    const searchableText = [
+      item.system,
+      item.milestone,
+      item.deliverable,
+      item.status,
+      item.observation,
+    ].join(" ").toLowerCase();
+    const searchOk = !search || searchableText.includes(search);
+    return systemOk && milestoneOk && searchOk;
+  });
+
+  const items = compact ? filtered.slice(0, 6) : filtered;
+
+  return (
+    <section className="card premiumSectionCard">
+      <div className="sectionHeader">
+        <div>
+          <h2>{compact ? "Entregables principales" : "Entregables"}</h2>
+          <p>Vista por sistema e hito, con acceso al documento cuando esté disponible.</p>
+        </div>
+      </div>
+
+      {!compact && (
+        <div className="filters premiumFilters">
+          <label className="filter searchFilter">
+            <span>Buscar</span>
+            <div className="searchInputWrap">
+              <Search size={16} />
+              <input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar entregable, sistema o hito..."
+              />
+            </div>
+          </label>
+          <FilterSelect label="Sistema" value={systemFilter} onChange={setSystemFilter} options={systems} />
+          <FilterSelect label="Hito" value={milestoneFilter} onChange={setMilestoneFilter} options={milestones} />
+        </div>
+      )}
+
+      {!compact && <div className="resultCounter"><Badge status="Disponible">{filtered.length} entregables</Badge></div>}
+
+      <div className="deliverablesGrid">
+        {items.map((item) => {
+          const link = safeUrl(item.link);
+          const selected = selectedDeliverable === item.deliverable;
+          return (
+            <div
+              className={`deliverableCard ${selected ? "selected" : ""} ${compact ? "clickable" : ""}`}
+              key={`${item.system}-${item.milestone}-${item.deliverable}`}
+              onClick={() => {
+                if (compact) {
+                  setSelectedDeliverable?.(item.deliverable);
+                  setView?.("entregables");
+                }
+              }}
+            >
+              <div className="area">{item.system}</div>
+              <div className="itemTitle">{item.deliverable}</div>
+              <div className="badgeRow"><Badge status={item.status}>{item.status}</Badge></div>
+              {item.milestone && <div className="muted">Hito: {item.milestone}</div>}
+              <ProgressBar value={item.progress} status={item.status} />
+              <div className="muted">{item.progress}% de avance</div>
+              {item.observation && <p className="observation">{item.observation}</p>}
+              {link && (
+                <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+                  Ver entregable <ExternalLink size={15} />
+                </a>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {!items.length && (
+        <div className="emptyState">
+          <Search size={22} />
+          <strong>No encontramos entregables con esos filtros.</strong>
+          <span>Prueba con otro sistema, hito o palabra clave.</span>
+        </div>
+      )}
+
+      {compact && deliverables.length > 6 && (
+        <button className="plainAction" onClick={() => setView?.("entregables")}>Ver todos los entregables <ChevronRight size={16} /></button>
+      )}
+    </section>
+  );
+}
+
+function UpdatesPanel({ project, updates, setView, pending = [] }) {
+  const safeUpdates = updates.length ? updates : [{ title: "Próximo paso", text: project.nextStep, target: "ruta" }];
+  const meetUrl = safeUrl(project.linkMeet);
+  const mainPending = pending[0];
+
+  return (
+    <aside className="rightPanel executiveRightPanel">
+      <div className="executiveSideCard nextStepWhiteCard">
+        <div className="sideCardIconLine">
+          <div className="sideIcon"><Flag size={18} /></div>
+          <span>Próximo paso</span>
+        </div>
+        <h3>{project.nextStep || "Próximo paso pendiente"}</h3>
+        <p>{project.nextDate || "Fecha por confirmar"}</p>
+        {meetUrl && (
+          <a className="sideMeetButton" href={meetUrl} target="_blank" rel="noreferrer">
+            <Video size={17} />
+            Conectarse a Google Meet
+          </a>
+        )}
+      </div>
+
+      {mainPending && (
+        <div className="executiveSideCard priorityPendingWhiteCard">
+          <div className="sideCardIconLine">
+            <div className="sideIcon warning"><AlertTriangle size={18} /></div>
+            <span>Pendiente prioritario</span>
+          </div>
+
+          <h3>{mainPending.request}</h3>
+          <p>Bloquea: {mainPending.blocks}</p>
+
+          <div className="sidePendingMeta">
+            <span><strong>Responsable:</strong> {mainPending.owner}</span>
+            <span><strong>Fecha:</strong> {mainPending.dueDate}</span>
+          </div>
+
+          <div className="badgeRow">
+            <Badge status={mainPending.status}>{mainPending.status}</Badge>
+          </div>
+
+          {safeUrl(mainPending.link) && (
+            <a className="sideLinkButton" href={safeUrl(mainPending.link)} target="_blank" rel="noreferrer">
+              Abrir documento <ExternalLink size={15} />
+            </a>
+          )}
+        </div>
+      )}
+
+      {!mainPending && safeUpdates.slice(0, 1).map((u, index) => (
+        <div className="executiveSideCard priorityPendingWhiteCard" key={`${u.title}-${index}`}>
+          <div className="sideCardIconLine">
+            <div className="sideIcon"><Search size={18} /></div>
+            <span>{u.title}</span>
+          </div>
+          <p>{u.text}</p>
+          <button className="sideLinkButton" onClick={() => setView("ruta")}>
+            Ver detalle <ChevronRight size={16} />
+          </button>
+        </div>
+      ))}
+    </aside>
   );
 }
 
@@ -1998,7 +2479,4 @@ createRoot(document.getElementById("root")).render(<App />);
 // LISTA_MAESTRA_IMAGEN_PROCESO_FICHA_TECNICA_FINAL
 
 
-// LISTA_MAESTRA_COLUMNAS_SEPARADAS_FINAL
-
-
-// COE_LISTA_MAESTRA_RECURSOS_FINAL
+// COE_MATRICES_OVERFLOW_TOP10_FIX_FINAL

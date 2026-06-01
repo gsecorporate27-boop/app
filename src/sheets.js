@@ -522,20 +522,6 @@ function mapProcessesToBe(rows) {
   })).filter((x) => x.processName || x.processCode || x.macroName || x.changes);
 }
 
-function mapCOERows(rows) {
-  return rows.map((row, index) => ({
-    id: getRowValue(row, ["N°", "N", "No", "Numero", "Número", "ID", "Id"]) || String(index + 1),
-    code: getRowValue(row, ["CÓDIGO", "Codigo", "Código", "CODIGO", "Code", "Cod", "Cód."]),
-    process: getRowValue(row, ["PROCESO", "Proceso", "process"]),
-    activity: getRowValue(row, ["ACTIVIDAD", "Actividad", "activity"]),
-    participant: getRowValue(row, ["INTERVINIENTE", "Interviniente", "Interviente", "Responsable", "Participante"]),
-    observation: getRowValue(row, ["OBSERVACIÓN", "Observación", "OBSERVACION", "Observacion", "ObservacionTecnica", "Comentario"]),
-    time: getRowValue(row, ["TIEMPO (xmin)", "Tiempo (xmin)", "Tiempo", "TIEMPO", "TiempoXmin", "Tiempo xmin"]),
-    cost: getRowValue(row, ["COSTO (xmin)", "Costo (xmin)", "Costo", "COSTO", "CostoXmin", "Costo xmin"]),
-    frequency: getRowValue(row, ["FRECUENCIA", "Frecuencia", "frequency"]),
-  })).filter((x) => x.code || x.process || x.activity || x.participant || x.observation);
-}
-
 function mapEducation(rows) {
   return rows.map((row) => ({
     system: getRowValue(row, ["Sistema"]),
@@ -550,6 +536,19 @@ function mapEducation(rows) {
     technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
     status: getRowValue(row, ["Estado"]),
   })).filter((x) => x.deliverable || x.whatIs || x.purpose);
+}
+
+function mapCOERows(rows) {
+  return rows.map((row) => ({
+    code: getRowValue(row, ["CÓDIGO", "CODIGO", "Codigo", "Código", "CodigoProceso", "Código Proceso", "Code"]),
+    process: getRowValue(row, ["PROCESO", "Proceso", "NombreProceso", "Nombre del Proceso"]),
+    activity: getRowValue(row, ["ACTIVIDAD", "Actividad"]),
+    participant: getRowValue(row, ["INTERVINIENTE", "Interviniente", "Responsable", "Rol"]),
+    observation: getRowValue(row, ["OBSERVACIÓN", "OBSERVACION", "Observación", "Observacion", "Notas", "Comentario"]),
+    time: getRowValue(row, ["TIEMPO (xmin)", "Tiempo (xmin)", "Tiempo", "TIEMPO", "TiempoXmin", "Tiempo xmin"]),
+    cost: getRowValue(row, ["COSTO (xmin)", "Costo (xmin)", "Costo", "COSTO", "CostoXmin", "Costo xmin"]),
+    frequency: getRowValue(row, ["FRECUENCIA", "Frecuencia"]),
+  })).filter((x) => x.code || x.process || x.activity || x.participant || x.observation);
 }
 
 export async function loadSheetData() {
@@ -568,8 +567,8 @@ export async function loadSheetData() {
     fetchFirstAvailableSheet(["Documentos", "CargaDocumentos", "Carga de documentos", "Carga Documentos", "ChecklistDocumentos", "Checklist Documentos", "Checklist"]),
     fetchFirstAvailableSheet(["ProcesosASIS", "Procesos AS IS", "Procesos As Is", "Procesos AS-IS", "Procesos AS_IS", "ListaASIS", "Lista AS IS", "Lista AS-IS", "ASIS", "AS IS"]),
     fetchFirstAvailableSheet(["ProcesosTOBE", "Procesos TO BE", "Procesos To Be", "Procesos TO-BE", "Procesos TO_BE", "ListaTOBE", "Lista TO BE", "Lista TO-BE", "TOBE", "TO BE"]),
-    fetchFirstAvailableSheet(["COEASIS", "COE AS IS", "COE AS-IS", "COE AS_IS", "COEAsIs", "COE As Is", "ASIS COE", "AS IS COE"]),
-    fetchFirstAvailableSheet(["COETOBE", "COE TO BE", "COE TO-BE", "COE TO_BE", "COEToBe", "COE To Be", "TOBE COE", "TO BE COE"]),
+    fetchFirstAvailableSheet(["COEASIS", "COE AS IS", "COE As Is", "COE AS-IS", "COE AS_IS", "COE Actual", "COEActual"]),
+    fetchFirstAvailableSheet(["COETOBE", "COE TO BE", "COE To Be", "COE TO-BE", "COE TO_BE", "COE Propuesto", "COEPropuesto"]),
   ]);
 
   return {
@@ -604,6 +603,4 @@ export async function loadSheetData() {
 
 // LISTA_MAESTRA_IMAGEN_PROCESO_FICHA_TECNICA_FINAL
 
-// LISTA_MAESTRA_COLUMNAS_SEPARADAS_FINAL
-
-// COE_LISTA_MAESTRA_RECURSOS_FINAL
+// COE_MATRICES_OVERFLOW_TOP10_FIX_FINAL
