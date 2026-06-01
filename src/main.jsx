@@ -1164,8 +1164,8 @@ function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
         <Badge status="En validación">{rows.length} visibles</Badge>
       </div>
 
-      <div className="processTableWrap">
-        <table className="processTable">
+      <div className="processTableWrap fixedMatrixWrap">
+        <table className="processTable fixedMatrixTable">
           <thead>
             <tr>
               <th>N°</th>
@@ -1388,14 +1388,14 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
         <table className="processTable coeTable">
           <thead>
             <tr>
-              <th>Código</th>
-              <th>Proceso</th>
-              <th>Actividad</th>
-              <th>Interviniente</th>
-              <th>Observación</th>
-              <th>Tiempo (xmin)</th>
-              <th>Costo (xmin)</th>
-              <th>Frecuencia</th>
+              <th>CÓDIGO</th>
+                    <th>PROCESO</th>
+                    <th>ACTIVIDAD</th>
+                    <th>INTERVINIENTE</th>
+                    <th>OBSERVACIÓN</th>
+                    <th>TIEMPO (xmin)</th>
+                    <th>COSTO (xmin)</th>
+                    <th>FRECUENCIA</th>
               <th>Total</th>
             </tr>
           </thead>
@@ -2480,3 +2480,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_MATRICES_OVERFLOW_TOP10_FIX_FINAL
+
+
+// MATRICES_SCROLL_FIJO_FINAL
