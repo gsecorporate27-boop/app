@@ -6736,3 +6736,141 @@ div:has(> table.coeMatrixTable)::-webkit-scrollbar-track {
     max-height: 340px !important;
   }
 }
+
+
+/* ==========================================================
+   SCROLL_SEPARADO_ASIS_TOBE_SIN_PADRE_FINAL
+   Elimina el scroll compartido del contenedor padre y deja
+   scroll independiente solo dentro de cada matriz AS IS / TO BE.
+   ========================================================== */
+
+/* El stack que contiene AS IS y TO BE NO debe tener scroll */
+.processMasterSection .processTablesStack,
+.coeSection .processTablesStack,
+.processTablesStack {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  display: grid !important;
+  gap: 28px !important;
+  margin-top: 22px !important;
+}
+
+/* Cada tarjeta de matriz se mantiene visible y sin scroll propio padre */
+.processMasterSection .processTableCard,
+.coeSection .processTableCard,
+.processTableCard,
+.coeTableCard {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  border-radius: 26px !important;
+}
+
+/* SOLO este contenedor interno debe scrollear: uno por AS IS y otro por TO BE */
+.processTableCard > .processTableWrap,
+.coeTableCard > .coeTableWrap,
+.coeTableCard > .processTableWrap,
+.processTableWrap.individualMatrixScroll,
+.coeTableWrap.individualMatrixScroll {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 360px !important;
+  max-height: 360px !important;
+  min-height: 260px !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+  border-radius: 22px !important;
+  background: #ffffff !important;
+  display: block !important;
+  position: relative !important;
+  margin-top: 16px !important;
+  box-shadow: none !important;
+}
+
+/* Neutraliza regla antigua que convertía el div padre con las 2 tablas en scroll */
+.processMasterSection.card:has(.processTable) > .processTablesStack,
+.coeSection.card:has(.coeTable) > .processTablesStack,
+.coeSection.card:has(.processTable) > .processTablesStack,
+.card:has(.processTable) > .processTablesStack,
+.card:has(.coeTable) > .processTablesStack {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+/* Neutraliza cualquier scroll asignado accidentalmente a la sección completa */
+.processMasterSection,
+.coeSection {
+  overflow: visible !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+/* Tablas internas conservan ancho para activar scroll horizontal dentro de cada matriz */
+.processTableCard > .processTableWrap > table,
+.coeTableCard > .processTableWrap > table,
+.coeTableCard > .coeTableWrap > table {
+  width: max-content !important;
+  table-layout: fixed !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.processTableCard > .processTableWrap > table.processTable {
+  min-width: 1450px !important;
+}
+
+.coeTableCard > .processTableWrap > table.coeTable,
+.coeTableCard > .coeTableWrap > table.coeTable {
+  min-width: 1320px !important;
+}
+
+/* Encabezado fijo dentro de cada matriz, no de toda la página */
+.processTableCard > .processTableWrap th,
+.coeTableCard > .processTableWrap th,
+.coeTableCard > .coeTableWrap th {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 5 !important;
+  background: #f2fbfb !important;
+}
+
+/* Scrollbar por matriz */
+.processTableCard > .processTableWrap::-webkit-scrollbar,
+.coeTableCard > .processTableWrap::-webkit-scrollbar,
+.coeTableCard > .coeTableWrap::-webkit-scrollbar {
+  height: 12px;
+  width: 12px;
+}
+
+.processTableCard > .processTableWrap::-webkit-scrollbar-thumb,
+.coeTableCard > .processTableWrap::-webkit-scrollbar-thumb,
+.coeTableCard > .coeTableWrap::-webkit-scrollbar-thumb {
+  background: rgba(0, 184, 181, 0.52);
+  border-radius: 999px;
+}
+
+.processTableCard > .processTableWrap::-webkit-scrollbar-track,
+.coeTableCard > .processTableWrap::-webkit-scrollbar-track,
+.coeTableCard > .coeTableWrap::-webkit-scrollbar-track {
+  background: rgba(0, 184, 181, 0.08);
+  border-radius: 999px;
+}
+
+@media (max-width: 900px) {
+  .processTableCard > .processTableWrap,
+  .coeTableCard > .processTableWrap,
+  .coeTableCard > .coeTableWrap {
+    height: 330px !important;
+    max-height: 330px !important;
+  }
+}

@@ -2486,3 +2486,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // SCROLL_INDIVIDUAL_ASIS_TOBE_MATRICES_FINAL
+
+
+// SCROLL_SEPARADO_ASIS_TOBE_SIN_PADRE_FINAL
