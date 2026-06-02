@@ -2074,167 +2074,187 @@ function PendingClient({ pending, compact = false, setView }) {
 }
 
 function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliverable, compact = false, setView }) {
-  const [systemFilter, setSystemFilter] = useState("Todos");
-  const [milestoneFilter, setMilestoneFilter] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
+  const [systemFilter, setSystemFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("Todos");
+  const [responsibleFilter, setResponsibleFilter] = useState("Todos");
 
-  const systems = [...new Set(deliverables.map((d) => d.system).filter(Boolean))];
-  const milestones = [...new Set(deliverables.map((d) => d.milestone).filter(Boolean))];
-  const search = String(searchTerm || "").trim().toLowerCase();
+  const systems = useMemo(() => deliverables.map((item) => item.system).filter(Boolean), [deliverables]);
+  const statuses = useMemo(() => deliverables.map((item) => item.status).filter(Boolean), [deliverables]);
+  const responsibles = useMemo(() => deliverables.map((item) => item.responsible).filter(Boolean), [deliverables]);
 
-  const filtered = deliverables.filter((item) => {
-    const systemOk = systemFilter === "Todos" || item.system === systemFilter;
-    const milestoneOk = milestoneFilter === "Todos" || item.milestone === milestoneFilter;
-    const searchableText = [
-      item.system,
-      item.milestone,
-      item.deliverable,
-      item.status,
-      item.observation,
-    ].join(" ").toLowerCase();
-    const searchOk = !search || searchableText.includes(search);
-    return systemOk && milestoneOk && searchOk;
-  });
+  const summary = useMemo(() => {
+    const isFinalized = (status = "") => {
+      const value = normalizeSystemName(status);
+      return value.includes("finalizado") || value.includes("terminado") || value.includes("aprobado") || value.includes("completado");
+    };
+    const isDevelopment = (status = "") => {
+      const value = normalizeSystemName(status);
+      return value.includes("desarrollo") || value.includes("desarollo") || value.includes("proceso") || value.includes("revision");
+    };
+    return deliverables.reduce((acc, item) => {
+      const responsible = normalizeSystemName(item.responsible || "");
+      const status = item.status || "";
+      if (responsible.includes("gse")) acc.gse += 1;
+      if (responsible.includes("cliente")) acc.client += 1;
+      if (isFinalized(status)) acc.finalized += 1;
+      else if (isDevelopment(status)) acc.development += 1;
+      else acc.pending += 1;
+      return acc;
+    }, { gse: 0, client: 0, pending: 0, development: 0, finalized: 0 });
+  }, [deliverables]);
 
-  const items = compact ? filtered.slice(0, 6) : filtered;
+  const filteredDeliverables = useMemo(() => {
+    const query = normalizeSystemName(searchTerm);
+    return deliverables.filter((item) => {
+      const responsible = item.responsible || "";
+      const status = item.status || "";
+      const matchesSystem = systemFilter === "Todos" || item.system === systemFilter;
+      const matchesStatus = statusFilter === "Todos" || status === statusFilter;
+      const matchesResponsible = responsibleFilter === "Todos" || responsible === responsibleFilter;
+      const searchable = normalizeSystemName([
+        item.system,
+        item.milestone,
+        item.deliverable,
+        item.status,
+        item.responsible,
+        item.observation,
+      ].join(" "));
+      return matchesSystem && matchesStatus && matchesResponsible && (!query || searchable.includes(query));
+    });
+  }, [deliverables, searchTerm, systemFilter, statusFilter, responsibleFilter]);
+
+  const items = compact ? deliverables.slice(0, 4) : filteredDeliverables;
 
   return (
-    <section className="card premiumSectionCard">
+    <section className="card premiumSectionCard deliverablesSection">
       <div className="sectionHeader">
         <div>
-          <h2>{compact ? "Entregables principales" : "Entregables"}</h2>
-          <p>Vista por sistema e hito, con acceso al documento cuando esté disponible.</p>
+          <h2>Entregables</h2>
+          <p>Consulta los documentos, avances y enlaces entregados durante el proyecto.</p>
         </div>
+        <Badge status="En validación">{compact ? deliverables.length : filteredDeliverables.length} entregables</Badge>
       </div>
 
       {!compact && (
-        <div className="filters premiumFilters">
-          <label className="filter searchFilter">
-            <span>Buscar</span>
-            <div className="searchInputWrap">
-              <Search size={16} />
-              <input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar entregable, sistema o hito..."
-              />
-            </div>
-          </label>
-          <FilterSelect label="Sistema" value={systemFilter} onChange={setSystemFilter} options={systems} />
-          <FilterSelect label="Hito" value={milestoneFilter} onChange={setMilestoneFilter} options={milestones} />
-        </div>
-      )}
+        <>
+          <div className="deliverablesSummaryGrid">
+            <article className="deliverablesSummaryCard">
+              <span>Total de entregables</span>
+              <strong>{deliverables.length}</strong>
+              <p>Documentos y productos registrados en la matriz.</p>
+            </article>
 
-      {!compact && <div className="resultCounter"><Badge status="Disponible">{filtered.length} entregables</Badge></div>}
+            <article className="deliverablesSummaryCard">
+              <span>Responsable</span>
+              <div className="deliverablesMiniRows">
+                <div>
+                  <span>GSE</span>
+                  <div className="deliverablesMiniTrack"><i style={{ width: `${deliverables.length ? (summary.gse / deliverables.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.gse}</strong>
+                </div>
+                <div>
+                  <span>Cliente</span>
+                  <div className="deliverablesMiniTrack soft"><i style={{ width: `${deliverables.length ? (summary.client / deliverables.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.client}</strong>
+                </div>
+              </div>
+              <p>Según la columna Responsable.</p>
+            </article>
+
+            <article className="deliverablesSummaryCard">
+              <span>Estado</span>
+              <div className="deliverablesMiniRows three">
+                <div>
+                  <span>Pendiente</span>
+                  <div className="deliverablesMiniTrack"><i style={{ width: `${deliverables.length ? (summary.pending / deliverables.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.pending}</strong>
+                </div>
+                <div>
+                  <span>En desarrollo</span>
+                  <div className="deliverablesMiniTrack soft"><i style={{ width: `${deliverables.length ? (summary.development / deliverables.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.development}</strong>
+                </div>
+                <div>
+                  <span>Finalizado</span>
+                  <div className="deliverablesMiniTrack success"><i style={{ width: `${deliverables.length ? (summary.finalized / deliverables.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.finalized}</strong>
+                </div>
+              </div>
+              <p>Según el estado del entregable.</p>
+            </article>
+          </div>
+
+          <div className="premiumFilters deliverablesFilters oneLineDeliverablesFilters">
+            <label className="searchFilter deliverablesSearchFilter">
+              <span>Buscar</span>
+              <div className="searchInputWrap compact">
+                <Search size={18} />
+                <input
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Buscar entregable, hito o sistema"
+                />
+              </div>
+            </label>
+            <FilterSelect label="Sistema" value={systemFilter} onChange={setSystemFilter} options={systems} />
+            <FilterSelect label="Responsable" value={responsibleFilter} onChange={setResponsibleFilter} options={responsibles} />
+            <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={statuses} />
+          </div>
+        </>
+      )}
 
       <div className="deliverablesGrid">
         {items.map((item) => {
+          const isSelected = selectedDeliverable === item.deliverable;
           const link = safeUrl(item.link);
-          const selected = selectedDeliverable === item.deliverable;
           return (
-            <div
-              className={`deliverableCard ${selected ? "selected" : ""} ${compact ? "clickable" : ""}`}
-              key={`${item.system}-${item.milestone}-${item.deliverable}`}
+            <article
+              key={`${item.system}-${item.deliverable}-${item.milestone}`}
+              className={`deliverableCard ${isSelected ? "selected" : ""}`}
               onClick={() => {
-                if (compact) {
-                  setSelectedDeliverable?.(item.deliverable);
-                  setView?.("entregables");
-                }
+                setSelectedDeliverable?.(item.deliverable);
+                if (compact) setView?.("entregables");
               }}
             >
-              <div className="area">{item.system}</div>
-              <div className="itemTitle">{item.deliverable}</div>
-              <div className="badgeRow"><Badge status={item.status}>{item.status}</Badge></div>
-              {item.milestone && <div className="muted">Hito: {item.milestone}</div>}
-              <ProgressBar value={item.progress} status={item.status} />
-              <div className="muted">{item.progress}% de avance</div>
-              {item.observation && <p className="observation">{item.observation}</p>}
-              {link && (
-                <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-                  Ver entregable <ExternalLink size={15} />
+              <div className="deliverableTop">
+                <Badge status="En validación">{item.system}</Badge>
+                <Badge status={item.status}>{item.status}</Badge>
+              </div>
+
+              <h3>{item.deliverable}</h3>
+
+              <div className="deliverableMeta">
+                <span><strong>Hito:</strong> {item.milestone}</span>
+                {item.responsible && <span><strong>Responsable:</strong> {item.responsible}</span>}
+              </div>
+
+              <ProgressBar value={item.progress} />
+
+              {item.observation && <p>{item.observation}</p>}
+
+              {link ? (
+                <a className="secondaryLink" href={link} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>
+                  Abrir entregable <ExternalLink size={15} />
                 </a>
+              ) : (
+                <span className="muted">Sin enlace cargado</span>
               )}
-            </div>
+            </article>
           );
         })}
       </div>
 
-      {!items.length && (
-        <div className="emptyState">
-          <Search size={22} />
-          <strong>No encontramos entregables con esos filtros.</strong>
-          <span>Prueba con otro sistema, hito o palabra clave.</span>
-        </div>
+      {!compact && filteredDeliverables.length === 0 && (
+        <div className="emptyState">No hay entregables que coincidan con los filtros seleccionados.</div>
       )}
 
-      {compact && deliverables.length > 6 && (
-        <button className="plainAction" onClick={() => setView?.("entregables")}>Ver todos los entregables <ChevronRight size={16} /></button>
+      {compact && deliverables.length > 4 && (
+        <button className="plainAction" onClick={() => setView?.("entregables")}>
+          Ver todos los entregables <ChevronRight size={16} />
+        </button>
       )}
     </section>
-  );
-}
-
-function UpdatesPanel({ project, updates, setView, pending = [] }) {
-  const safeUpdates = updates.length ? updates : [{ title: "Próximo paso", text: project.nextStep, target: "ruta" }];
-  const meetUrl = safeUrl(project.linkMeet);
-  const mainPending = pending[0];
-
-  return (
-    <aside className="rightPanel executiveRightPanel">
-      <div className="executiveSideCard nextStepWhiteCard">
-        <div className="sideCardIconLine">
-          <div className="sideIcon"><Flag size={18} /></div>
-          <span>Próximo paso</span>
-        </div>
-        <h3>{project.nextStep || "Próximo paso pendiente"}</h3>
-        <p>{project.nextDate || "Fecha por confirmar"}</p>
-        {meetUrl && (
-          <a className="sideMeetButton" href={meetUrl} target="_blank" rel="noreferrer">
-            <Video size={17} />
-            Conectarse a Google Meet
-          </a>
-        )}
-      </div>
-
-      {mainPending && (
-        <div className="executiveSideCard priorityPendingWhiteCard">
-          <div className="sideCardIconLine">
-            <div className="sideIcon warning"><AlertTriangle size={18} /></div>
-            <span>Pendiente prioritario</span>
-          </div>
-
-          <h3>{mainPending.request}</h3>
-
-          <div className="sidePendingMeta">
-            <span><strong>Responsable:</strong> {mainPending.owner}</span>
-            <span><strong>Fecha:</strong> {mainPending.dueDate}</span>
-          </div>
-
-          <div className="badgeRow">
-            <Badge status={mainPending.status}>{mainPending.status}</Badge>
-          </div>
-
-          {safeUrl(mainPending.link) && (
-            <a className="sideLinkButton" href={safeUrl(mainPending.link)} target="_blank" rel="noreferrer">
-              Abrir documento <ExternalLink size={15} />
-            </a>
-          )}
-        </div>
-      )}
-
-      {!mainPending && safeUpdates.slice(0, 1).map((u, index) => (
-        <div className="executiveSideCard priorityPendingWhiteCard" key={`${u.title}-${index}`}>
-          <div className="sideCardIconLine">
-            <div className="sideIcon"><Search size={18} /></div>
-            <span>{u.title}</span>
-          </div>
-          <p>{u.text}</p>
-          <button className="sideLinkButton" onClick={() => setView("ruta")}>
-            Ver detalle <ChevronRight size={16} />
-          </button>
-        </div>
-      ))}
-    </aside>
   );
 }
 
@@ -2840,3 +2860,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RUTA_V3_RESTAURA_MENU_STATUS_FINAL
+
+
+// ENTREGABLES_V2_RESPONSABLE_FINAL
