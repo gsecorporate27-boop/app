@@ -1374,6 +1374,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [processFilter, setProcessFilter] = useState("Todos");
   const [statusFilter, setStatusFilter] = useState("Todos");
+  const [navFilter, setNavFilter] = useState("Todos");
 
   const enrichRows = (rows) => rows.map((item) => {
     const time = parseNumericValue(item.time);
@@ -1396,11 +1397,13 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const allRows = useMemo(() => [...asIsRows, ...toBeRows], [asIsRows, toBeRows]);
   const processOptions = useMemo(() => allRows.map((item) => item.process).filter(Boolean), [allRows]);
   const statusOptions = useMemo(() => allRows.map((item) => item.observationStatus).filter(Boolean), [allRows]);
+  const navOptions = useMemo(() => allRows.map((item) => item.navStatus).filter(Boolean), [allRows]);
 
   const filterRow = (item) => {
     const query = normalizeSystemName(searchTerm);
     const matchesProcess = processFilter === "Todos" || item.process === processFilter;
     const matchesStatus = statusFilter === "Todos" || item.observationStatus === statusFilter;
+    const matchesNav = navFilter === "Todos" || item.navStatus === navFilter;
     const searchable = normalizeSystemName([
       item.code,
       item.process,
@@ -1412,11 +1415,11 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       item.cost,
       item.frequency,
     ].join(" "));
-    return matchesProcess && matchesStatus && (!query || searchable.includes(query));
+    return matchesProcess && matchesStatus && matchesNav && (!query || searchable.includes(query));
   };
 
-  const filteredAsIs = useMemo(() => asIsRows.filter(filterRow), [asIsRows, searchTerm, processFilter, statusFilter]);
-  const filteredToBe = useMemo(() => toBeRows.filter(filterRow), [toBeRows, searchTerm, processFilter, statusFilter]);
+  const filteredAsIs = useMemo(() => asIsRows.filter(filterRow), [asIsRows, searchTerm, processFilter, statusFilter, navFilter]);
+  const filteredToBe = useMemo(() => toBeRows.filter(filterRow), [toBeRows, searchTerm, processFilter, statusFilter, navFilter]);
 
   const totalsByProcess = (rows) => {
     const totals = new Map();
@@ -1640,6 +1643,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
         </label>
         <FilterSelect label="Proceso" value={processFilter} onChange={setProcessFilter} options={processOptions} />
         <FilterSelect label="Status" value={statusFilter} onChange={setStatusFilter} options={statusOptions} />
+        <FilterSelect label="NAV" value={navFilter} onChange={setNavFilter} options={navOptions} />
       </div>
 
       <div className="processTablesStack coeTablesStack">
@@ -2703,3 +2707,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V6_NAV_LAYOUT_FINAL
+
+
+// COE_V7_HOMOGENEO_NAV_FILTER_FINAL
