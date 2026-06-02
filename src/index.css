@@ -8232,3 +8232,179 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* ==========================================================
+   COE_V5_TARJETAS_CLASES_REALES_FINAL
+   Apunta a las clases reales del componente:
+   .coeExecutiveGrid y .coeExecutiveCard
+   ========================================================== */
+
+.coeExecutiveGrid.fourCards,
+.coeExecutiveGrid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+  align-items: stretch !important;
+}
+
+.coeExecutiveCard {
+  min-height: 330px !important;
+  height: 100% !important;
+  padding: 30px 28px !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem), #ffffff !important;
+  color: #102F37 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  box-shadow: 0 22px 46px rgba(0, 59, 63, 0.06) !important;
+  overflow: hidden !important;
+}
+
+.coeExecutiveCard > span {
+  display: block !important;
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 1.02rem !important;
+  line-height: 1.25 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.coeExecutiveCard > strong {
+  display: block !important;
+  color: #0B4E58 !important;
+  -webkit-text-fill-color: #0B4E58 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: clamp(3.4rem, 5vw, 5.4rem) !important;
+  line-height: 0.9 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.07em !important;
+  margin: 34px 0 20px !important;
+}
+
+.coeExecutiveCard > p {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-size: 0.86rem !important;
+  line-height: 1.35 !important;
+  margin: 0 !important;
+  max-width: 92% !important;
+}
+
+/* Diferencia estimada: degradado con letras y número blancos */
+.coeExecutiveCard.difference,
+.coeExecutiveCard.coeDifferenceCard {
+  background: linear-gradient(135deg, #006C66 0%, #00B8B5 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.coeExecutiveCard.difference *,
+.coeExecutiveCard.coeDifferenceCard * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.coeExecutiveCard.difference > strong,
+.coeExecutiveCard.coeDifferenceCard > strong {
+  font-size: clamp(3.6rem, 5.4vw, 5.8rem) !important;
+  margin: 34px 0 20px !important;
+}
+
+/* Actividades: más compacta y legible */
+.coeExecutiveCard.activities,
+.coeExecutiveCard.coeActivitiesCard {
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem), #ffffff !important;
+  color: #102F37 !important;
+  padding: 24px 26px !important;
+}
+
+.coeExecutiveCard.activities > span,
+.coeExecutiveCard.coeActivitiesCard > span {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+}
+
+.coeActivitySummaryRow {
+  display: grid !important;
+  gap: 10px !important;
+  margin-top: 10px !important;
+}
+
+.coeActivitySummaryRow > span {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.92rem !important;
+  font-weight: 900 !important;
+}
+
+.coeActivitiesMiniGrid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.coeActivitiesMiniGrid > div {
+  min-width: 0 !important;
+  padding: 10px 7px !important;
+  border-radius: 16px !important;
+  background: rgba(0, 184, 181, 0.08) !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+  text-align: center !important;
+}
+
+.coeActivitiesMiniGrid strong {
+  display: block !important;
+  color: #0B4E58 !important;
+  -webkit-text-fill-color: #0B4E58 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 1.7rem !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.04em !important;
+}
+
+.coeActivitiesMiniGrid small {
+  display: block !important;
+  margin-top: 5px !important;
+  color: #425e65 !important;
+  -webkit-text-fill-color: #425e65 !important;
+  font-size: 0.68rem !important;
+  line-height: 1.15 !important;
+  font-weight: 700 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.coeExecutiveCard.activities > p,
+.coeExecutiveCard.coeActivitiesCard > p {
+  font-size: 0.78rem !important;
+  line-height: 1.25 !important;
+  color: #425e65 !important;
+  -webkit-text-fill-color: #425e65 !important;
+}
+
+/* Responsive */
+@media (max-width: 1180px) {
+  .coeExecutiveGrid.fourCards,
+  .coeExecutiveGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .coeExecutiveGrid.fourCards,
+  .coeExecutiveGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .coeExecutiveCard {
+    min-height: 270px !important;
+  }
+}

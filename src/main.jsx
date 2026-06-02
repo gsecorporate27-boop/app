@@ -1540,23 +1540,23 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       </div>
 
       <div className="coeExecutiveGrid fourCards">
-        <article className="coeExecutiveCard">
+        <article className="coeExecutiveCard coeCostCard">
           <span>Costo procesos AS IS</span>
           <strong>${formatCurrency(asIsTotal)}</strong>
           <p>Total de costo actual.</p>
         </article>
-        <article className="coeExecutiveCard difference">
+        <article className="coeExecutiveCard coeDifferenceCard difference">
           <span>Diferencia estimada</span>
           <strong>${formatCurrency(Math.abs(difference))}</strong>
           <p>{difference >= 0 ? "Ahorro potencial frente al AS IS." : "Incremento frente al AS IS."}</p>
         </article>
-        <article className="coeExecutiveCard activities">
+        <article className="coeExecutiveCard coeActivitiesCard activities">
           <span>Actividades</span>
           <ActivitySummaryRow title="Actividades AS IS" summary={asIsActivityStatusSummary} />
           <ActivitySummaryRow title="Actividades TO BE" summary={toBeActivityStatusSummary} />
           <p>Según la columna Observación.</p>
         </article>
-        <article className="coeExecutiveCard">
+        <article className="coeExecutiveCard coeCostCard">
           <span>Costo procesos TO BE</span>
           <strong>${formatCurrency(toBeTotal)}</strong>
           <p>Total de costo propuesto.</p>
@@ -2639,3 +2639,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V4_TARJETAS_VISUALES_FINAL
+
+
+// COE_V5_TARJETAS_CLASES_REALES_FINAL
