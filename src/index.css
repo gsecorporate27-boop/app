@@ -7959,3 +7959,276 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     min-height: 270px !important;
   }
 }
+
+
+/* ==========================================================
+   COE_V4_TARJETAS_VISUALES_FINAL
+   Ajuste visual de tarjetas superiores COE.
+   ========================================================== */
+
+/* Grid superior COE homogéneo */
+.coeSummaryGrid,
+.coeKpiGrid,
+.coeTopCards,
+.coeMetricsGrid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 22px !important;
+  align-items: stretch !important;
+}
+
+/* Todas las tarjetas COE con altura pareja */
+.coeSummaryGrid > *,
+.coeKpiGrid > *,
+.coeTopCards > *,
+.coeMetricsGrid > *,
+.coeMetricCard,
+.coeKpiCard,
+.coeSummaryCard {
+  min-height: 330px !important;
+  height: 100% !important;
+  border-radius: 28px !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+  box-shadow: 0 22px 46px rgba(0, 59, 63, 0.06) !important;
+  overflow: hidden !important;
+}
+
+/* Tarjetas blancas: títulos #102F37 y números #0B4E58 */
+.coeSummaryGrid > *:not(.accent):not(.featured):not(.highlight):not(.difference),
+.coeKpiGrid > *:not(.accent):not(.featured):not(.highlight):not(.difference),
+.coeTopCards > *:not(.accent):not(.featured):not(.highlight):not(.difference),
+.coeMetricsGrid > *:not(.accent):not(.featured):not(.highlight):not(.difference),
+.coeMetricCard:not(.accent):not(.featured):not(.highlight):not(.difference),
+.coeKpiCard:not(.accent):not(.featured):not(.highlight):not(.difference),
+.coeSummaryCard:not(.accent):not(.featured):not(.highlight):not(.difference) {
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 15rem), #ffffff !important;
+  color: #102F37 !important;
+}
+
+/* Tarjeta de diferencia estimada: degradado + texto blanco */
+.coeSummaryGrid > *:nth-child(2),
+.coeKpiGrid > *:nth-child(2),
+.coeTopCards > *:nth-child(2),
+.coeMetricsGrid > *:nth-child(2),
+.coeDifferenceCard,
+.coeMetricCard.difference,
+.coeKpiCard.difference,
+.coeSummaryCard.difference,
+.coeMetricCard.accent,
+.coeKpiCard.accent,
+.coeSummaryCard.accent {
+  background: linear-gradient(135deg, #006C66 0%, #00B8B5 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* Texto blanco solo para tarjeta de diferencia/degradado */
+.coeSummaryGrid > *:nth-child(2) *,
+.coeKpiGrid > *:nth-child(2) *,
+.coeTopCards > *:nth-child(2) *,
+.coeMetricsGrid > *:nth-child(2) *,
+.coeDifferenceCard *,
+.coeMetricCard.difference *,
+.coeKpiCard.difference *,
+.coeSummaryCard.difference *,
+.coeMetricCard.accent *,
+.coeKpiCard.accent *,
+.coeSummaryCard.accent * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Títulos de las tarjetas blancas */
+.coeSummaryGrid > *:not(:nth-child(2)) h3,
+.coeSummaryGrid > *:not(:nth-child(2)) h4,
+.coeSummaryGrid > *:not(:nth-child(2)) .cardTitle,
+.coeSummaryGrid > *:not(:nth-child(2)) .metricTitle,
+.coeKpiGrid > *:not(:nth-child(2)) h3,
+.coeKpiGrid > *:not(:nth-child(2)) h4,
+.coeKpiGrid > *:not(:nth-child(2)) .cardTitle,
+.coeKpiGrid > *:not(:nth-child(2)) .metricTitle,
+.coeTopCards > *:not(:nth-child(2)) h3,
+.coeTopCards > *:not(:nth-child(2)) h4,
+.coeTopCards > *:not(:nth-child(2)) .cardTitle,
+.coeTopCards > *:not(:nth-child(2)) .metricTitle,
+.coeMetricsGrid > *:not(:nth-child(2)) h3,
+.coeMetricsGrid > *:not(:nth-child(2)) h4,
+.coeMetricsGrid > *:not(:nth-child(2)) .cardTitle,
+.coeMetricsGrid > *:not(:nth-child(2)) .metricTitle {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-size: 1.02rem !important;
+  line-height: 1.25 !important;
+  font-weight: 900 !important;
+}
+
+/* Números grandes tarjetas blancas */
+.coeSummaryGrid > *:not(:nth-child(2)) .metricValue,
+.coeSummaryGrid > *:not(:nth-child(2)) .coeValue,
+.coeSummaryGrid > *:not(:nth-child(2)) .bigNumber,
+.coeSummaryGrid > *:not(:nth-child(2)) strong.value,
+.coeSummaryGrid > *:not(:nth-child(2)) [class*="Value"],
+.coeSummaryGrid > *:not(:nth-child(2)) [class*="Number"],
+.coeKpiGrid > *:not(:nth-child(2)) .metricValue,
+.coeKpiGrid > *:not(:nth-child(2)) .coeValue,
+.coeKpiGrid > *:not(:nth-child(2)) .bigNumber,
+.coeKpiGrid > *:not(:nth-child(2)) strong.value,
+.coeKpiGrid > *:not(:nth-child(2)) [class*="Value"],
+.coeKpiGrid > *:not(:nth-child(2)) [class*="Number"],
+.coeTopCards > *:not(:nth-child(2)) .metricValue,
+.coeTopCards > *:not(:nth-child(2)) .coeValue,
+.coeTopCards > *:not(:nth-child(2)) .bigNumber,
+.coeTopCards > *:not(:nth-child(2)) strong.value,
+.coeTopCards > *:not(:nth-child(2)) [class*="Value"],
+.coeTopCards > *:not(:nth-child(2)) [class*="Number"],
+.coeMetricsGrid > *:not(:nth-child(2)) .metricValue,
+.coeMetricsGrid > *:not(:nth-child(2)) .coeValue,
+.coeMetricsGrid > *:not(:nth-child(2)) .bigNumber,
+.coeMetricsGrid > *:not(:nth-child(2)) strong.value,
+.coeMetricsGrid > *:not(:nth-child(2)) [class*="Value"],
+.coeMetricsGrid > *:not(:nth-child(2)) [class*="Number"] {
+  color: #0B4E58 !important;
+  -webkit-text-fill-color: #0B4E58 !important;
+  font-size: clamp(3rem, 4.6vw, 4.8rem) !important;
+  line-height: 0.92 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.06em !important;
+}
+
+/* Número grande diferencia estimada */
+.coeSummaryGrid > *:nth-child(2) .metricValue,
+.coeSummaryGrid > *:nth-child(2) .coeValue,
+.coeSummaryGrid > *:nth-child(2) .bigNumber,
+.coeSummaryGrid > *:nth-child(2) strong.value,
+.coeSummaryGrid > *:nth-child(2) [class*="Value"],
+.coeSummaryGrid > *:nth-child(2) [class*="Number"],
+.coeKpiGrid > *:nth-child(2) .metricValue,
+.coeKpiGrid > *:nth-child(2) .coeValue,
+.coeKpiGrid > *:nth-child(2) .bigNumber,
+.coeKpiGrid > *:nth-child(2) strong.value,
+.coeKpiGrid > *:nth-child(2) [class*="Value"],
+.coeKpiGrid > *:nth-child(2) [class*="Number"],
+.coeTopCards > *:nth-child(2) .metricValue,
+.coeTopCards > *:nth-child(2) .coeValue,
+.coeTopCards > *:nth-child(2) .bigNumber,
+.coeTopCards > *:nth-child(2) strong.value,
+.coeTopCards > *:nth-child(2) [class*="Value"],
+.coeTopCards > *:nth-child(2) [class*="Number"],
+.coeMetricsGrid > *:nth-child(2) .metricValue,
+.coeMetricsGrid > *:nth-child(2) .coeValue,
+.coeMetricsGrid > *:nth-child(2) .bigNumber,
+.coeMetricsGrid > *:nth-child(2) strong.value,
+.coeMetricsGrid > *:nth-child(2) [class*="Value"],
+.coeMetricsGrid > *:nth-child(2) [class*="Number"] {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: clamp(3.2rem, 5vw, 5rem) !important;
+  line-height: 0.92 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.06em !important;
+}
+
+/* Descripciones más pequeñas y mejor distribuidas */
+.coeSummaryGrid p,
+.coeKpiGrid p,
+.coeTopCards p,
+.coeMetricsGrid p,
+.coeMetricCard p,
+.coeKpiCard p,
+.coeSummaryCard p,
+.coeSummaryGrid .description,
+.coeKpiGrid .description,
+.coeTopCards .description,
+.coeMetricsGrid .description,
+.coeSummaryGrid .metricDescription,
+.coeKpiGrid .metricDescription,
+.coeTopCards .metricDescription,
+.coeMetricsGrid .metricDescription {
+  font-size: 0.88rem !important;
+  line-height: 1.35 !important;
+  margin-top: auto !important;
+  max-width: 92% !important;
+}
+
+/* Layout interno más equilibrado para tarjetas */
+.coeSummaryGrid > *,
+.coeKpiGrid > *,
+.coeTopCards > *,
+.coeMetricsGrid > *,
+.coeMetricCard,
+.coeKpiCard,
+.coeSummaryCard {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  padding: 28px !important;
+}
+
+/* Tarjeta de actividades: compacta, sin agrandar visualmente */
+.coeActivitiesCard,
+.coeSummaryGrid > *:nth-child(3),
+.coeKpiGrid > *:nth-child(3),
+.coeTopCards > *:nth-child(3),
+.coeMetricsGrid > *:nth-child(3) {
+  padding: 24px !important;
+}
+
+.coeActivitiesCard .activityCounters,
+.coeSummaryGrid > *:nth-child(3) .activityCounters,
+.coeKpiGrid > *:nth-child(3) .activityCounters,
+.coeTopCards > *:nth-child(3) .activityCounters,
+.coeMetricsGrid > *:nth-child(3) .activityCounters {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 9px !important;
+}
+
+.coeActivitiesCard .activityCounter,
+.coeSummaryGrid > *:nth-child(3) .activityCounter,
+.coeKpiGrid > *:nth-child(3) .activityCounter,
+.coeTopCards > *:nth-child(3) .activityCounter,
+.coeMetricsGrid > *:nth-child(3) .activityCounter {
+  min-width: 0 !important;
+  padding: 10px 8px !important;
+  border-radius: 16px !important;
+}
+
+.coeActivitiesCard .activityCounter strong,
+.coeSummaryGrid > *:nth-child(3) .activityCounter strong,
+.coeKpiGrid > *:nth-child(3) .activityCounter strong,
+.coeTopCards > *:nth-child(3) .activityCounter strong,
+.coeMetricsGrid > *:nth-child(3) .activityCounter strong {
+  color: #0B4E58 !important;
+  -webkit-text-fill-color: #0B4E58 !important;
+  font-size: 1.6rem !important;
+  line-height: 1 !important;
+  font-weight: 900 !important;
+}
+
+.coeActivitiesCard .activityCounter span,
+.coeSummaryGrid > *:nth-child(3) .activityCounter span,
+.coeKpiGrid > *:nth-child(3) .activityCounter span,
+.coeTopCards > *:nth-child(3) .activityCounter span,
+.coeMetricsGrid > *:nth-child(3) .activityCounter span {
+  font-size: 0.72rem !important;
+  line-height: 1.15 !important;
+}
+
+/* Responsive */
+@media (max-width: 1180px) {
+  .coeSummaryGrid,
+  .coeKpiGrid,
+  .coeTopCards,
+  .coeMetricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .coeSummaryGrid,
+  .coeKpiGrid,
+  .coeTopCards,
+  .coeMetricsGrid {
+    grid-template-columns: 1fr !important;
+  }
+}

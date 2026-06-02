@@ -2636,3 +2636,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V3_TITULOS_ACTIVIDADES_FILTROS_FINAL
+
+
+// COE_V4_TARJETAS_VISUALES_FINAL
