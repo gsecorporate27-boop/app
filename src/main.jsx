@@ -2924,3 +2924,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // ENTREGABLES_V3_FIX_RESPONSABLE_RESUMEN_FINAL
+
+
+// ENTREGABLES_V4_BADGES_VISIBLES_FINAL

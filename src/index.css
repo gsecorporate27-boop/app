@@ -10000,3 +10000,73 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     min-height: 185px;
   }
 }
+
+
+/* ==========================================================
+   ENTREGABLES_V4_BADGES_VISIBLES_FINAL
+   Corrige etiquetas de estado en tarjetas de Entregables.
+   ========================================================== */
+
+/* Badge de estado dentro de tarjetas de Entregables: siempre visible */
+.deliverablesSection .deliverableCard .badgeRow .badge,
+.deliverablesSection .deliverableCard .badgeRow [class*="badge"],
+.deliverablesGrid .deliverableCard .badgeRow .badge,
+.deliverablesGrid .deliverableCard .badgeRow [class*="badge"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: max-content !important;
+  min-width: 96px !important;
+  min-height: 30px !important;
+  padding: 7px 14px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  border: 1px solid rgba(0, 184, 181, 0.26) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  text-shadow: none !important;
+}
+
+/* Si el texto del badge está en span/strong interno, también debe verse */
+.deliverablesSection .deliverableCard .badgeRow .badge *,
+.deliverablesSection .deliverableCard .badgeRow [class*="badge"] *,
+.deliverablesGrid .deliverableCard .badgeRow .badge *,
+.deliverablesGrid .deliverableCard .badgeRow [class*="badge"] * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Separación del badge para que no quede pegado al título */
+.deliverablesSection .deliverableCard .badgeRow,
+.deliverablesGrid .deliverableCard .badgeRow {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 12px 0 14px !important;
+}
+
+/* En tarjetas blancas, textos principales oscuros */
+.deliverablesSection .deliverableCard .itemTitle,
+.deliverablesGrid .deliverableCard .itemTitle {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+}
+
+.deliverablesSection .deliverableCard .area,
+.deliverablesGrid .deliverableCard .area,
+.deliverablesSection .deliverableCard .muted,
+.deliverablesGrid .deliverableCard .muted,
+.deliverablesSection .deliverableCard .observation,
+.deliverablesGrid .deliverableCard .observation {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+}
