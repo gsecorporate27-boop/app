@@ -611,3 +611,5 @@ export async function loadSheetData() {
 // COE_V6_NAV_LAYOUT_FINAL
 
 // COE_V7_HOMOGENEO_NAV_FILTER_FINAL
+
+// COE_V8_TIPOGRAFIA_SUAVE_FINAL

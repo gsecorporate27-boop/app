@@ -2710,3 +2710,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V7_HOMOGENEO_NAV_FILTER_FINAL
+
+
+// COE_V8_TIPOGRAFIA_SUAVE_FINAL

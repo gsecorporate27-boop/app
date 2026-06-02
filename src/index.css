@@ -8806,3 +8806,60 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     min-height: 190px !important;
   }
 }
+
+
+/* ==========================================================
+   COE_V8_TIPOGRAFIA_SUAVE_FINAL
+   Títulos más suaves y números sin negrita excesiva.
+   ========================================================== */
+
+/* Títulos de tarjetas COE */
+.coeExecutiveGrid.threeCards .coeExecutiveCard > span,
+.coeInsightCard > span,
+.coeInsightRow > span,
+.coeProcessListCard h3,
+.coeChartHeader h3,
+.coeTableCard h3,
+.coeSection .processTableHeader h3 {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-weight: 800 !important;
+}
+
+/* Números principales en tarjetas blancas: sin negrita pesada */
+.coeExecutiveGrid.threeCards .coeExecutiveCard:not(.difference) > strong,
+.coeExecutiveGrid.threeCards .coeCostCard > strong {
+  font-weight: 700 !important;
+  letter-spacing: -0.045em !important;
+}
+
+/* Número de COE mensual: blanco pero menos pesado */
+.coeExecutiveGrid.threeCards .coeDifferenceCard > strong,
+.coeExecutiveGrid.threeCards .coeExecutiveCard.difference > strong {
+  font-weight: 700 !important;
+  letter-spacing: -0.045em !important;
+}
+
+/* Porcentaje COE mensual más suave */
+.coeExecutiveGrid.threeCards .coeDifferenceCard > em,
+.coeExecutiveGrid.threeCards .coeExecutiveCard.difference > em {
+  font-weight: 700 !important;
+}
+
+/* Números de Actividades y NAV más suaves */
+.coeMiniCounterGrid strong,
+.coeActivitiesMiniGrid strong,
+.coeInsightCard strong {
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+}
+
+/* Títulos internos de filtros/encabezados en COE */
+.coeSection .filter span,
+.coeSection .searchFilter > span,
+.coeSection .processTableHeader p,
+.coeChartHeader p,
+.coeInsightCard > p {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+}
