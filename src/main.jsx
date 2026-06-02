@@ -1026,8 +1026,19 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
     });
   }, [milestones, routeSearchTerm, routeStatusFilter, routeHitoFilter]);
 
-  const completedMilestones = milestones.filter((m) => isCompletedStatus(m.status)).length;
-  const pendingMilestones = Math.max(0, milestones.length - completedMilestones);
+  const statusCounts = useMemo(() => {
+    return milestones.reduce((acc, milestone) => {
+      const status = normalizeSystemName(milestone.status || "");
+      if (status.includes("finalizado") || status.includes("aprobado") || status.includes("completado") || status.includes("terminado")) {
+        acc.finished += 1;
+      } else if (status.includes("desarrollo") || status.includes("desarollo") || status.includes("progreso")) {
+        acc.development += 1;
+      } else {
+        acc.pending += 1;
+      }
+      return acc;
+    }, { finished: 0, pending: 0, development: 0 });
+  }, [milestones]);
 
   return (
     <section className="card premiumSectionCard routeProjectSection">
@@ -1048,18 +1059,23 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
               <p>Hitos cargados en la ruta de avance.</p>
             </article>
 
-            <article className="routeSummaryCard">
+            <article className="routeSummaryCard routeStatusSummaryCard">
               <span>Estado de hitos</span>
-              <div className="routeMiniStatusRows">
+              <div className="routeMiniStatusRows threeStatus">
                 <div>
-                  <span>Finalizados</span>
-                  <div className="routeMiniTrack"><i style={{ width: `${milestones.length ? (completedMilestones / milestones.length) * 100 : 0}%` }} /></div>
-                  <strong>{completedMilestones}</strong>
+                  <span>Finalizado</span>
+                  <div className="routeMiniTrack"><i style={{ width: `${milestones.length ? (statusCounts.finished / milestones.length) * 100 : 0}%` }} /></div>
+                  <strong>{statusCounts.finished}</strong>
                 </div>
                 <div>
-                  <span>Pendientes</span>
-                  <div className="routeMiniTrack pending"><i style={{ width: `${milestones.length ? (pendingMilestones / milestones.length) * 100 : 0}%` }} /></div>
-                  <strong>{pendingMilestones}</strong>
+                  <span>Pendiente</span>
+                  <div className="routeMiniTrack pending"><i style={{ width: `${milestones.length ? (statusCounts.pending / milestones.length) * 100 : 0}%` }} /></div>
+                  <strong>{statusCounts.pending}</strong>
+                </div>
+                <div>
+                  <span>En desarrollo</span>
+                  <div className="routeMiniTrack development"><i style={{ width: `${milestones.length ? (statusCounts.development / milestones.length) * 100 : 0}%` }} /></div>
+                  <strong>{statusCounts.development}</strong>
                 </div>
               </div>
               <p>Según el estado registrado para cada hito.</p>
@@ -1105,7 +1121,9 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
               className={`${detailed ? "premiumMilestone" : "timelineItem"} ${completed ? "completed" : ""} ${selectedHito === m.title ? "selected" : ""}`}
               onClick={() => !detailed && goToRoute(m.title)}
             >
-              <div className="milestoneIcon">{completed ? <CheckCircle2 size={20} /> : (index + 1)}</div>
+              <div className={`milestoneIcon routeMilestoneIcon ${completed ? "done" : "empty"}`}>
+                {completed ? <CheckCircle2 size={20} /> : null}
+              </div>
 
               <div className="milestoneContent">
                 <h3>{m.id ? `E${m.id}: ` : ""}{m.title}</h3>
@@ -1246,6 +1264,467 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
       {detailed && filteredMilestones.length === 0 && (
         <div className="emptyState">No hay hitos que coincidan con los filtros seleccionados.</div>
       )}
+    </section>
+  );
+}
+
+function ProcessesMasterList({ processesAsIs = [], processesToBe = [] }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("Todos");
+  const [macroFilter, setMacroFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("Todos");
+
+  const allProcesses = [...processesAsIs, ...processesToBe];
+  const typeOptions = useMemo(() => allProcesses.map((item) => item.type).filter(Boolean), [allProcesses]);
+  const macroOptions = useMemo(() => allProcesses.map((item) => item.macroName).filter(Boolean), [allProcesses]);
+  const statusOptions = useMemo(() => processesToBe.map((item) => item.status).filter(Boolean), [processesToBe]);
+
+  const filterProcess = (item, source) => {
+    const query = normalizeSystemName(searchTerm);
+    const matchesType = typeFilter === "Todos" || item.type === typeFilter;
+    const matchesMacro = macroFilter === "Todos" || item.macroName === macroFilter;
+    const matchesStatus = source === "ASIS" || statusFilter === "Todos" || item.status === statusFilter;
+    const searchable = normalizeSystemName([
+      item.id,
+      item.type,
+      item.macroCode,
+      item.macroName,
+      item.processCode,
+      item.processName,
+      item.description,
+      item.changes,
+      item.status,
+      item.link,
+    ].join(" "));
+    return matchesType && matchesMacro && matchesStatus && (!query || searchable.includes(query));
+  };
+
+  const filteredAsIs = useMemo(
+    () => processesAsIs.filter((item) => filterProcess(item, "ASIS")),
+    [processesAsIs, searchTerm, typeFilter, macroFilter, statusFilter]
+  );
+
+  const filteredToBe = useMemo(
+    () => processesToBe.filter((item) => filterProcess(item, "TOBE")),
+    [processesToBe, searchTerm, typeFilter, macroFilter, statusFilter]
+  );
+
+  const ProcessTable = ({ title, subtitle, rows, variant }) => (
+    <div className="processTableCard">
+      <div className="processTableHeader">
+        <div>
+          <h3>{title}</h3>
+          <p>{subtitle}</p>
+        </div>
+        <Badge status="En validación">{rows.length} visibles</Badge>
+      </div>
+
+      <div className="processTableWrap individualMatrixScroll">
+        <table className="processTable fixedMatrixTable">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Tipo</th>
+              <th>Cód. Macro</th>
+              <th>Macroproceso</th>
+              <th>Cód. Proceso</th>
+              <th>Proceso</th>
+              {variant === "asis" ? <th>Descripción</th> : <th>Cambios / Observaciones</th>}
+              {variant === "tobe" && <th>Status</th>}
+              <th>Imagen Proceso</th>
+              <th>Ficha Técnica</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((item, index) => (
+              <tr key={`${variant}-${item.id}-${item.processCode}-${index}`}>
+                <td>{item.id}</td>
+                <td>{item.type}</td>
+                <td>{item.macroCode}</td>
+                <td>{item.macroName}</td>
+                <td>{item.processCode}</td>
+                <td><strong>{item.processName}</strong></td>
+                <td>{variant === "asis" ? item.description : item.changes}</td>
+                {variant === "tobe" && <td><Badge status={item.status}>{item.status || "Sin status"}</Badge></td>}
+                <td className="imageProcessCell">
+                  {safeUrl(item.imageProcess || item.link) ? (
+                    <a className="processPreviewLink" href={safeUrl(item.imageProcess || item.link)} target="_blank" rel="noreferrer">
+                      Ver imagen <ExternalLink size={14} />
+                    </a>
+                  ) : (
+                    <span className="processNoPreview">Sin imagen</span>
+                  )}
+                </td>
+                <td className="techSheetCell">
+                  {safeUrl(item.technicalSheet) ? (
+                    <a className="processPreviewLink" href={safeUrl(item.technicalSheet)} target="_blank" rel="noreferrer">
+                      Ver ficha <ExternalLink size={14} />
+                    </a>
+                  ) : (
+                    <span className="processNoPreview">Sin ficha</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {rows.length === 0 && <div className="emptyState">No hay procesos que coincidan con los filtros seleccionados.</div>}
+    </div>
+  );
+
+  return (
+    <section className="card premiumSectionCard processMasterSection">
+      <div className="sectionHeader">
+        <div>
+          <h2>Lista Maestra de Procesos</h2>
+          <p>Consulta integrada de procesos AS IS y TO BE, con búsqueda y filtros por tipo, macroproceso y status.</p>
+        </div>
+      </div>
+
+      <div className="processSummaryGrid">
+        <article className="processSummaryCard">
+          <span>Total procesos AS IS</span>
+          <strong>{processesAsIs.length}</strong>
+          <p>Procesos levantados en situación actual.</p>
+        </article>
+        <article className="processSummaryCard">
+          <span>Total procesos TO BE</span>
+          <strong>{processesToBe.length}</strong>
+          <p>Procesos propuestos o ajustados.</p>
+        </article>
+      </div>
+
+      <div className="premiumFilters processFilters">
+        <label className="searchFilter processSearchFilter">
+          <span>Buscar proceso</span>
+          <div className="searchInputWrap">
+            <Search size={18} />
+            <input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar por código, proceso, macroproceso, descripción o cambios"
+            />
+          </div>
+        </label>
+        <FilterSelect label="Tipo de proceso" value={typeFilter} onChange={setTypeFilter} options={typeOptions} />
+        <FilterSelect label="Macroproceso" value={macroFilter} onChange={setMacroFilter} options={macroOptions} />
+        <FilterSelect label="Status TO BE" value={statusFilter} onChange={setStatusFilter} options={statusOptions} />
+      </div>
+
+      <div className="processTablesStack">
+        <ProcessTable
+          title="Procesos AS IS"
+          subtitle="Situación actual documentada en la lista maestra."
+          rows={filteredAsIs}
+          variant="asis"
+        />
+        <ProcessTable
+          title="Procesos TO BE"
+          subtitle="Procesos propuestos, modificados o diseñados para la operación objetivo."
+          rows={filteredToBe}
+          variant="tobe"
+        />
+      </div>
+    </section>
+  );
+}
+
+function parseNumericValue(value) {
+  const raw = String(value ?? "")
+    .replace(/\$/g, "")
+    .replace(/,/g, ".")
+    .replace(/[^0-9.-]/g, "");
+  const number = Number(raw);
+  return Number.isFinite(number) ? number : 0;
+}
+
+function formatCurrency(value) {
+  const number = Number(value) || 0;
+  return number.toLocaleString("es-EC", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [processFilter, setProcessFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("Todos");
+  const [navFilter, setNavFilter] = useState("Todos");
+
+  const enrichRows = (rows) => rows.map((item) => {
+    const time = parseNumericValue(item.time);
+    const cost = parseNumericValue(item.cost);
+    const frequency = parseNumericValue(item.frequency) || 1;
+    const observationStatus = String(item.observation || "").trim();
+    return {
+      ...item,
+      timeValue: time,
+      costValue: cost,
+      frequencyValue: frequency,
+      observationStatus,
+      navStatus: String(item.nav || "").trim(),
+      totalCost: cost * frequency,
+    };
+  });
+
+  const asIsRows = useMemo(() => enrichRows(coeAsIs), [coeAsIs]);
+  const toBeRows = useMemo(() => enrichRows(coeToBe), [coeToBe]);
+  const allRows = useMemo(() => [...asIsRows, ...toBeRows], [asIsRows, toBeRows]);
+  const processOptions = useMemo(() => allRows.map((item) => item.process).filter(Boolean), [allRows]);
+  const statusOptions = useMemo(() => allRows.map((item) => item.observationStatus).filter(Boolean), [allRows]);
+  const navOptions = useMemo(() => allRows.map((item) => item.navStatus).filter(Boolean), [allRows]);
+
+  const filterRow = (item) => {
+    const query = normalizeSystemName(searchTerm);
+    const matchesProcess = processFilter === "Todos" || item.process === processFilter;
+    const matchesStatus = statusFilter === "Todos" || item.observationStatus === statusFilter;
+    const matchesNav = navFilter === "Todos" || item.navStatus === navFilter;
+    const searchable = normalizeSystemName([
+      item.code,
+      item.process,
+      item.activity,
+      item.participant,
+      item.observation,
+      item.navStatus,
+      item.time,
+      item.cost,
+      item.frequency,
+    ].join(" "));
+    return matchesProcess && matchesStatus && matchesNav && (!query || searchable.includes(query));
+  };
+
+  const filteredAsIs = useMemo(() => asIsRows.filter(filterRow), [asIsRows, searchTerm, processFilter, statusFilter, navFilter]);
+  const filteredToBe = useMemo(() => toBeRows.filter(filterRow), [toBeRows, searchTerm, processFilter, statusFilter, navFilter]);
+
+  const totalsByProcess = (rows) => {
+    const totals = new Map();
+    rows.forEach((item) => {
+      const key = item.process || "Sin proceso";
+      totals.set(key, (totals.get(key) || 0) + item.totalCost);
+    });
+    return Array.from(totals.entries())
+      .map(([process, total]) => ({ process, total }))
+      .sort((a, b) => b.total - a.total);
+  };
+
+  const asIsProcesses = useMemo(() => totalsByProcess(asIsRows), [asIsRows]);
+  const toBeProcesses = useMemo(() => totalsByProcess(toBeRows), [toBeRows]);
+  const asIsTotal = useMemo(() => asIsRows.reduce((sum, row) => sum + row.totalCost, 0), [asIsRows]);
+  const toBeTotal = useMemo(() => toBeRows.reduce((sum, row) => sum + row.totalCost, 0), [toBeRows]);
+  const difference = asIsTotal - toBeTotal;
+  const reductionPercent = asIsTotal > 0 ? (difference / asIsTotal) * 100 : 0;
+  const maxProcessCost = Math.max(1, ...asIsProcesses.map((item) => item.total), ...toBeProcesses.map((item) => item.total));
+
+  const summarizeActivities = (rows) => {
+    const isMatch = (value, words) => words.some((word) => normalizeSystemName(value).includes(word));
+    return rows.reduce((acc, item) => {
+      const obs = item.observationStatus || "";
+      if (isMatch(obs, ["mantiene", "mantenida", "mantenido", "mantener", "igual", "continua", "continuar"])) acc.maintained += 1;
+      if (isMatch(obs, ["elimina", "eliminada", "eliminado", "eliminar", "suprime", "suprimido"])) acc.deleted += 1;
+      if (isMatch(obs, ["agrega", "agregada", "agregado", "agregar", "nuevo", "nueva", "crea", "creado"])) acc.added += 1;
+      return acc;
+    }, { maintained: 0, deleted: 0, added: 0 });
+  };
+
+  const summarizeNav = (rows) => {
+    const isValue = (value) => {
+      const text = normalizeSystemName(value);
+      return text.includes("si") || text.includes("sí") || text.includes("genera") || text.includes("valor") || text.includes("agrega");
+    };
+    const isNoValue = (value) => {
+      const text = normalizeSystemName(value);
+      return text.includes("no") || text.includes("nav") || text.includes("no agrega") || text.includes("sin valor");
+    };
+
+    return rows.reduce((acc, item) => {
+      const nav = item.navStatus || "";
+      if (!nav) {
+        acc.unclassified += 1;
+      } else if (isNoValue(nav)) {
+        acc.noValue += 1;
+      } else if (isValue(nav)) {
+        acc.value += 1;
+      } else {
+        acc.unclassified += 1;
+      }
+      return acc;
+    }, { value: 0, noValue: 0, unclassified: 0 });
+  };
+
+  const asIsActivityStatusSummary = useMemo(() => summarizeActivities(asIsRows), [asIsRows]);
+  const toBeActivityStatusSummary = useMemo(() => summarizeActivities(toBeRows), [toBeRows]);
+  const asIsNavSummary = useMemo(() => summarizeNav(asIsRows), [asIsRows]);
+  const toBeNavSummary = useMemo(() => summarizeNav(toBeRows), [toBeRows]);
+
+  const MiniCounterGroup = ({ summary }) => (
+    <div className="coeMiniCounterGrid">
+      <div><strong>{summary.maintained}</strong><small>Mantenidas</small></div>
+      <div><strong>{summary.deleted}</strong><small>Eliminadas</small></div>
+      <div><strong>{summary.added}</strong><small>Agregadas</small></div>
+    </div>
+  );
+
+  const ActivitySummaryRow = ({ title, summary }) => (
+    <div className="coeInsightRow">
+      <span>{title}</span>
+      <MiniCounterGroup summary={summary} />
+    </div>
+  );
+
+  const NavSummaryRow = ({ title, summary }) => (
+    <div className="coeInsightRow">
+      <span>{title}</span>
+      <div className="coeMiniCounterGrid nav">
+        <div><strong>{summary.value}</strong><small>Generan valor</small></div>
+        <div><strong>{summary.noValue}</strong><small>No generan valor</small></div>
+        <div><strong>{summary.unclassified}</strong><small>Sin clasificar</small></div>
+      </div>
+    </div>
+  );
+
+  const ProcessCostList = ({ title, subtitle, rows, badge }) => (
+    <article className="coeProcessListCard fixedHeight">
+      <div className="coeChartHeader">
+        <div>
+          <h3>{title}</h3>
+          <p>{subtitle}</p>
+        </div>
+        <Badge status="En validación">{badge}</Badge>
+      </div>
+      <div className="coeProcessScrollList fixedProcessList">
+        {rows.map((item, index) => (
+          <div className="coeBarRow" key={`${title}-${item.process}-${index}`}>
+            <div className="coeBarInfo">
+              <span>{index + 1}. {item.process}</span>
+              <strong>${formatCurrency(item.total)}</strong>
+            </div>
+            <div className="coeBarTrack">
+              <div className="coeBarFill" style={{ width: `${Math.max(4, (item.total / maxProcessCost) * 100)}%` }} />
+            </div>
+          </div>
+        ))}
+        {!rows.length && <div className="emptyState compact">No hay datos para mostrar.</div>}
+      </div>
+    </article>
+  );
+
+  const COETable = ({ title, subtitle, rows }) => (
+    <div className="processTableCard coeTableCard">
+      <div className="processTableHeader">
+        <div>
+          <h3>{title}</h3>
+          <p>{subtitle}</p>
+        </div>
+        <Badge status="En validación">{rows.length} visibles</Badge>
+      </div>
+      <div className="processTableWrap coeTableWrap coeMatrixInternalScroll">
+        <table className="processTable coeTable matrixInternalScrollTable">
+          <thead>
+            <tr>
+              <th>CÓDIGO</th>
+              <th>PROCESO</th>
+              <th>ACTIVIDAD</th>
+              <th>INTERVINIENTE</th>
+              <th>OBSERVACIÓN / STATUS</th>
+              <th>NAV</th>
+              <th>TIEMPO (xmin)</th>
+              <th>COSTO (xmin)</th>
+              <th>FRECUENCIA</th>
+              <th>TOTAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((item, index) => (
+              <tr key={`${title}-${item.code}-${item.activity}-${index}`}>
+                <td>{item.code}</td>
+                <td><strong>{item.process}</strong></td>
+                <td>{item.activity}</td>
+                <td>{item.participant}</td>
+                <td>{item.observation}</td>
+                <td>{item.navStatus}</td>
+                <td>{item.time}</td>
+                <td>{item.cost}</td>
+                <td>{item.frequency}</td>
+                <td><strong>${formatCurrency(item.totalCost)}</strong></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {!rows.length && <div className="emptyState">No hay actividades que coincidan con los filtros seleccionados.</div>}
+    </div>
+  );
+
+  return (
+    <section className="card premiumSectionCard coeSection">
+      <div className="sectionHeader">
+        <div>
+          <h2>COE</h2>
+          <p>Comparativo de costo operativo estructural por proceso, separando AS IS y TO BE.</p>
+        </div>
+      </div>
+
+      <div className="coeExecutiveGrid threeCards">
+        <article className="coeExecutiveCard coeCostCard">
+          <span>Costo procesos AS IS</span>
+          <strong>${formatCurrency(asIsTotal)}</strong>
+          <p>Total mensual estimado de la situación actual.</p>
+        </article>
+        <article className="coeExecutiveCard coeDifferenceCard difference">
+          <span>COE mensual</span>
+          <strong>${formatCurrency(Math.abs(difference))}</strong>
+          <em>{Math.abs(reductionPercent).toFixed(1)}%</em>
+          <p>{difference >= 0 ? "Reducción estimada frente al AS IS." : "Incremento estimado frente al AS IS."}</p>
+        </article>
+        <article className="coeExecutiveCard coeCostCard">
+          <span>Costo procesos TO BE</span>
+          <strong>${formatCurrency(toBeTotal)}</strong>
+          <p>Total mensual estimado de la operación objetivo.</p>
+        </article>
+      </div>
+
+      <div className="coeInsightGrid">
+        <article className="coeInsightCard coeActivitiesCard">
+          <span>Actividades</span>
+          <ActivitySummaryRow title="Actividades AS IS" summary={asIsActivityStatusSummary} />
+          <ActivitySummaryRow title="Actividades TO BE" summary={toBeActivityStatusSummary} />
+          <p>Según la columna Observación.</p>
+        </article>
+
+        <article className="coeInsightCard coeNavCard">
+          <span>NAV</span>
+          <NavSummaryRow title="NAV AS IS" summary={asIsNavSummary} />
+          <NavSummaryRow title="NAV TO BE" summary={toBeNavSummary} />
+          <p>Clasificación de actividades que generan o no generan valor.</p>
+        </article>
+      </div>
+
+      <div className="coeChartsGrid coeProcessListsGrid">
+        <ProcessCostList title="Procesos AS IS" subtitle="Costo total por proceso actual." rows={asIsProcesses} badge={`${asIsProcesses.length} procesos`} />
+        <ProcessCostList title="Procesos TO BE" subtitle="Costo total por proceso propuesto." rows={toBeProcesses} badge={`${toBeProcesses.length} procesos`} />
+      </div>
+
+      <div className="premiumFilters processFilters coeFiltersOneLine">
+        <label className="searchFilter processSearchFilter compactSearchFilter">
+          <span>Buscar actividad</span>
+          <div className="searchInputWrap compact">
+            <Search size={18} />
+            <input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar por código, proceso o actividad"
+            />
+          </div>
+        </label>
+        <FilterSelect label="Proceso" value={processFilter} onChange={setProcessFilter} options={processOptions} />
+        <FilterSelect label="Status" value={statusFilter} onChange={setStatusFilter} options={statusOptions} />
+        <FilterSelect label="NAV" value={navFilter} onChange={setNavFilter} options={navOptions} />
+      </div>
+
+      <div className="processTablesStack coeTablesStack">
+        <COETable title="Matriz COE AS IS" subtitle="Actividades levantadas en la situación actual." rows={filteredAsIs} />
+        <COETable title="Matriz COE TO BE" subtitle="Actividades propuestas para la operación objetivo." rows={filteredToBe} />
+      </div>
     </section>
   );
 }
@@ -2360,4 +2839,4 @@ createRoot(document.getElementById("root")).render(<App />);
 // RESUMEN_V5_PENDIENTE_PRIORITARIO_LIMPIO_FINAL
 
 
-// RUTA_V2_FILTROS_INCLUYE_CLIENTE_FINAL
+// RUTA_V3_RESTAURA_MENU_STATUS_FINAL

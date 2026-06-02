@@ -9606,8 +9606,9 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 
 
 /* ==========================================================
-   RUTA_V2_FILTROS_INCLUYE_CLIENTE_FINAL
-   Ruta: Incluye GSE/Cliente + tarjetas resumen + buscador/filtros.
+   RUTA_V3_RESTAURA_MENU_STATUS_FINAL
+   Ruta V3: conserva todas las pestañas, incluye GSE/cliente,
+   filtros y estados Finalizado/Pendiente/En desarrollo.
    ========================================================== */
 
 .routeSummaryGrid {
@@ -9659,20 +9660,20 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 
 .routeMiniStatusRows {
   display: grid;
-  gap: 12px;
-  margin: 12px 0;
+  gap: 10px;
+  margin: 10px 0;
 }
 
 .routeMiniStatusRows > div {
   display: grid;
-  grid-template-columns: 88px minmax(0, 1fr) 34px;
+  grid-template-columns: 104px minmax(0, 1fr) 34px;
   align-items: center;
   gap: 10px;
 }
 
 .routeMiniStatusRows span {
   color: #557176;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
 }
 
@@ -9684,7 +9685,7 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 }
 
 .routeMiniTrack {
-  height: 12px;
+  height: 11px;
   border-radius: 999px;
   background: #dfe7ea;
   overflow: hidden;
@@ -9698,7 +9699,11 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 }
 
 .routeMiniTrack.pending i {
-  background: linear-gradient(90deg, #7ddbd8, #00b8b5);
+  background: linear-gradient(90deg, #b8e7e5, #00b8b5);
+}
+
+.routeMiniTrack.development i {
+  background: linear-gradient(90deg, #5fd2ce, #00877f);
 }
 
 .routeFilters.oneLineRouteFilters,
@@ -9731,6 +9736,24 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   color: #557176 !important;
   -webkit-text-fill-color: #557176 !important;
   font-size: 11px !important;
+}
+
+/* Círculo del hito: vacío hasta que esté finalizado */
+.timelineDetailed .routeMilestoneIcon.empty,
+.routeMilestoneIcon.empty {
+  background: rgba(0, 184, 181, 0.12) !important;
+  border: 2px solid rgba(0, 184, 181, 0.42) !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  box-shadow: 0 16px 30px rgba(0, 184, 181, 0.08) !important;
+}
+
+.timelineDetailed .routeMilestoneIcon.done,
+.routeMilestoneIcon.done {
+  background: linear-gradient(135deg, #00B8B5, #4fd8d4) !important;
+  border: 0 !important;
+  color: #003f3e !important;
+  -webkit-text-fill-color: #003f3e !important;
 }
 
 /* Acordeones más compactos y menos pesados */
