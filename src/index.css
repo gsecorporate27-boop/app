@@ -9811,8 +9811,8 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 
 
 /* ==========================================================
-   ENTREGABLES_V2_RESPONSABLE_FINAL
-   Entregables: Responsable + tarjetas resumen + filtros.
+   ENTREGABLES_V3_FIX_RESPONSABLE_RESUMEN_FINAL
+   Corrige lectura de Responsable, preserva Resumen y fuerza texto oscuro.
    ========================================================== */
 
 .deliverablesSummaryGrid {
@@ -9827,16 +9827,23 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   padding: 26px 28px;
   border-radius: 28px;
   border: 1px solid rgba(0, 184, 181, 0.24);
-  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem), #ffffff;
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem), #ffffff !important;
   box-shadow: 0 22px 46px rgba(0, 59, 63, 0.06);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  color: #102F37 !important;
+}
+
+.deliverablesSummaryCard,
+.deliverablesSummaryCard * {
+  color: #102F37 !important;
+  -webkit-text-fill-color: initial !important;
 }
 
 .deliverablesSummaryCard > span {
-  color: #557176;
-  -webkit-text-fill-color: #557176;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
   font-family: "Montserrat", sans-serif;
   font-size: 1rem;
   font-weight: 800;
@@ -9844,8 +9851,8 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 }
 
 .deliverablesSummaryCard > strong {
-  color: #00877f;
-  -webkit-text-fill-color: #00877f;
+  color: #00877f !important;
+  -webkit-text-fill-color: #00877f !important;
   font-family: "Montserrat", sans-serif;
   font-size: clamp(3.4rem, 4.6vw, 4.4rem);
   line-height: 0.9;
@@ -9855,8 +9862,8 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 }
 
 .deliverablesSummaryCard > p {
-  color: #557176;
-  -webkit-text-fill-color: #557176;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
   font-size: 0.86rem;
   line-height: 1.3;
   margin: 0;
@@ -9870,23 +9877,21 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 
 .deliverablesMiniRows > div {
   display: grid;
-  grid-template-columns: 92px minmax(0, 1fr) 32px;
+  grid-template-columns: 112px minmax(0, 1fr) 32px;
   gap: 9px;
   align-items: center;
 }
 
-.deliverablesMiniRows.three > div {
-  grid-template-columns: 112px minmax(0, 1fr) 32px;
-}
-
 .deliverablesMiniRows span {
-  color: #557176;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
   font-size: 0.78rem;
   font-weight: 700;
 }
 
 .deliverablesMiniRows strong {
-  color: #0B4E58;
+  color: #0B4E58 !important;
+  -webkit-text-fill-color: #0B4E58 !important;
   font-size: 0.92rem;
   font-weight: 700;
   text-align: right;
@@ -9914,7 +9919,6 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   background: linear-gradient(90deg, #00877f, #4ddbd7);
 }
 
-/* Filtros en una sola fila */
 .deliverablesFilters.oneLineDeliverablesFilters,
 .premiumFilters.deliverablesFilters.oneLineDeliverablesFilters {
   display: grid !important;
@@ -9926,7 +9930,6 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 }
 
 .deliverablesFilters.oneLineDeliverablesFilters .searchFilter,
-.deliverablesFilters.oneLineDeliverablesFilters .deliverablesSearchFilter,
 .deliverablesFilters.oneLineDeliverablesFilters .filter {
   min-width: 0 !important;
   width: 100% !important;
@@ -9940,22 +9943,40 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   border-radius: 16px !important;
 }
 
-.deliverablesFilters.oneLineDeliverablesFilters .filter span,
-.deliverablesFilters.oneLineDeliverablesFilters .searchFilter > span {
+/* Fuerza las tarjetas de entregables a blanco con texto oscuro */
+.deliverablesSection .deliverableCard,
+.deliverablesGrid .deliverableCard {
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.06), transparent 14rem), #ffffff !important;
+  color: #102F37 !important;
+  border: 1px solid rgba(0, 184, 181, 0.20) !important;
+}
+
+.deliverablesSection .deliverableCard *,
+.deliverablesGrid .deliverableCard * {
+  color: inherit;
+}
+
+.deliverablesSection .deliverableCard .area,
+.deliverablesGrid .deliverableCard .area {
   color: #557176 !important;
   -webkit-text-fill-color: #557176 !important;
-  font-size: 11px !important;
+  font-weight: 800;
 }
 
-.deliverableMeta {
-  display: grid;
-  gap: 6px;
-  color: #557176;
-  font-size: 0.88rem;
+.deliverablesSection .deliverableCard .itemTitle,
+.deliverablesGrid .deliverableCard .itemTitle,
+.deliverablesSection .deliverableCard h3,
+.deliverablesGrid .deliverableCard h3 {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
 }
 
-.deliverableMeta strong {
-  color: #102F37;
+.deliverablesSection .deliverableCard .muted,
+.deliverablesGrid .deliverableCard .muted,
+.deliverablesSection .deliverableCard p,
+.deliverablesGrid .deliverableCard p {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
 }
 
 @media (max-width: 1080px) {

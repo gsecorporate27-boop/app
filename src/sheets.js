@@ -436,6 +436,7 @@ function mapDeliverables(rows) {
     milestone: getRowValue(row, ["Hito"]),
     deliverable: getRowValue(row, ["Entregable"]),
     status: getRowValue(row, ["Estado"]),
+    responsible: getRowValue(row, ["Responsable", "responsable", "Owner", "Encargado", "ResponsableEntregable", "Responsable Entregable"]),
     progress: parseNumber(getRowValue(row, ["% Avance", "Avance", "Progreso"])),
     link: getRowValue(row, [
       "LinkEntregable", "Link Entregable", "Link entregable", "Link", "URL", "Enlace",
@@ -620,4 +621,4 @@ export async function loadSheetData() {
 
 // RUTA_V3_RESTAURA_MENU_STATUS_FINAL
 
-// ENTREGABLES_V2_RESPONSABLE_FINAL
+// ENTREGABLES_V3_FIX_RESPONSABLE_RESUMEN_FINAL

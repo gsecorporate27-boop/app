@@ -2074,14 +2074,14 @@ function PendingClient({ pending, compact = false, setView }) {
 }
 
 function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliverable, compact = false, setView }) {
-  const [searchTerm, setSearchTerm] = useState("");
   const [systemFilter, setSystemFilter] = useState("Todos");
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [responsibleFilter, setResponsibleFilter] = useState("Todos");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const systems = useMemo(() => deliverables.map((item) => item.system).filter(Boolean), [deliverables]);
-  const statuses = useMemo(() => deliverables.map((item) => item.status).filter(Boolean), [deliverables]);
-  const responsibles = useMemo(() => deliverables.map((item) => item.responsible).filter(Boolean), [deliverables]);
+  const systems = [...new Set(deliverables.map((d) => d.system).filter(Boolean))];
+  const statuses = [...new Set(deliverables.map((d) => d.status).filter(Boolean))];
+  const responsibles = [...new Set(deliverables.map((d) => d.responsible).filter(Boolean))];
 
   const summary = useMemo(() => {
     const isFinalized = (status = "") => {
@@ -2092,48 +2092,49 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
       const value = normalizeSystemName(status);
       return value.includes("desarrollo") || value.includes("desarollo") || value.includes("proceso") || value.includes("revision");
     };
+
     return deliverables.reduce((acc, item) => {
       const responsible = normalizeSystemName(item.responsible || "");
       const status = item.status || "";
+
       if (responsible.includes("gse")) acc.gse += 1;
       if (responsible.includes("cliente")) acc.client += 1;
+
       if (isFinalized(status)) acc.finalized += 1;
       else if (isDevelopment(status)) acc.development += 1;
       else acc.pending += 1;
+
       return acc;
     }, { gse: 0, client: 0, pending: 0, development: 0, finalized: 0 });
   }, [deliverables]);
 
-  const filteredDeliverables = useMemo(() => {
-    const query = normalizeSystemName(searchTerm);
-    return deliverables.filter((item) => {
-      const responsible = item.responsible || "";
-      const status = item.status || "";
-      const matchesSystem = systemFilter === "Todos" || item.system === systemFilter;
-      const matchesStatus = statusFilter === "Todos" || status === statusFilter;
-      const matchesResponsible = responsibleFilter === "Todos" || responsible === responsibleFilter;
-      const searchable = normalizeSystemName([
-        item.system,
-        item.milestone,
-        item.deliverable,
-        item.status,
-        item.responsible,
-        item.observation,
-      ].join(" "));
-      return matchesSystem && matchesStatus && matchesResponsible && (!query || searchable.includes(query));
-    });
-  }, [deliverables, searchTerm, systemFilter, statusFilter, responsibleFilter]);
+  const search = String(searchTerm || "").trim().toLowerCase();
 
-  const items = compact ? deliverables.slice(0, 4) : filteredDeliverables;
+  const filtered = deliverables.filter((item) => {
+    const systemOk = systemFilter === "Todos" || item.system === systemFilter;
+    const statusOk = statusFilter === "Todos" || item.status === statusFilter;
+    const responsibleOk = responsibleFilter === "Todos" || item.responsible === responsibleFilter;
+    const searchableText = [
+      item.system,
+      item.milestone,
+      item.deliverable,
+      item.status,
+      item.responsible,
+      item.observation,
+    ].join(" ").toLowerCase();
+    const searchOk = !search || searchableText.includes(search);
+    return systemOk && statusOk && responsibleOk && searchOk;
+  });
+
+  const items = compact ? filtered.slice(0, 6) : filtered;
 
   return (
     <section className="card premiumSectionCard deliverablesSection">
       <div className="sectionHeader">
         <div>
-          <h2>Entregables</h2>
-          <p>Consulta los documentos, avances y enlaces entregados durante el proyecto.</p>
+          <h2>{compact ? "Entregables principales" : "Entregables"}</h2>
+          <p>Vista por sistema e hito, con acceso al documento cuando esté disponible.</p>
         </div>
-        <Badge status="En validación">{compact ? deliverables.length : filteredDeliverables.length} entregables</Badge>
       </div>
 
       {!compact && (
@@ -2185,15 +2186,15 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
             </article>
           </div>
 
-          <div className="premiumFilters deliverablesFilters oneLineDeliverablesFilters">
-            <label className="searchFilter deliverablesSearchFilter">
+          <div className="filters premiumFilters deliverablesFilters oneLineDeliverablesFilters">
+            <label className="filter searchFilter deliverablesSearchFilter">
               <span>Buscar</span>
               <div className="searchInputWrap compact">
-                <Search size={18} />
+                <Search size={16} />
                 <input
                   value={searchTerm}
-                  onChange={(event) => setSearchTerm(event.target.value)}
-                  placeholder="Buscar entregable, hito o sistema"
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar entregable, sistema o hito..."
                 />
               </div>
             </label>
@@ -2204,57 +2205,117 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
         </>
       )}
 
+      {!compact && <div className="resultCounter"><Badge status="Disponible">{filtered.length} entregables</Badge></div>}
+
       <div className="deliverablesGrid">
         {items.map((item) => {
-          const isSelected = selectedDeliverable === item.deliverable;
           const link = safeUrl(item.link);
+          const selected = selectedDeliverable === item.deliverable;
           return (
-            <article
-              key={`${item.system}-${item.deliverable}-${item.milestone}`}
-              className={`deliverableCard ${isSelected ? "selected" : ""}`}
+            <div
+              className={`deliverableCard ${selected ? "selected" : ""} ${compact ? "clickable" : ""}`}
+              key={`${item.system}-${item.milestone}-${item.deliverable}`}
               onClick={() => {
-                setSelectedDeliverable?.(item.deliverable);
-                if (compact) setView?.("entregables");
+                if (compact) {
+                  setSelectedDeliverable?.(item.deliverable);
+                  setView?.("entregables");
+                }
               }}
             >
-              <div className="deliverableTop">
-                <Badge status="En validación">{item.system}</Badge>
-                <Badge status={item.status}>{item.status}</Badge>
-              </div>
-
-              <h3>{item.deliverable}</h3>
-
-              <div className="deliverableMeta">
-                <span><strong>Hito:</strong> {item.milestone}</span>
-                {item.responsible && <span><strong>Responsable:</strong> {item.responsible}</span>}
-              </div>
-
-              <ProgressBar value={item.progress} />
-
-              {item.observation && <p>{item.observation}</p>}
-
-              {link ? (
-                <a className="secondaryLink" href={link} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>
-                  Abrir entregable <ExternalLink size={15} />
+              <div className="area">{item.system}</div>
+              <div className="itemTitle">{item.deliverable}</div>
+              <div className="badgeRow"><Badge status={item.status}>{item.status}</Badge></div>
+              {item.milestone && <div className="muted">Hito: {item.milestone}</div>}
+              {item.responsible && <div className="muted"><strong>Responsable:</strong> {item.responsible}</div>}
+              <ProgressBar value={item.progress} status={item.status} />
+              <div className="muted">{item.progress}% de avance</div>
+              {item.observation && <p className="observation">{item.observation}</p>}
+              {link && (
+                <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+                  Ver entregable <ExternalLink size={15} />
                 </a>
-              ) : (
-                <span className="muted">Sin enlace cargado</span>
               )}
-            </article>
+            </div>
           );
         })}
       </div>
 
-      {!compact && filteredDeliverables.length === 0 && (
-        <div className="emptyState">No hay entregables que coincidan con los filtros seleccionados.</div>
+      {!items.length && (
+        <div className="emptyState">
+          <Search size={22} />
+          <strong>No encontramos entregables con esos filtros.</strong>
+          <span>Prueba con otro sistema, estado, responsable o palabra clave.</span>
+        </div>
       )}
 
-      {compact && deliverables.length > 4 && (
-        <button className="plainAction" onClick={() => setView?.("entregables")}>
-          Ver todos los entregables <ChevronRight size={16} />
-        </button>
+      {compact && deliverables.length > 6 && (
+        <button className="plainAction" onClick={() => setView?.("entregables")}>Ver todos los entregables <ChevronRight size={16} /></button>
       )}
     </section>
+  );
+}
+
+function UpdatesPanel({ project, updates, setView, pending = [] }) {
+  const safeUpdates = updates.length ? updates : [{ title: "Próximo paso", text: project.nextStep, target: "ruta" }];
+  const meetUrl = safeUrl(project.linkMeet);
+  const mainPending = pending[0];
+
+  return (
+    <aside className="rightPanel executiveRightPanel">
+      <div className="executiveSideCard nextStepWhiteCard">
+        <div className="sideCardIconLine">
+          <div className="sideIcon"><Flag size={18} /></div>
+          <span>Próximo paso</span>
+        </div>
+        <h3>{project.nextStep || "Próximo paso pendiente"}</h3>
+        <p>{project.nextDate || "Fecha por confirmar"}</p>
+        {meetUrl && (
+          <a className="sideMeetButton" href={meetUrl} target="_blank" rel="noreferrer">
+            <Video size={17} />
+            Conectarse a Google Meet
+          </a>
+        )}
+      </div>
+
+      {mainPending && (
+        <div className="executiveSideCard priorityPendingWhiteCard">
+          <div className="sideCardIconLine">
+            <div className="sideIcon warning"><AlertTriangle size={18} /></div>
+            <span>Pendiente prioritario</span>
+          </div>
+
+          <h3>{mainPending.request}</h3>
+
+          <div className="sidePendingMeta">
+            <span><strong>Responsable:</strong> {mainPending.owner}</span>
+            <span><strong>Fecha:</strong> {mainPending.dueDate}</span>
+          </div>
+
+          <div className="badgeRow">
+            <Badge status={mainPending.status}>{mainPending.status}</Badge>
+          </div>
+
+          {safeUrl(mainPending.link) && (
+            <a className="sideLinkButton" href={safeUrl(mainPending.link)} target="_blank" rel="noreferrer">
+              Abrir documento <ExternalLink size={15} />
+            </a>
+          )}
+        </div>
+      )}
+
+      {!mainPending && safeUpdates.slice(0, 1).map((u, index) => (
+        <div className="executiveSideCard priorityPendingWhiteCard" key={`${u.title}-${index}`}>
+          <div className="sideCardIconLine">
+            <div className="sideIcon"><Search size={18} /></div>
+            <span>{u.title}</span>
+          </div>
+          <p>{u.text}</p>
+          <button className="sideLinkButton" onClick={() => setView("ruta")}>
+            Ver detalle <ChevronRight size={16} />
+          </button>
+        </div>
+      ))}
+    </aside>
   );
 }
 
@@ -2862,4 +2923,4 @@ createRoot(document.getElementById("root")).render(<App />);
 // RUTA_V3_RESTAURA_MENU_STATUS_FINAL
 
 
-// ENTREGABLES_V2_RESPONSABLE_FINAL
+// ENTREGABLES_V3_FIX_RESPONSABLE_RESUMEN_FINAL
