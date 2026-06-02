@@ -9281,3 +9281,190 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     margin-bottom: -10px !important;
   }
 }
+
+
+/* ==========================================================
+   RESUMEN_V3_ESPEJO_LAYOUT_FINAL
+   Resumen: 4 tarjetas arriba + centro compacto + 4 tarjetas abajo
+   a ancho completo tipo espejo.
+   ========================================================== */
+
+.summaryMirrorPage {
+  display: grid !important;
+  gap: 24px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* La fila central mantiene hitos a la izquierda y las dos tarjetas a la derecha */
+.summaryTopMirrorGrid.executiveSummaryLayout,
+.executiveSummaryLayout.hitosFirst.summaryTopMirrorGrid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 2.15fr) minmax(300px, 1fr) !important;
+  gap: 24px !important;
+  align-items: stretch !important;
+  margin-top: 0 !important;
+}
+
+.summaryTopMirrorGrid .summaryHitosColumn,
+.summaryTopMirrorGrid .executiveSummaryMain {
+  min-width: 0 !important;
+  display: flex !important;
+}
+
+.summaryTopMirrorGrid .hitosProgressCard {
+  height: 100% !important;
+  min-height: 360px !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+/* El panel derecho debe caber dentro de la misma altura visual del bloque de hitos */
+.summaryTopMirrorGrid .sidePanel,
+.summaryTopMirrorGrid .updatesPanel,
+.summaryTopMirrorGrid aside,
+.summaryTopMirrorGrid [class*="UpdatesPanel"] {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* Compacta las tarjetas de Próximo paso y Pendiente prioritario */
+.summaryTopMirrorGrid .nextStepCard,
+.summaryTopMirrorGrid .priorityPendingCard,
+.summaryTopMirrorGrid .sidePanelCard,
+.summaryTopMirrorGrid .updatesPanelCard,
+.summaryTopMirrorGrid aside > article,
+.summaryTopMirrorGrid aside > section,
+.summaryTopMirrorGrid .rightRailCard {
+  min-height: 168px !important;
+  height: auto !important;
+  padding: 22px 24px !important;
+  border-radius: 24px !important;
+}
+
+/* Si el panel derecho es una columna de dos cards */
+.summaryTopMirrorGrid aside,
+.summaryTopMirrorGrid .sidePanel,
+.summaryTopMirrorGrid .updatesPanel {
+  display: grid !important;
+  gap: 18px !important;
+  align-content: stretch !important;
+}
+
+/* Reduce tamaño de tipografía y botón en panel derecho para que no se haga gigante */
+.summaryTopMirrorGrid .nextStepCard h3,
+.summaryTopMirrorGrid .priorityPendingCard h3,
+.summaryTopMirrorGrid .sidePanelCard h3,
+.summaryTopMirrorGrid aside h3,
+.summaryTopMirrorGrid .updatesPanel h3 {
+  font-size: 1.35rem !important;
+  line-height: 1.15 !important;
+  margin: 8px 0 !important;
+}
+
+.summaryTopMirrorGrid .nextStepCard p,
+.summaryTopMirrorGrid .priorityPendingCard p,
+.summaryTopMirrorGrid .sidePanelCard p,
+.summaryTopMirrorGrid aside p,
+.summaryTopMirrorGrid .updatesPanel p {
+  font-size: 0.95rem !important;
+  line-height: 1.35 !important;
+  margin: 6px 0 !important;
+}
+
+.summaryTopMirrorGrid .nextStepCard .primaryAction,
+.summaryTopMirrorGrid .sidePanelCard .primaryAction,
+.summaryTopMirrorGrid aside .primaryAction,
+.summaryTopMirrorGrid .updatesPanel .primaryAction,
+.summaryTopMirrorGrid .nextStepCard a,
+.summaryTopMirrorGrid aside a {
+  min-height: 48px !important;
+  padding: 12px 18px !important;
+  border-radius: 18px !important;
+  font-size: 0.95rem !important;
+}
+
+/* Las 4 tarjetas inferiores ahora ocupan TODO el ancho, como las 4 superiores */
+.summaryMirrorPage .summaryBottomGrid.fourCards,
+.summaryMirrorPage .summaryBottomGrid {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 24px !important;
+  margin-top: 0 !important;
+}
+
+/* Misma altura y presencia de las tarjetas superiores */
+.summaryMirrorPage .summaryBottomCard {
+  min-height: 295px !important;
+  height: 100% !important;
+  padding: 24px !important;
+  border-radius: 24px !important;
+}
+
+/* Ajuste para que radar no se vea comprimido */
+.summaryMirrorPage .summaryRadarCard .summaryRadarMini {
+  transform: scale(0.78) !important;
+  transform-origin: top center !important;
+  margin: -10px auto -38px !important;
+}
+
+/* Hallazgos y actividades se distribuyen mejor */
+.summaryMirrorPage .summaryMiniBars {
+  margin-top: 10px !important;
+}
+
+.summaryMirrorPage .summaryActivityCreative {
+  margin: 14px 0 8px !important;
+}
+
+.summaryMirrorPage .summaryActivityCreative > div {
+  min-height: 78px !important;
+}
+
+/* COE se mantiene diferenciado pero con el mismo tamaño */
+.summaryMirrorPage .summaryCOECard {
+  min-height: 295px !important;
+}
+
+/* Evita que el layout anterior limite el ancho de las 4 tarjetas */
+.summaryMirrorPage .executiveSummaryMain .summaryBottomGrid {
+  grid-column: 1 / -1 !important;
+}
+
+/* Responsive */
+@media (max-width: 1280px) {
+  .summaryTopMirrorGrid.executiveSummaryLayout,
+  .executiveSummaryLayout.hitosFirst.summaryTopMirrorGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .summaryTopMirrorGrid .hitosProgressCard {
+    min-height: 330px !important;
+  }
+
+  .summaryMirrorPage .summaryBottomGrid.fourCards,
+  .summaryMirrorPage .summaryBottomGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .summaryMirrorPage .summaryBottomGrid.fourCards,
+  .summaryMirrorPage .summaryBottomGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .summaryMirrorPage .summaryBottomCard {
+    min-height: 255px !important;
+  }
+
+  .summaryTopMirrorGrid .nextStepCard,
+  .summaryTopMirrorGrid .priorityPendingCard,
+  .summaryTopMirrorGrid .sidePanelCard,
+  .summaryTopMirrorGrid aside > article,
+  .summaryTopMirrorGrid aside > section {
+    min-height: 145px !important;
+  }
+}

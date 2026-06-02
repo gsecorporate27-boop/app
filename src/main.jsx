@@ -2660,32 +2660,33 @@ function App() {
           {view === "portal" && <PortalProject project={project} milestones={milestones} pending={pending} setView={setView} />}
 
           {view === "resumen" && (
-            <>
+            <div className="summaryMirrorPage">
               <KpiCards project={project} milestones={milestones} pending={pending} setView={setView} />
 
-              <div className="executiveSummaryLayout hitosFirst">
-                <div className="executiveSummaryMain">
+              <div className="executiveSummaryLayout hitosFirst summaryTopMirrorGrid">
+                <div className="executiveSummaryMain summaryHitosColumn">
                   <MilestonesExecutive
                     milestones={milestones}
                     setView={setView}
                     selectedHito={selectedHito}
                     setSelectedHito={setSelectedHito}
                   />
-                  <SummaryInsightCards
-                    project={project}
-                    milestones={milestones}
-                    deliverables={deliverables}
-                    findings={findings}
-                    processesAsIs={processesAsIs}
-                    processesToBe={processesToBe}
-                    coeAsIs={coeAsIs}
-                    coeToBe={coeToBe}
-                  />
                 </div>
 
                 <UpdatesPanel project={project} updates={updates} pending={pending} setView={setView} />
               </div>
-            </>
+
+              <SummaryInsightCards
+                project={project}
+                milestones={milestones}
+                deliverables={deliverables}
+                findings={findings}
+                processesAsIs={processesAsIs}
+                processesToBe={processesToBe}
+                coeAsIs={coeAsIs}
+                coeToBe={coeToBe}
+              />
+            </div>
           )}
 
           {view === "ruta" && <Timeline milestones={milestones} deliverables={deliverables} detailed setView={setView} setSelectedDeliverable={setSelectedDeliverable} selectedHito={selectedHito} setSelectedHito={setSelectedHito} />}
@@ -2790,3 +2791,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RESUMEN_V2_HOMOGENEO_4X4_FINAL
+
+
+// RESUMEN_V3_ESPEJO_LAYOUT_FINAL
