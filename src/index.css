@@ -8863,3 +8863,169 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   color: #557176 !important;
   -webkit-text-fill-color: #557176 !important;
 }
+
+
+/* ==========================================================
+   HALLAZGOS_V2_ESTADOS_FILTROS_FINAL
+   Tarjetas resumen + filtros Proceso/Estado en Hallazgos.
+   ========================================================== */
+
+.findingsSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin: 22px 0;
+}
+
+.findingsSummaryCard {
+  min-height: 210px;
+  padding: 28px 30px;
+  border-radius: 28px;
+  border: 1px solid rgba(0, 184, 181, 0.24);
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem), #ffffff;
+  box-shadow: 0 22px 46px rgba(0, 59, 63, 0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.findingsSummaryCard > span {
+  color: #557176;
+  -webkit-text-fill-color: #557176;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.findingsSummaryCard > strong {
+  color: #00877f;
+  -webkit-text-fill-color: #00877f;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(4.1rem, 5.8vw, 6rem);
+  line-height: 0.86;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  margin: 12px 0 8px;
+}
+
+.findingsSummaryCard > p {
+  color: #557176;
+  -webkit-text-fill-color: #557176;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.findingsMiniCounterGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0 12px;
+}
+
+.findingsMiniCounterGrid > div {
+  min-width: 0;
+  padding: 13px 10px;
+  border-radius: 18px;
+  background: rgba(0, 184, 181, 0.08);
+  border: 1px solid rgba(0, 184, 181, 0.18);
+  text-align: center;
+}
+
+.findingsMiniCounterGrid strong {
+  display: block;
+  color: #00877f;
+  -webkit-text-fill-color: #00877f;
+  font-family: "Montserrat", sans-serif;
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.findingsMiniCounterGrid small {
+  display: block;
+  margin-top: 6px;
+  color: #557176;
+  -webkit-text-fill-color: #557176;
+  font-size: 0.75rem;
+  line-height: 1.1;
+  font-weight: 700;
+}
+
+/* Filtros en una misma fila */
+.findingsFilters.oneLineFindingsFilters,
+.premiumFilters.findingsFilters.oneLineFindingsFilters {
+  display: grid !important;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(140px, 0.5fr) minmax(160px, 0.55fr) minmax(140px, 0.5fr) !important;
+  gap: 12px !important;
+  align-items: end !important;
+  width: 100% !important;
+  margin: 22px 0 !important;
+}
+
+.findingsFilters.oneLineFindingsFilters .searchFilter,
+.findingsFilters.oneLineFindingsFilters .findingsSearchFilter {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.findingsFilters.oneLineFindingsFilters .filter {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.findingsFilters.oneLineFindingsFilters .searchInputWrap,
+.findingsFilters.oneLineFindingsFilters .searchInputWrap.compact,
+.findingsFilters.oneLineFindingsFilters .filter select {
+  min-height: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.findingsFilters.oneLineFindingsFilters .filter span,
+.findingsFilters.oneLineFindingsFilters .searchFilter > span {
+  font-size: 11px !important;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+}
+
+/* Mantiene tarjetas blancas y homogéneas */
+.findingWhiteCard {
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.07), transparent 16rem), #ffffff !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+  color: #102F37 !important;
+}
+
+.findingWhiteHeader h3 {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+}
+
+.findingMetaLine span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+}
+
+@media (max-width: 1080px) {
+  .findingsSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .findingsFilters.oneLineFindingsFilters,
+  .premiumFilters.findingsFilters.oneLineFindingsFilters {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .findingsFilters.oneLineFindingsFilters,
+  .premiumFilters.findingsFilters.oneLineFindingsFilters {
+    grid-template-columns: 1fr !important;
+  }
+
+  .findingsSummaryCard {
+    min-height: 190px;
+  }
+}

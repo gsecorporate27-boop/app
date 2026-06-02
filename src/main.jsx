@@ -1658,32 +1658,47 @@ function Findings({ findings = [] }) {
   const [open, setOpen] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("Todos");
-  const [areaFilter, setAreaFilter] = useState("Todos");
+  const [processFilter, setProcessFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("Todos");
 
   const priorities = useMemo(() => findings.map((item) => item.priority).filter(Boolean), [findings]);
-  const areas = useMemo(() => findings.map((item) => item.processArea || item.area).filter(Boolean), [findings]);
+  const processes = useMemo(() => findings.map((item) => item.processArea || item.area).filter(Boolean), [findings]);
+  const statuses = useMemo(() => findings.map((item) => item.status).filter(Boolean), [findings]);
+
+  const statusSummary = useMemo(() => {
+    const isMatch = (value, words) => words.some((word) => normalizeSystemName(value).includes(word));
+    return findings.reduce((acc, item) => {
+      const status = item.status || "";
+      if (isMatch(status, ["mantiene", "mantenido", "mantenida", "mantener", "se mantiene"])) acc.maintained += 1;
+      if (isMatch(status, ["elimina", "eliminado", "eliminada", "eliminar"])) acc.deleted += 1;
+      if (isMatch(status, ["agrega", "agregado", "agregada", "agregar", "nuevo", "nueva"])) acc.added += 1;
+      return acc;
+    }, { maintained: 0, deleted: 0, added: 0 });
+  }, [findings]);
 
   const filteredFindings = useMemo(() => {
     const query = normalizeSystemName(searchTerm);
     return findings.filter((item) => {
-      const area = item.processArea || item.area || "";
+      const process = item.processArea || item.area || "";
       const priority = item.priority || "";
+      const status = item.status || "";
       const matchesPriority = priorityFilter === "Todos" || priority === priorityFilter;
-      const matchesArea = areaFilter === "Todos" || area === areaFilter;
+      const matchesProcess = processFilter === "Todos" || process === processFilter;
+      const matchesStatus = statusFilter === "Todos" || status === statusFilter;
       const searchable = normalizeSystemName([
         item.id,
-        area,
+        process,
         item.finding,
         item.description,
         item.recommendation || item.solution,
         item.solutionType || item.system,
         item.owner,
-        item.status,
-        item.priority,
+        status,
+        priority,
       ].join(" "));
-      return matchesPriority && matchesArea && (!query || searchable.includes(query));
+      return matchesPriority && matchesProcess && matchesStatus && (!query || searchable.includes(query));
     });
-  }, [findings, searchTerm, priorityFilter, areaFilter]);
+  }, [findings, searchTerm, priorityFilter, processFilter, statusFilter]);
 
   return (
     <section className="card premiumSectionCard findingsPremiumSection">
@@ -1695,25 +1710,44 @@ function Findings({ findings = [] }) {
         <Badge status="En validación">{filteredFindings.length} visibles</Badge>
       </div>
 
-      <div className="premiumFilters findingsFilters">
-        <label className="searchFilter">
+      <div className="findingsSummaryGrid">
+        <article className="findingsSummaryCard">
+          <span>Hallazgos totales</span>
+          <strong>{findings.length}</strong>
+          <p>Total de hallazgos registrados en la matriz.</p>
+        </article>
+
+        <article className="findingsSummaryCard">
+          <span>Estado de hallazgos</span>
+          <div className="findingsMiniCounterGrid">
+            <div><strong>{statusSummary.maintained}</strong><small>Mantiene</small></div>
+            <div><strong>{statusSummary.deleted}</strong><small>Elimina</small></div>
+            <div><strong>{statusSummary.added}</strong><small>Agrega</small></div>
+          </div>
+          <p>Según la columna Estado.</p>
+        </article>
+      </div>
+
+      <div className="premiumFilters findingsFilters oneLineFindingsFilters">
+        <label className="searchFilter findingsSearchFilter">
           <span>Buscar</span>
-          <div className="searchInputWrap">
+          <div className="searchInputWrap compact">
             <Search size={18} />
             <input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Buscar por hallazgo, área, responsable o recomendación"
+              placeholder="Buscar por hallazgo, proceso o recomendación"
             />
           </div>
         </label>
         <FilterSelect label="Prioridad" value={priorityFilter} onChange={setPriorityFilter} options={priorities} />
-        <FilterSelect label="Área" value={areaFilter} onChange={setAreaFilter} options={areas} />
+        <FilterSelect label="Proceso" value={processFilter} onChange={setProcessFilter} options={processes} />
+        <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={statuses} />
       </div>
 
       <div className="findingsGridWhite">
         {filteredFindings.map((item) => {
-          const area = item.processArea || item.area || "Área no definida";
+          const process = item.processArea || item.area || "Proceso no definido";
           const recommendation = item.recommendation || item.solution;
           const solutionType = item.solutionType || item.system;
           const link = safeUrl(item.link || item.image);
@@ -1727,7 +1761,7 @@ function Findings({ findings = [] }) {
                 <div>
                   <div className="findingMetaLine">
                     <span>ID {item.id}</span>
-                    <span>{area}</span>
+                    <span>{process}</span>
                   </div>
                   <h3>{item.finding || "Hallazgo sin título"}</h3>
                   <div className="badgeRow">
@@ -2713,3 +2747,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V8_TIPOGRAFIA_SUAVE_FINAL
+
+
+// HALLAZGOS_V2_ESTADOS_FILTROS_FINAL
