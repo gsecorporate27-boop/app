@@ -2938,3 +2938,9 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V9_TIPO_PROCESO_FINAL
+
+
+// COE_V10_FILTROS_DOS_FILAS_NUMEROS_AJUSTADOS
+
+
+// COE_V11_NUMEROS_IGUAL_LISTA_MAESTRA
