@@ -10070,3 +10070,85 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   color: #557176 !important;
   -webkit-text-fill-color: #557176 !important;
 }
+
+
+/* ==========================================================
+   COE_V9_TIPO_PROCESO_FINAL
+   COE lee TIPO DE PROCESO y agrega filtro Tipo.
+   ========================================================== */
+
+/* Filtros COE en una fila con Buscador + Proceso + Tipo + Status + NAV */
+.coeFiltersOneLine,
+.premiumFilters.coeFiltersOneLine,
+.processFilters.coeFiltersOneLine {
+  display: grid !important;
+  grid-template-columns: minmax(210px, 0.9fr) minmax(140px, 0.52fr) minmax(130px, 0.48fr) minmax(130px, 0.48fr) minmax(120px, 0.42fr) !important;
+  gap: 10px !important;
+  align-items: end !important;
+  width: 100% !important;
+}
+
+.coeFiltersOneLine .searchInputWrap,
+.coeFiltersOneLine .searchInputWrap.compact,
+.coeFiltersOneLine .filter select {
+  min-height: 44px !important;
+  height: 44px !important;
+  border-radius: 15px !important;
+}
+
+/* Números de las tres tarjetas superiores COE más grandes, estilo lista maestra */
+.coeExecutiveGrid.threeCards .coeExecutiveCard > strong {
+  font-size: clamp(4.4rem, 6.2vw, 6.4rem) !important;
+  line-height: 0.86 !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.06em !important;
+  margin: 10px 0 8px !important;
+}
+
+.coeExecutiveGrid.threeCards .coeDifferenceCard > strong,
+.coeExecutiveGrid.threeCards .coeExecutiveCard.difference > strong {
+  font-size: clamp(4.4rem, 6.2vw, 6.4rem) !important;
+  line-height: 0.86 !important;
+  font-weight: 650 !important;
+}
+
+/* Contadores de procesos de las dos tarjetas */
+.coeProcessListCard .badge,
+.coeProcessListCard [class*="badge"] {
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Matriz COE con columna Tipo */
+.coeTable th:nth-child(3),
+.coeTable td:nth-child(3),
+.coeMatrixTable th:nth-child(3),
+.coeMatrixTable td:nth-child(3) {
+  min-width: 150px !important;
+  max-width: 180px !important;
+}
+
+.coeTable th:nth-child(4),
+.coeTable td:nth-child(4),
+.coeMatrixTable th:nth-child(4),
+.coeMatrixTable td:nth-child(4) {
+  min-width: 320px !important;
+  max-width: 420px !important;
+}
+
+@media (max-width: 1180px) {
+  .coeFiltersOneLine,
+  .premiumFilters.coeFiltersOneLine,
+  .processFilters.coeFiltersOneLine {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .coeFiltersOneLine,
+  .premiumFilters.coeFiltersOneLine,
+  .processFilters.coeFiltersOneLine {
+    grid-template-columns: 1fr !important;
+  }
+}

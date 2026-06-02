@@ -1448,6 +1448,7 @@ function formatCurrency(value) {
 function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [processFilter, setProcessFilter] = useState("Todos");
+  const [typeFilter, setTypeFilter] = useState("Todos");
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [navFilter, setNavFilter] = useState("Todos");
 
@@ -1462,6 +1463,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       costValue: cost,
       frequencyValue: frequency,
       observationStatus,
+      processType: String(item.processType || "").trim(),
       navStatus: String(item.nav || "").trim(),
       totalCost: cost * frequency,
     };
@@ -1471,17 +1473,20 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const toBeRows = useMemo(() => enrichRows(coeToBe), [coeToBe]);
   const allRows = useMemo(() => [...asIsRows, ...toBeRows], [asIsRows, toBeRows]);
   const processOptions = useMemo(() => allRows.map((item) => item.process).filter(Boolean), [allRows]);
+  const typeOptions = useMemo(() => allRows.map((item) => item.processType).filter(Boolean), [allRows]);
   const statusOptions = useMemo(() => allRows.map((item) => item.observationStatus).filter(Boolean), [allRows]);
   const navOptions = useMemo(() => allRows.map((item) => item.navStatus).filter(Boolean), [allRows]);
 
   const filterRow = (item) => {
     const query = normalizeSystemName(searchTerm);
     const matchesProcess = processFilter === "Todos" || item.process === processFilter;
+    const matchesType = typeFilter === "Todos" || item.processType === typeFilter;
     const matchesStatus = statusFilter === "Todos" || item.observationStatus === statusFilter;
     const matchesNav = navFilter === "Todos" || item.navStatus === navFilter;
     const searchable = normalizeSystemName([
       item.code,
       item.process,
+      item.processType,
       item.activity,
       item.participant,
       item.observation,
@@ -1490,11 +1495,11 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       item.cost,
       item.frequency,
     ].join(" "));
-    return matchesProcess && matchesStatus && matchesNav && (!query || searchable.includes(query));
+    return matchesProcess && matchesType && matchesStatus && matchesNav && (!query || searchable.includes(query));
   };
 
-  const filteredAsIs = useMemo(() => asIsRows.filter(filterRow), [asIsRows, searchTerm, processFilter, statusFilter, navFilter]);
-  const filteredToBe = useMemo(() => toBeRows.filter(filterRow), [toBeRows, searchTerm, processFilter, statusFilter, navFilter]);
+  const filteredAsIs = useMemo(() => asIsRows.filter(filterRow), [asIsRows, searchTerm, processFilter, typeFilter, statusFilter, navFilter]);
+  const filteredToBe = useMemo(() => toBeRows.filter(filterRow), [toBeRows, searchTerm, processFilter, typeFilter, statusFilter, navFilter]);
 
   const totalsByProcess = (rows) => {
     const totals = new Map();
@@ -1507,10 +1512,10 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       .sort((a, b) => b.total - a.total);
   };
 
-  const asIsProcesses = useMemo(() => totalsByProcess(asIsRows), [asIsRows]);
-  const toBeProcesses = useMemo(() => totalsByProcess(toBeRows), [toBeRows]);
-  const asIsTotal = useMemo(() => asIsRows.reduce((sum, row) => sum + row.totalCost, 0), [asIsRows]);
-  const toBeTotal = useMemo(() => toBeRows.reduce((sum, row) => sum + row.totalCost, 0), [toBeRows]);
+  const asIsProcesses = useMemo(() => totalsByProcess(filteredAsIs), [filteredAsIs]);
+  const toBeProcesses = useMemo(() => totalsByProcess(filteredToBe), [filteredToBe]);
+  const asIsTotal = useMemo(() => filteredAsIs.reduce((sum, row) => sum + row.totalCost, 0), [filteredAsIs]);
+  const toBeTotal = useMemo(() => filteredToBe.reduce((sum, row) => sum + row.totalCost, 0), [filteredToBe]);
   const difference = asIsTotal - toBeTotal;
   const reductionPercent = asIsTotal > 0 ? (difference / asIsTotal) * 100 : 0;
   const maxProcessCost = Math.max(1, ...asIsProcesses.map((item) => item.total), ...toBeProcesses.map((item) => item.total));
@@ -1551,10 +1556,10 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
     }, { value: 0, noValue: 0, unclassified: 0 });
   };
 
-  const asIsActivityStatusSummary = useMemo(() => summarizeActivities(asIsRows), [asIsRows]);
-  const toBeActivityStatusSummary = useMemo(() => summarizeActivities(toBeRows), [toBeRows]);
-  const asIsNavSummary = useMemo(() => summarizeNav(asIsRows), [asIsRows]);
-  const toBeNavSummary = useMemo(() => summarizeNav(toBeRows), [toBeRows]);
+  const asIsActivityStatusSummary = useMemo(() => summarizeActivities(filteredAsIs), [filteredAsIs]);
+  const toBeActivityStatusSummary = useMemo(() => summarizeActivities(filteredToBe), [filteredToBe]);
+  const asIsNavSummary = useMemo(() => summarizeNav(filteredAsIs), [filteredAsIs]);
+  const toBeNavSummary = useMemo(() => summarizeNav(filteredToBe), [filteredToBe]);
 
   const MiniCounterGroup = ({ summary }) => (
     <div className="coeMiniCounterGrid">
@@ -1623,6 +1628,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
             <tr>
               <th>CÓDIGO</th>
               <th>PROCESO</th>
+              <th>TIPO</th>
               <th>ACTIVIDAD</th>
               <th>INTERVINIENTE</th>
               <th>OBSERVACIÓN / STATUS</th>
@@ -1638,6 +1644,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
               <tr key={`${title}-${item.code}-${item.activity}-${index}`}>
                 <td>{item.code}</td>
                 <td><strong>{item.process}</strong></td>
+                <td>{item.processType}</td>
                 <td>{item.activity}</td>
                 <td>{item.participant}</td>
                 <td>{item.observation}</td>
@@ -1717,6 +1724,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
           </div>
         </label>
         <FilterSelect label="Proceso" value={processFilter} onChange={setProcessFilter} options={processOptions} />
+        <FilterSelect label="Tipo" value={typeFilter} onChange={setTypeFilter} options={typeOptions} />
         <FilterSelect label="Status" value={statusFilter} onChange={setStatusFilter} options={statusOptions} />
         <FilterSelect label="NAV" value={navFilter} onChange={setNavFilter} options={navOptions} />
       </div>
@@ -2927,3 +2935,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // ENTREGABLES_V4_BADGES_VISIBLES_FINAL
+
+
+// COE_V9_TIPO_PROCESO_FINAL

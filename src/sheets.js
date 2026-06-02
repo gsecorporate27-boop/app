@@ -545,6 +545,7 @@ function mapCOERows(rows) {
   return rows.map((row) => ({
     code: getRowValue(row, ["CÓDIGO", "CODIGO", "Codigo", "Código", "CodigoProceso", "Código Proceso", "Code"]),
     process: getRowValue(row, ["PROCESO", "Proceso", "NombreProceso", "Nombre del Proceso"]),
+    processType: getRowValue(row, ["TIPO DE PROCESO", "Tipo de Proceso", "TipoProceso", "TIPO PROCESO", "Tipo", "Tipo Proceso"]),
     activity: getRowValue(row, ["ACTIVIDAD", "Actividad"]),
     participant: getRowValue(row, ["INTERVINIENTE", "Interviniente", "Responsable", "Rol"]),
     observation: getRowValue(row, ["OBSERVACIÓN", "OBSERVACION", "Observación", "Observacion", "Notas", "Comentario"]),
@@ -552,7 +553,7 @@ function mapCOERows(rows) {
     cost: getRowValue(row, ["COSTO (xmin)", "Costo (xmin)", "Costo", "COSTO", "CostoXmin", "Costo xmin"]),
     frequency: getRowValue(row, ["FRECUENCIA", "Frecuencia"]),
     nav: getRowValue(row, ["NAV", "Nav", "nav", "GeneraValor", "Genera Valor", "Valor", "NoAgregaValor", "No agrega valor"]),
-  })).filter((x) => x.code || x.process || x.activity || x.participant || x.observation || x.nav);
+  })).filter((x) => x.code || x.process || x.processType || x.activity || x.participant || x.observation || x.nav);
 }
 
 export async function loadSheetData() {
@@ -624,3 +625,5 @@ export async function loadSheetData() {
 // ENTREGABLES_V3_FIX_RESPONSABLE_RESUMEN_FINAL
 
 // ENTREGABLES_V4_BADGES_VISIBLES_FINAL
+
+// COE_V9_TIPO_PROCESO_FINAL
