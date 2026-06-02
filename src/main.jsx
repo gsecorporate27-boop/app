@@ -1373,16 +1373,19 @@ function formatCurrency(value) {
 function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [processFilter, setProcessFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("Todos");
 
   const enrichRows = (rows) => rows.map((item) => {
     const time = parseNumericValue(item.time);
     const cost = parseNumericValue(item.cost);
     const frequency = parseNumericValue(item.frequency) || 1;
+    const observationStatus = String(item.observation || "").trim();
     return {
       ...item,
       timeValue: time,
       costValue: cost,
       frequencyValue: frequency,
+      observationStatus,
       totalCost: cost * frequency,
     };
   });
@@ -1391,10 +1394,12 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const toBeRows = useMemo(() => enrichRows(coeToBe), [coeToBe]);
   const allRows = useMemo(() => [...asIsRows, ...toBeRows], [asIsRows, toBeRows]);
   const processOptions = useMemo(() => allRows.map((item) => item.process).filter(Boolean), [allRows]);
+  const statusOptions = useMemo(() => allRows.map((item) => item.observationStatus).filter(Boolean), [allRows]);
 
   const filterRow = (item) => {
     const query = normalizeSystemName(searchTerm);
     const matchesProcess = processFilter === "Todos" || item.process === processFilter;
+    const matchesStatus = statusFilter === "Todos" || item.observationStatus === statusFilter;
     const searchable = normalizeSystemName([
       item.code,
       item.process,
@@ -1405,11 +1410,11 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       item.cost,
       item.frequency,
     ].join(" "));
-    return matchesProcess && (!query || searchable.includes(query));
+    return matchesProcess && matchesStatus && (!query || searchable.includes(query));
   };
 
-  const filteredAsIs = useMemo(() => asIsRows.filter(filterRow), [asIsRows, searchTerm, processFilter]);
-  const filteredToBe = useMemo(() => toBeRows.filter(filterRow), [toBeRows, searchTerm, processFilter]);
+  const filteredAsIs = useMemo(() => asIsRows.filter(filterRow), [asIsRows, searchTerm, processFilter, statusFilter]);
+  const filteredToBe = useMemo(() => toBeRows.filter(filterRow), [toBeRows, searchTerm, processFilter, statusFilter]);
 
   const totalsByProcess = (rows) => {
     const totals = new Map();
@@ -1419,38 +1424,50 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
     });
     return Array.from(totals.entries())
       .map(([process, total]) => ({ process, total }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 10);
+      .sort((a, b) => b.total - a.total);
   };
 
-  const asIsTop = useMemo(() => totalsByProcess(asIsRows), [asIsRows]);
-  const toBeTop = useMemo(() => totalsByProcess(toBeRows), [toBeRows]);
+  const asIsProcesses = useMemo(() => totalsByProcess(asIsRows), [asIsRows]);
+  const toBeProcesses = useMemo(() => totalsByProcess(toBeRows), [toBeRows]);
   const asIsTotal = useMemo(() => asIsRows.reduce((sum, row) => sum + row.totalCost, 0), [asIsRows]);
   const toBeTotal = useMemo(() => toBeRows.reduce((sum, row) => sum + row.totalCost, 0), [toBeRows]);
-  const maxTopCost = Math.max(1, ...asIsTop.map((item) => item.total), ...toBeTop.map((item) => item.total));
+  const difference = asIsTotal - toBeTotal;
+  const maxProcessCost = Math.max(1, ...asIsProcesses.map((item) => item.total), ...toBeProcesses.map((item) => item.total));
 
-  const TopCostChart = ({ title, subtitle, rows }) => (
-    <article className="coeChartCard">
+  const activityStatusSummary = useMemo(() => {
+    const targetRows = toBeRows.length ? toBeRows : allRows;
+    const isMatch = (value, words) => words.some((word) => normalizeSystemName(value).includes(word));
+    return targetRows.reduce((acc, item) => {
+      const obs = item.observationStatus || "";
+      if (isMatch(obs, ["mantiene", "mantener", "igual", "continua"])) acc.maintained += 1;
+      if (isMatch(obs, ["elimina", "eliminado", "eliminar", "suprime", "suprimido"])) acc.deleted += 1;
+      if (isMatch(obs, ["agrega", "agregado", "agregar", "nuevo", "nueva", "crea", "creado"])) acc.added += 1;
+      return acc;
+    }, { maintained: 0, deleted: 0, added: 0 });
+  }, [toBeRows, allRows]);
+
+  const ProcessCostList = ({ title, subtitle, rows, badge }) => (
+    <article className="coeProcessListCard">
       <div className="coeChartHeader">
         <div>
           <h3>{title}</h3>
           <p>{subtitle}</p>
         </div>
-        <Badge status="En validación">Top 10</Badge>
+        <Badge status="En validación">{badge}</Badge>
       </div>
-      <div className="coeBarsList">
-        {rows.map((item) => (
-          <div className="coeBarRow" key={`${title}-${item.process}`}>
+      <div className="coeProcessScrollList">
+        {rows.map((item, index) => (
+          <div className="coeBarRow" key={`${title}-${item.process}-${index}`}>
             <div className="coeBarInfo">
-              <span>{item.process}</span>
+              <span>{index + 1}. {item.process}</span>
               <strong>${formatCurrency(item.total)}</strong>
             </div>
             <div className="coeBarTrack">
-              <div className="coeBarFill" style={{ width: `${Math.max(4, (item.total / maxTopCost) * 100)}%` }} />
+              <div className="coeBarFill" style={{ width: `${Math.max(4, (item.total / maxProcessCost) * 100)}%` }} />
             </div>
           </div>
         ))}
-        {!rows.length && <div className="emptyState compact">No hay datos para graficar.</div>}
+        {!rows.length && <div className="emptyState compact">No hay datos para mostrar.</div>}
       </div>
     </article>
   );
@@ -1464,19 +1481,19 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
         </div>
         <Badge status="En validación">{rows.length} visibles</Badge>
       </div>
-      <div className="processTableWrap coeTableWrap">
-        <table className="processTable coeTable">
+      <div className="processTableWrap coeTableWrap coeMatrixInternalScroll">
+        <table className="processTable coeTable matrixInternalScrollTable">
           <thead>
             <tr>
               <th>CÓDIGO</th>
-                    <th>PROCESO</th>
-                    <th>ACTIVIDAD</th>
-                    <th>INTERVINIENTE</th>
-                    <th>OBSERVACIÓN</th>
-                    <th>TIEMPO (xmin)</th>
-                    <th>COSTO (xmin)</th>
-                    <th>FRECUENCIA</th>
-              <th>Total</th>
+              <th>PROCESO</th>
+              <th>ACTIVIDAD</th>
+              <th>INTERVINIENTE</th>
+              <th>OBSERVACIÓN / STATUS</th>
+              <th>TIEMPO (xmin)</th>
+              <th>COSTO (xmin)</th>
+              <th>FRECUENCIA</th>
+              <th>TOTAL</th>
             </tr>
           </thead>
           <tbody>
@@ -1509,22 +1526,36 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
         </div>
       </div>
 
-      <div className="processSummaryGrid coeSummaryGrid">
-        <article className="processSummaryCard">
-          <span>Total COE AS IS</span>
+      <div className="coeExecutiveGrid fourCards">
+        <article className="coeExecutiveCard">
+          <span>Costo procesos AS IS</span>
           <strong>${formatCurrency(asIsTotal)}</strong>
-          <p>Costo total actual según actividades registradas.</p>
+          <p>Total de costo actual.</p>
         </article>
-        <article className="processSummaryCard">
-          <span>Total COE TO BE</span>
+        <article className="coeExecutiveCard difference">
+          <span>Diferencia estimada</span>
+          <strong>${formatCurrency(Math.abs(difference))}</strong>
+          <p>{difference >= 0 ? "Ahorro potencial frente al AS IS." : "Incremento frente al AS IS."}</p>
+        </article>
+        <article className="coeExecutiveCard activities">
+          <span>Actividades TO BE</span>
+          <div className="coeActivitiesMiniGrid">
+            <div><strong>{activityStatusSummary.maintained}</strong><small>Mantenidas</small></div>
+            <div><strong>{activityStatusSummary.deleted}</strong><small>Eliminadas</small></div>
+            <div><strong>{activityStatusSummary.added}</strong><small>Agregadas</small></div>
+          </div>
+          <p>Según la columna Observación.</p>
+        </article>
+        <article className="coeExecutiveCard">
+          <span>Costo procesos TO BE</span>
           <strong>${formatCurrency(toBeTotal)}</strong>
-          <p>Costo total propuesto según actividades registradas.</p>
+          <p>Total de costo propuesto.</p>
         </article>
       </div>
 
-      <div className="coeChartsGrid">
-        <TopCostChart title="Top 10 procesos más costosos AS IS" subtitle="Costo total por proceso actual." rows={asIsTop} />
-        <TopCostChart title="Top 10 procesos más costosos TO BE" subtitle="Costo total por proceso propuesto." rows={toBeTop} />
+      <div className="coeChartsGrid coeProcessListsGrid">
+        <ProcessCostList title="Procesos AS IS" subtitle="Costo total por proceso actual." rows={asIsProcesses} badge={`${asIsProcesses.length} procesos`} />
+        <ProcessCostList title="Procesos TO BE" subtitle="Costo total por proceso propuesto." rows={toBeProcesses} badge={`${toBeProcesses.length} procesos`} />
       </div>
 
       <div className="premiumFilters processFilters">
@@ -1540,9 +1571,10 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
           </div>
         </label>
         <FilterSelect label="Proceso" value={processFilter} onChange={setProcessFilter} options={processOptions} />
+        <FilterSelect label="Status" value={statusFilter} onChange={setStatusFilter} options={statusOptions} />
       </div>
 
-      <div className="processTablesStack">
+      <div className="processTablesStack coeTablesStack">
         <COETable title="Matriz COE AS IS" subtitle="Actividades levantadas en la situación actual." rows={filteredAsIs} />
         <COETable title="Matriz COE TO BE" subtitle="Actividades propuestas para la operación objetivo." rows={filteredToBe} />
       </div>
@@ -2588,3 +2620,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RESUMEN_TRES_TARJETAS_FINAL
+
+
+// COE_V2_STATUS_ACTIVIDADES_FINAL
