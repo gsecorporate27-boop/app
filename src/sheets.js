@@ -357,6 +357,8 @@ function mapMilestones(rows) {
     progress: parseNumber(getRowValue(row, ["% Avance", "Avance", "Progreso"])),
     description: getRowValue(row, ["Descripcion", "Descripción", "Detalle"]),
     includes: getRowValue(row, ["Qué incluye", "Que incluye", "QueIncluye", "Incluye", "Contenido", "Dentro", "Actividades"]),
+    includesGSE: getRowValue(row, ["QueIncluyeGSE", "Qué incluye GSE", "Que incluye GSE", "IncluyeGSE", "Incluye GSE"]),
+    includesClient: getRowValue(row, ["QueIncluyeCliente", "Qué incluye cliente", "Que incluye cliente", "IncluyeCliente", "Incluye Cliente"]),
     link: getRowValue(row, ["Link", "URL", "Enlace", "LinkHito"]),
     imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
     technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
@@ -615,3 +617,5 @@ export async function loadSheetData() {
 // COE_V8_TIPOGRAFIA_SUAVE_FINAL
 
 // HALLAZGOS_V2_ESTADOS_FILTROS_FINAL
+
+// RUTA_V2_FILTROS_INCLUYE_CLIENTE_FINAL

@@ -9603,3 +9603,185 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 .summaryTopMirrorGrid aside .priorityPendingCard button {
   display: inline-flex !important;
 }
+
+
+/* ==========================================================
+   RUTA_V2_FILTROS_INCLUYE_CLIENTE_FINAL
+   Ruta: Incluye GSE/Cliente + tarjetas resumen + buscador/filtros.
+   ========================================================== */
+
+.routeSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin: 22px 0;
+}
+
+.routeSummaryCard {
+  min-height: 196px;
+  padding: 26px 28px;
+  border-radius: 28px;
+  border: 1px solid rgba(0, 184, 181, 0.24);
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem), #ffffff;
+  box-shadow: 0 22px 46px rgba(0, 59, 63, 0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.routeSummaryCard > span {
+  color: #557176;
+  -webkit-text-fill-color: #557176;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.routeSummaryCard > strong {
+  color: #00877f;
+  -webkit-text-fill-color: #00877f;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(4rem, 5.5vw, 5.6rem);
+  line-height: 0.86;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  margin: 8px 0;
+}
+
+.routeSummaryCard > p {
+  color: #557176;
+  -webkit-text-fill-color: #557176;
+  font-size: 0.9rem;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.routeMiniStatusRows {
+  display: grid;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.routeMiniStatusRows > div {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) 34px;
+  align-items: center;
+  gap: 10px;
+}
+
+.routeMiniStatusRows span {
+  color: #557176;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.routeMiniStatusRows strong {
+  color: #0B4E58;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.routeMiniTrack {
+  height: 12px;
+  border-radius: 999px;
+  background: #dfe7ea;
+  overflow: hidden;
+}
+
+.routeMiniTrack i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #007f7d, #00b8b5);
+}
+
+.routeMiniTrack.pending i {
+  background: linear-gradient(90deg, #7ddbd8, #00b8b5);
+}
+
+.routeFilters.oneLineRouteFilters,
+.premiumFilters.routeFilters.oneLineRouteFilters {
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1fr) minmax(150px, 0.45fr) minmax(190px, 0.7fr) !important;
+  gap: 12px !important;
+  align-items: end !important;
+  width: 100% !important;
+  margin: 22px 0 !important;
+}
+
+.routeFilters.oneLineRouteFilters .searchFilter,
+.routeFilters.oneLineRouteFilters .routeSearchFilter,
+.routeFilters.oneLineRouteFilters .filter {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.routeFilters.oneLineRouteFilters .searchInputWrap,
+.routeFilters.oneLineRouteFilters .searchInputWrap.compact,
+.routeFilters.oneLineRouteFilters .filter select {
+  min-height: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.routeFilters.oneLineRouteFilters .filter span,
+.routeFilters.oneLineRouteFilters .searchFilter > span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 11px !important;
+}
+
+/* Acordeones más compactos y menos pesados */
+.timelineDetailed .routeAccordionCompact {
+  gap: 10px !important;
+  padding: 12px !important;
+  border-radius: 22px !important;
+}
+
+.timelineDetailed .routeAccordionCompact .routeAccordionItem {
+  border-radius: 16px !important;
+}
+
+.timelineDetailed .routeAccordionCompact .routeAccordionHeader {
+  padding: 12px 15px !important;
+  font-size: 0.82rem !important;
+  line-height: 1.15 !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+}
+
+.timelineDetailed .routeAccordionCompact .routeAccordionHeader span {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-weight: 650 !important;
+}
+
+.timelineDetailed .routeAccordionCompact .routeAccordionBody {
+  padding: 0 15px 14px !important;
+}
+
+.timelineDetailed .routeAccordionCompact .routeAccordionBody p {
+  font-size: 0.92rem !important;
+  line-height: 1.45 !important;
+}
+
+.timelineDetailed .routeAccordionCompact .miniListItem {
+  min-height: 48px !important;
+  padding: 12px 14px !important;
+}
+
+@media (max-width: 880px) {
+  .routeSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .routeFilters.oneLineRouteFilters,
+  .premiumFilters.routeFilters.oneLineRouteFilters {
+    grid-template-columns: 1fr !important;
+  }
+}
