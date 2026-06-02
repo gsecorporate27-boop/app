@@ -7808,3 +7808,154 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   .coeExecutiveGrid.fourCards { grid-template-columns: 1fr; }
   .coeActivitiesMiniGrid { grid-template-columns: 1fr; }
 }
+
+
+/* ==========================================================
+   COE_V3_TITULOS_ACTIVIDADES_FILTROS_FINAL
+   Ajustes visuales COE: títulos, actividades AS IS/TO BE,
+   listas con altura fija y filtros en una sola fila.
+   ========================================================== */
+.coeSection .coeExecutiveCard span,
+.coeSection .coeExecutiveCard strong,
+.coeSection .coeExecutiveCard p,
+.coeSection .coeChartHeader h3,
+.coeSection .processTableHeader h3 {
+  color: #102F37 !important;
+}
+
+.coeSection .coeExecutiveCard span,
+.coeSection .coeChartHeader h3,
+.coeSection .processTableHeader h3 {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+}
+
+.coeExecutiveCard.activities {
+  gap: 10px !important;
+}
+
+.coeActivitySummaryRow {
+  display: grid;
+  gap: 7px;
+  width: 100%;
+  padding: 8px 0;
+  border-top: 1px solid rgba(0, 184, 181, 0.12);
+}
+
+.coeActivitySummaryRow:first-of-type {
+  border-top: 0;
+  padding-top: 2px;
+}
+
+.coeActivitySummaryRow > span {
+  color: #102F37 !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.coeActivitiesMiniGrid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.coeActivitiesMiniGrid div {
+  min-width: 0;
+  padding: 8px 6px !important;
+  border-radius: 14px !important;
+  background: rgba(0, 184, 181, 0.07) !important;
+  border: 1px solid rgba(0, 184, 181, 0.14) !important;
+}
+
+.coeActivitiesMiniGrid strong {
+  display: block;
+  color: #007f7d !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+}
+
+.coeActivitiesMiniGrid small {
+  display: block;
+  margin-top: 4px;
+  color: #557176 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.coeProcessListCard.fixedHeight {
+  min-height: 440px !important;
+  height: 440px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.coeProcessScrollList.fixedProcessList,
+.coeProcessScrollList {
+  flex: 1 1 auto !important;
+  height: 310px !important;
+  max-height: 310px !important;
+  min-height: 310px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 8px !important;
+}
+
+.coeProcessScrollList::-webkit-scrollbar {
+  width: 9px;
+}
+
+.coeProcessScrollList::-webkit-scrollbar-thumb {
+  background: rgba(0, 184, 181, 0.45);
+  border-radius: 999px;
+}
+
+.coeProcessScrollList::-webkit-scrollbar-track {
+  background: rgba(0, 184, 181, 0.08);
+  border-radius: 999px;
+}
+
+.coeFiltersOneLine {
+  display: grid !important;
+  grid-template-columns: minmax(260px, 0.8fr) minmax(190px, 0.35fr) minmax(190px, 0.35fr) !important;
+  align-items: end !important;
+  gap: 14px !important;
+}
+
+.coeFiltersOneLine .filter,
+.coeFiltersOneLine .searchFilter {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.coeFiltersOneLine .searchInputWrap.compact,
+.coeFiltersOneLine .searchInputWrap,
+.coeFiltersOneLine .filter select {
+  min-height: 48px !important;
+  height: 48px !important;
+}
+
+.coeFiltersOneLine input {
+  font-size: 14px !important;
+}
+
+@media (max-width: 1100px) {
+  .coeFiltersOneLine {
+    grid-template-columns: 1fr !important;
+  }
+
+  .coeProcessListCard.fixedHeight {
+    height: 400px !important;
+    min-height: 400px !important;
+  }
+
+  .coeProcessScrollList.fixedProcessList,
+  .coeProcessScrollList {
+    height: 270px !important;
+    max-height: 270px !important;
+    min-height: 270px !important;
+  }
+}

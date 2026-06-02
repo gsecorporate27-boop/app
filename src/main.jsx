@@ -1434,20 +1434,33 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const difference = asIsTotal - toBeTotal;
   const maxProcessCost = Math.max(1, ...asIsProcesses.map((item) => item.total), ...toBeProcesses.map((item) => item.total));
 
-  const activityStatusSummary = useMemo(() => {
-    const targetRows = toBeRows.length ? toBeRows : allRows;
+  const summarizeActivities = (rows) => {
     const isMatch = (value, words) => words.some((word) => normalizeSystemName(value).includes(word));
-    return targetRows.reduce((acc, item) => {
+    return rows.reduce((acc, item) => {
       const obs = item.observationStatus || "";
-      if (isMatch(obs, ["mantiene", "mantener", "igual", "continua"])) acc.maintained += 1;
-      if (isMatch(obs, ["elimina", "eliminado", "eliminar", "suprime", "suprimido"])) acc.deleted += 1;
-      if (isMatch(obs, ["agrega", "agregado", "agregar", "nuevo", "nueva", "crea", "creado"])) acc.added += 1;
+      if (isMatch(obs, ["mantiene", "mantenida", "mantenido", "mantener", "igual", "continua", "continuar"])) acc.maintained += 1;
+      if (isMatch(obs, ["elimina", "eliminada", "eliminado", "eliminar", "suprime", "suprimido"])) acc.deleted += 1;
+      if (isMatch(obs, ["agrega", "agregada", "agregado", "agregar", "nuevo", "nueva", "crea", "creado"])) acc.added += 1;
       return acc;
     }, { maintained: 0, deleted: 0, added: 0 });
-  }, [toBeRows, allRows]);
+  };
+
+  const asIsActivityStatusSummary = useMemo(() => summarizeActivities(asIsRows), [asIsRows]);
+  const toBeActivityStatusSummary = useMemo(() => summarizeActivities(toBeRows), [toBeRows]);
+
+  const ActivitySummaryRow = ({ title, summary }) => (
+    <div className="coeActivitySummaryRow">
+      <span>{title}</span>
+      <div className="coeActivitiesMiniGrid">
+        <div><strong>{summary.maintained}</strong><small>Mantenidas</small></div>
+        <div><strong>{summary.deleted}</strong><small>Eliminadas</small></div>
+        <div><strong>{summary.added}</strong><small>Agregadas</small></div>
+      </div>
+    </div>
+  );
 
   const ProcessCostList = ({ title, subtitle, rows, badge }) => (
-    <article className="coeProcessListCard">
+    <article className="coeProcessListCard fixedHeight">
       <div className="coeChartHeader">
         <div>
           <h3>{title}</h3>
@@ -1455,7 +1468,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
         </div>
         <Badge status="En validación">{badge}</Badge>
       </div>
-      <div className="coeProcessScrollList">
+      <div className="coeProcessScrollList fixedProcessList">
         {rows.map((item, index) => (
           <div className="coeBarRow" key={`${title}-${item.process}-${index}`}>
             <div className="coeBarInfo">
@@ -1538,12 +1551,9 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
           <p>{difference >= 0 ? "Ahorro potencial frente al AS IS." : "Incremento frente al AS IS."}</p>
         </article>
         <article className="coeExecutiveCard activities">
-          <span>Actividades TO BE</span>
-          <div className="coeActivitiesMiniGrid">
-            <div><strong>{activityStatusSummary.maintained}</strong><small>Mantenidas</small></div>
-            <div><strong>{activityStatusSummary.deleted}</strong><small>Eliminadas</small></div>
-            <div><strong>{activityStatusSummary.added}</strong><small>Agregadas</small></div>
-          </div>
+          <span>Actividades</span>
+          <ActivitySummaryRow title="Actividades AS IS" summary={asIsActivityStatusSummary} />
+          <ActivitySummaryRow title="Actividades TO BE" summary={toBeActivityStatusSummary} />
           <p>Según la columna Observación.</p>
         </article>
         <article className="coeExecutiveCard">
@@ -1558,15 +1568,15 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
         <ProcessCostList title="Procesos TO BE" subtitle="Costo total por proceso propuesto." rows={toBeProcesses} badge={`${toBeProcesses.length} procesos`} />
       </div>
 
-      <div className="premiumFilters processFilters">
-        <label className="searchFilter processSearchFilter">
+      <div className="premiumFilters processFilters coeFiltersOneLine">
+        <label className="searchFilter processSearchFilter compactSearchFilter">
           <span>Buscar actividad</span>
-          <div className="searchInputWrap">
+          <div className="searchInputWrap compact">
             <Search size={18} />
             <input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Buscar por código, proceso, actividad, interviniente u observación"
+              placeholder="Buscar por código, proceso o actividad"
             />
           </div>
         </label>
@@ -2623,3 +2633,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V2_STATUS_ACTIVIDADES_FINAL
+
+
+// COE_V3_TITULOS_ACTIVIDADES_FILTROS_FINAL
