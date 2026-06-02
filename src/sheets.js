@@ -548,7 +548,8 @@ function mapCOERows(rows) {
     time: getRowValue(row, ["TIEMPO (xmin)", "Tiempo (xmin)", "Tiempo", "TIEMPO", "TiempoXmin", "Tiempo xmin"]),
     cost: getRowValue(row, ["COSTO (xmin)", "Costo (xmin)", "Costo", "COSTO", "CostoXmin", "Costo xmin"]),
     frequency: getRowValue(row, ["FRECUENCIA", "Frecuencia"]),
-  })).filter((x) => x.code || x.process || x.activity || x.participant || x.observation);
+    nav: getRowValue(row, ["NAV", "Nav", "nav", "GeneraValor", "Genera Valor", "Valor", "NoAgregaValor", "No agrega valor"]),
+  })).filter((x) => x.code || x.process || x.activity || x.participant || x.observation || x.nav);
 }
 
 export async function loadSheetData() {
@@ -606,3 +607,5 @@ export async function loadSheetData() {
 // COE_MATRICES_OVERFLOW_TOP10_FIX_FINAL
 
 // MATRICES_SCROLL_FIJO_FINAL
+
+// COE_V6_NAV_LAYOUT_FINAL

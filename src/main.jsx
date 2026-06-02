@@ -1386,6 +1386,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       costValue: cost,
       frequencyValue: frequency,
       observationStatus,
+      navStatus: String(item.nav || "").trim(),
       totalCost: cost * frequency,
     };
   });
@@ -1406,6 +1407,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
       item.activity,
       item.participant,
       item.observation,
+      item.navStatus,
       item.time,
       item.cost,
       item.frequency,
@@ -1432,6 +1434,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const asIsTotal = useMemo(() => asIsRows.reduce((sum, row) => sum + row.totalCost, 0), [asIsRows]);
   const toBeTotal = useMemo(() => toBeRows.reduce((sum, row) => sum + row.totalCost, 0), [toBeRows]);
   const difference = asIsTotal - toBeTotal;
+  const reductionPercent = asIsTotal > 0 ? (difference / asIsTotal) * 100 : 0;
   const maxProcessCost = Math.max(1, ...asIsProcesses.map((item) => item.total), ...toBeProcesses.map((item) => item.total));
 
   const summarizeActivities = (rows) => {
@@ -1445,16 +1448,58 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
     }, { maintained: 0, deleted: 0, added: 0 });
   };
 
+  const summarizeNav = (rows) => {
+    const isValue = (value) => {
+      const text = normalizeSystemName(value);
+      return text.includes("si") || text.includes("sí") || text.includes("genera") || text.includes("valor") || text.includes("agrega");
+    };
+    const isNoValue = (value) => {
+      const text = normalizeSystemName(value);
+      return text.includes("no") || text.includes("nav") || text.includes("no agrega") || text.includes("sin valor");
+    };
+
+    return rows.reduce((acc, item) => {
+      const nav = item.navStatus || "";
+      if (!nav) {
+        acc.unclassified += 1;
+      } else if (isNoValue(nav)) {
+        acc.noValue += 1;
+      } else if (isValue(nav)) {
+        acc.value += 1;
+      } else {
+        acc.unclassified += 1;
+      }
+      return acc;
+    }, { value: 0, noValue: 0, unclassified: 0 });
+  };
+
   const asIsActivityStatusSummary = useMemo(() => summarizeActivities(asIsRows), [asIsRows]);
   const toBeActivityStatusSummary = useMemo(() => summarizeActivities(toBeRows), [toBeRows]);
+  const asIsNavSummary = useMemo(() => summarizeNav(asIsRows), [asIsRows]);
+  const toBeNavSummary = useMemo(() => summarizeNav(toBeRows), [toBeRows]);
+
+  const MiniCounterGroup = ({ summary }) => (
+    <div className="coeMiniCounterGrid">
+      <div><strong>{summary.maintained}</strong><small>Mantenidas</small></div>
+      <div><strong>{summary.deleted}</strong><small>Eliminadas</small></div>
+      <div><strong>{summary.added}</strong><small>Agregadas</small></div>
+    </div>
+  );
 
   const ActivitySummaryRow = ({ title, summary }) => (
-    <div className="coeActivitySummaryRow">
+    <div className="coeInsightRow">
       <span>{title}</span>
-      <div className="coeActivitiesMiniGrid">
-        <div><strong>{summary.maintained}</strong><small>Mantenidas</small></div>
-        <div><strong>{summary.deleted}</strong><small>Eliminadas</small></div>
-        <div><strong>{summary.added}</strong><small>Agregadas</small></div>
+      <MiniCounterGroup summary={summary} />
+    </div>
+  );
+
+  const NavSummaryRow = ({ title, summary }) => (
+    <div className="coeInsightRow">
+      <span>{title}</span>
+      <div className="coeMiniCounterGrid nav">
+        <div><strong>{summary.value}</strong><small>Generan valor</small></div>
+        <div><strong>{summary.noValue}</strong><small>No generan valor</small></div>
+        <div><strong>{summary.unclassified}</strong><small>Sin clasificar</small></div>
       </div>
     </div>
   );
@@ -1503,6 +1548,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
               <th>ACTIVIDAD</th>
               <th>INTERVINIENTE</th>
               <th>OBSERVACIÓN / STATUS</th>
+              <th>NAV</th>
               <th>TIEMPO (xmin)</th>
               <th>COSTO (xmin)</th>
               <th>FRECUENCIA</th>
@@ -1517,6 +1563,7 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
                 <td>{item.activity}</td>
                 <td>{item.participant}</td>
                 <td>{item.observation}</td>
+                <td>{item.navStatus}</td>
                 <td>{item.time}</td>
                 <td>{item.cost}</td>
                 <td>{item.frequency}</td>
@@ -1539,27 +1586,38 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
         </div>
       </div>
 
-      <div className="coeExecutiveGrid fourCards">
+      <div className="coeExecutiveGrid threeCards">
         <article className="coeExecutiveCard coeCostCard">
           <span>Costo procesos AS IS</span>
           <strong>${formatCurrency(asIsTotal)}</strong>
-          <p>Total de costo actual.</p>
+          <p>Total mensual estimado de la situación actual.</p>
         </article>
         <article className="coeExecutiveCard coeDifferenceCard difference">
-          <span>Diferencia estimada</span>
+          <span>COE mensual</span>
           <strong>${formatCurrency(Math.abs(difference))}</strong>
-          <p>{difference >= 0 ? "Ahorro potencial frente al AS IS." : "Incremento frente al AS IS."}</p>
+          <em>{Math.abs(reductionPercent).toFixed(1)}%</em>
+          <p>{difference >= 0 ? "Reducción estimada frente al AS IS." : "Incremento estimado frente al AS IS."}</p>
         </article>
-        <article className="coeExecutiveCard coeActivitiesCard activities">
+        <article className="coeExecutiveCard coeCostCard">
+          <span>Costo procesos TO BE</span>
+          <strong>${formatCurrency(toBeTotal)}</strong>
+          <p>Total mensual estimado de la operación objetivo.</p>
+        </article>
+      </div>
+
+      <div className="coeInsightGrid">
+        <article className="coeInsightCard coeActivitiesCard">
           <span>Actividades</span>
           <ActivitySummaryRow title="Actividades AS IS" summary={asIsActivityStatusSummary} />
           <ActivitySummaryRow title="Actividades TO BE" summary={toBeActivityStatusSummary} />
           <p>Según la columna Observación.</p>
         </article>
-        <article className="coeExecutiveCard coeCostCard">
-          <span>Costo procesos TO BE</span>
-          <strong>${formatCurrency(toBeTotal)}</strong>
-          <p>Total de costo propuesto.</p>
+
+        <article className="coeInsightCard coeNavCard">
+          <span>NAV</span>
+          <NavSummaryRow title="NAV AS IS" summary={asIsNavSummary} />
+          <NavSummaryRow title="NAV TO BE" summary={toBeNavSummary} />
+          <p>Clasificación de actividades que generan o no generan valor.</p>
         </article>
       </div>
 
@@ -2642,3 +2700,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V5_TARJETAS_CLASES_REALES_FINAL
+
+
+// COE_V6_NAV_LAYOUT_FINAL
