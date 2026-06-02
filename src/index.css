@@ -9468,3 +9468,138 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     min-height: 145px !important;
   }
 }
+
+
+/* ==========================================================
+   RESUMEN_V4_TITULOS_LIMPIOS_FINAL
+   Tarjetas inferiores del resumen: un solo título, sin etiqueta derecha
+   y con tipografía menos pesada.
+   ========================================================== */
+
+/* Oculta cualquier badge dentro de las tarjetas inferiores del resumen */
+.summaryBottomCard .summaryBottomHeader .badge,
+.summaryBottomCard .summaryBottomHeader [class*="badge"],
+.summaryBottomCard .summaryBottomHeader [class*="Badge"] {
+  display: none !important;
+}
+
+/* Oculta el subtítulo pequeño superior si quedara por caché o versión previa */
+.summaryBottomCard .summaryBottomHeader span {
+  display: none !important;
+}
+
+/* Header más limpio: solo título */
+.summaryBottomCard .summaryBottomHeader {
+  display: block !important;
+  margin-bottom: 12px !important;
+}
+
+/* Títulos más suaves, sin tanta negrita */
+.summaryBottomCard .summaryBottomHeader h3 {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 1.24rem !important;
+  line-height: 1.15 !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 !important;
+}
+
+/* En la tarjeta COE también solo título blanco */
+.summaryCOECard .summaryBottomHeader h3,
+.summaryCOECard .summaryBottomHeader h3 * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 750 !important;
+}
+
+/* Radar: elimina espacio reservado de badge/título duplicado */
+.summaryRadarCard .summaryBottomHeader {
+  min-height: auto !important;
+}
+
+/* Números y textos un poco menos pesados */
+.summaryBigNumber,
+.summaryCOEValue,
+.summaryActivityCreative strong {
+  font-weight: 650 !important;
+}
+
+/* Ajuste de radar para que no se comprima con el título limpio */
+.summaryRadarCard .summaryRadarMini {
+  margin-top: 2px !important;
+}
+
+/* Actividades: contadores menos pesados */
+.summaryActivityCreative span {
+  font-weight: 700 !important;
+}
+
+/* Hallazgos: barras más limpias */
+.summaryMiniRow span,
+.summaryMiniRow strong {
+  font-weight: 650 !important;
+}
+
+
+/* ==========================================================
+   RESUMEN_V5_PENDIENTE_PRIORITARIO_LIMPIO_FINAL
+   Limpia la tarjeta Pendiente prioritario del resumen:
+   sin "Bloquea..." y sin badge pequeño de estado.
+   ========================================================== */
+
+/* Oculta línea "Bloquea..." solo en el panel derecho del resumen */
+.summaryTopMirrorGrid .priorityPendingCard .muted,
+.summaryTopMirrorGrid .priorityPendingCard p,
+.summaryTopMirrorGrid aside .priorityPendingCard .muted,
+.summaryTopMirrorGrid aside .priorityPendingCard p,
+.summaryTopMirrorGrid .updatesPanel .priorityPendingCard .muted,
+.summaryTopMirrorGrid .updatesPanel .priorityPendingCard p,
+.summaryTopMirrorGrid .rightRailCard.priorityPendingCard .muted,
+.summaryTopMirrorGrid .rightRailCard.priorityPendingCard p {
+  display: none !important;
+}
+
+/* Pero conserva datos importantes de responsable/fecha si usan strong/span */
+.summaryTopMirrorGrid .priorityPendingCard .pendingMeta,
+.summaryTopMirrorGrid .priorityPendingCard .pendingMeta *,
+.summaryTopMirrorGrid .priorityPendingCard .metaRow,
+.summaryTopMirrorGrid .priorityPendingCard .metaRow *,
+.summaryTopMirrorGrid .priorityPendingCard strong,
+.summaryTopMirrorGrid .priorityPendingCard span,
+.summaryTopMirrorGrid aside .priorityPendingCard strong,
+.summaryTopMirrorGrid aside .priorityPendingCard span {
+  display: revert !important;
+}
+
+/* Oculta badge de estado pequeño dentro de Pendiente prioritario del resumen */
+.summaryTopMirrorGrid .priorityPendingCard .badgeRow,
+.summaryTopMirrorGrid .priorityPendingCard .badge,
+.summaryTopMirrorGrid .priorityPendingCard [class*="badge"],
+.summaryTopMirrorGrid .priorityPendingCard [class*="Badge"],
+.summaryTopMirrorGrid aside .priorityPendingCard .badgeRow,
+.summaryTopMirrorGrid aside .priorityPendingCard .badge,
+.summaryTopMirrorGrid aside .priorityPendingCard [class*="badge"],
+.summaryTopMirrorGrid aside .priorityPendingCard [class*="Badge"] {
+  display: none !important;
+}
+
+/* Ajusta espacio después de quitar descripción y badge */
+.summaryTopMirrorGrid .priorityPendingCard {
+  gap: 12px !important;
+}
+
+.summaryTopMirrorGrid .priorityPendingCard h3 {
+  margin-bottom: 14px !important;
+}
+
+/* Mantiene visible el botón de abrir documento */
+.summaryTopMirrorGrid .priorityPendingCard a,
+.summaryTopMirrorGrid .priorityPendingCard .primaryAction,
+.summaryTopMirrorGrid .priorityPendingCard button,
+.summaryTopMirrorGrid aside .priorityPendingCard a,
+.summaryTopMirrorGrid aside .priorityPendingCard .primaryAction,
+.summaryTopMirrorGrid aside .priorityPendingCard button {
+  display: inline-flex !important;
+}

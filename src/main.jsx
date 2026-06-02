@@ -620,10 +620,8 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
       <article className="summaryBottomCard summaryRadarCard">
         <div className="summaryBottomHeader">
           <div>
-            <span>Radar</span>
             <h3>Avance por sistemas</h3>
           </div>
-          <Badge status="En validación">5 sistemas</Badge>
         </div>
         <div className="summaryRadarMini">
           <DashboardRadar systemScores={systemScores} />
@@ -633,7 +631,6 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
       <article className="summaryBottomCard summaryFindingsCard">
         <div className="summaryBottomHeader">
           <div>
-            <span>Hallazgos</span>
             <h3>Total de hallazgos</h3>
           </div>
           <strong className="summaryBigNumber">{findings.length}</strong>
@@ -661,10 +658,8 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
       <article className="summaryBottomCard summaryCOECard">
         <div className="summaryBottomHeader">
           <div>
-            <span>COE</span>
             <h3>COE mensual</h3>
           </div>
-          <Badge status="En validación">AS IS / TO BE</Badge>
         </div>
         <strong className="summaryCOEValue">${formatCurrency(Math.abs(coeDelta))}</strong>
         <div className="summaryCOEPill">{Math.abs(coePercent).toFixed(1)}%</div>
@@ -674,10 +669,8 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
       <article className="summaryBottomCard summaryActivitiesCard">
         <div className="summaryBottomHeader">
           <div>
-            <span>Actividades</span>
             <h3>Estado de actividades</h3>
           </div>
-          <Badge status="En revisión">{coeAsIs.length + coeToBe.length} registros</Badge>
         </div>
         <div className="summaryActivityCreative">
           <div>
@@ -2166,7 +2159,6 @@ function UpdatesPanel({ project, updates, setView, pending = [] }) {
           </div>
 
           <h3>{mainPending.request}</h3>
-          <p>Bloquea: {mainPending.blocks}</p>
 
           <div className="sidePendingMeta">
             <span><strong>Responsable:</strong> {mainPending.owner}</span>
@@ -2794,3 +2786,9 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RESUMEN_V3_ESPEJO_LAYOUT_FINAL
+
+
+// RESUMEN_V4_TITULOS_LIMPIOS_FINAL
+
+
+// RESUMEN_V5_PENDIENTE_PRIORITARIO_LIMPIO_FINAL
