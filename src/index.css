@@ -9029,3 +9029,255 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     min-height: 190px;
   }
 }
+
+
+/* ==========================================================
+   RESUMEN_V2_HOMOGENEO_4X4_FINAL
+   Resumen homogéneo: 4 tarjetas arriba + hitos/pendientes centro
+   + 4 tarjetas abajo.
+   ========================================================== */
+
+.summaryBottomGrid.fourCards,
+.summaryBottomGrid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 20px !important;
+  margin-top: 22px !important;
+}
+
+.summaryBottomCard {
+  min-height: 300px !important;
+  height: 100% !important;
+  padding: 22px !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.07), transparent 14rem), #ffffff !important;
+  box-shadow: 0 18px 38px rgba(0, 59, 63, 0.05) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  overflow: hidden !important;
+}
+
+.summaryBottomHeader {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 12px !important;
+}
+
+.summaryBottomHeader span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.76rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+}
+
+.summaryBottomHeader h3 {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  margin: 4px 0 0 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.2 !important;
+  font-weight: 900 !important;
+}
+
+.summaryBottomCard p {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 0.82rem !important;
+  line-height: 1.32 !important;
+  margin: 10px 0 0 !important;
+}
+
+.summaryBigNumber {
+  color: #00877f !important;
+  -webkit-text-fill-color: #00877f !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 2.6rem !important;
+  line-height: 0.9 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.045em !important;
+}
+
+.summaryRadarCard .summaryRadarMini {
+  transform: scale(0.84) !important;
+  transform-origin: top center !important;
+  margin: -8px auto -24px !important;
+  width: 100% !important;
+}
+
+.summaryRadarCard .dashboardRadarWrap {
+  max-width: 100% !important;
+}
+
+.summaryFindingsCard .summaryBottomHeader {
+  align-items: center !important;
+}
+
+.summaryMiniBars {
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.summaryMiniRow {
+  display: grid !important;
+  grid-template-columns: 76px minmax(0, 1fr) 28px !important;
+  gap: 8px !important;
+  align-items: center !important;
+}
+
+.summaryMiniRow span {
+  color: #557176 !important;
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+}
+
+.summaryMiniRow strong {
+  color: #0B4E58 !important;
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+  text-align: right !important;
+}
+
+.summaryMiniTrack {
+  height: 10px !important;
+  border-radius: 999px !important;
+  background: #dfe7ea !important;
+  overflow: hidden !important;
+}
+
+.summaryMiniTrack i {
+  display: block !important;
+  height: 100% !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+}
+
+.summaryCOECard {
+  background: linear-gradient(135deg, #006C66 0%, #00B8B5 100%) !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,0.16) !important;
+}
+
+.summaryCOECard *,
+.summaryCOECard .summaryBottomHeader span,
+.summaryCOECard .summaryBottomHeader h3,
+.summaryCOECard p {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.summaryCOEValue {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: clamp(2.9rem, 4vw, 4.3rem) !important;
+  line-height: 0.9 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.05em !important;
+  margin: 10px 0 4px !important;
+}
+
+.summaryCOEPill {
+  width: max-content !important;
+  padding: 7px 13px !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  color: #ffffff !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 800 !important;
+  font-size: 0.95rem !important;
+}
+
+.summaryActivityCreative {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin: 10px 0 !important;
+}
+
+.summaryActivityCreative > div {
+  min-height: 86px !important;
+  border-radius: 18px !important;
+  background: rgba(0, 184, 181, 0.08) !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  padding: 10px 6px !important;
+}
+
+.summaryActivityCreative strong {
+  color: #00877f !important;
+  -webkit-text-fill-color: #00877f !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 2rem !important;
+  line-height: 0.9 !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.04em !important;
+}
+
+.summaryActivityCreative span {
+  margin-top: 7px !important;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 0.7rem !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+}
+
+.summaryActivityLine {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  height: 6px !important;
+}
+
+.summaryActivityLine i {
+  display: block !important;
+  height: 6px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+}
+
+/* Hace que el centro siga siendo claro: hitos + panel derecho */
+.executiveSummaryLayout.hitosFirst {
+  align-items: start !important;
+}
+
+.executiveSummaryMain {
+  min-width: 0 !important;
+}
+
+/* Responsive */
+@media (max-width: 1280px) {
+  .summaryBottomGrid.fourCards,
+  .summaryBottomGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .summaryBottomGrid.fourCards,
+  .summaryBottomGrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .summaryBottomCard {
+    min-height: 250px !important;
+  }
+
+  .summaryRadarCard .summaryRadarMini {
+    transform: scale(0.9) !important;
+    margin-bottom: -10px !important;
+  }
+}

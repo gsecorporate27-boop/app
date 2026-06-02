@@ -597,14 +597,28 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
     return sum + (cost * frequency);
   }, 0);
 
+  const summarizeStatus = (rows = []) => {
+    const isMatch = (value, words) => words.some((word) => normalizeSystemName(value).includes(word));
+    return rows.reduce((acc, item) => {
+      const status = item.status || item.estado || item.observation || item.observacion || item["OBSERVACIÓN"] || "";
+      if (isMatch(status, ["mantiene", "mantenido", "mantenida", "mantener", "se mantiene"])) acc.maintained += 1;
+      if (isMatch(status, ["elimina", "eliminado", "eliminada", "eliminar"])) acc.deleted += 1;
+      if (isMatch(status, ["agrega", "agregado", "agregada", "agregar", "nuevo", "nueva"])) acc.added += 1;
+      return acc;
+    }, { maintained: 0, deleted: 0, added: 0 });
+  };
+
   const asIsCOE = totalCost(coeAsIs);
   const toBeCOE = totalCost(coeToBe);
-  const coeDelta = Math.max(0, asIsCOE - toBeCOE);
+  const coeDelta = asIsCOE - toBeCOE;
+  const coePercent = asIsCOE > 0 ? (coeDelta / asIsCOE) * 100 : 0;
+  const findingsStatus = summarizeStatus(findings);
+  const activityStatus = summarizeStatus([...coeAsIs, ...coeToBe]);
 
   return (
-    <div className="summaryInsightGrid">
-      <article className="summaryInsightCard radarSummaryCard">
-        <div className="summaryInsightHeader">
+    <div className="summaryBottomGrid fourCards">
+      <article className="summaryBottomCard summaryRadarCard">
+        <div className="summaryBottomHeader">
           <div>
             <span>Radar</span>
             <h3>Avance por sistemas</h3>
@@ -616,52 +630,75 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
         </div>
       </article>
 
-      <article className="summaryInsightCard">
-        <div className="summaryInsightHeader">
+      <article className="summaryBottomCard summaryFindingsCard">
+        <div className="summaryBottomHeader">
           <div>
-            <span>Procesos y hallazgos</span>
-            <h3>Resumen técnico</h3>
+            <span>Hallazgos</span>
+            <h3>Total de hallazgos</h3>
           </div>
-          <Badge status="En revisión">Proyecto</Badge>
+          <strong className="summaryBigNumber">{findings.length}</strong>
         </div>
-        <div className="summaryMetricStack">
-          <div className="summaryMetricLine primary">
-            <span>Total hallazgos encontrados</span>
-            <strong>{findings.length}</strong>
+        <div className="summaryMiniBars">
+          <div className="summaryMiniRow">
+            <span>Mantiene</span>
+            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.maintained / findings.length) * 100 : 0}%` }} /></div>
+            <strong>{findingsStatus.maintained}</strong>
           </div>
-          <div className="summaryMetricLine">
-            <span>Procesos AS IS</span>
-            <strong>{processesAsIs.length}</strong>
+          <div className="summaryMiniRow">
+            <span>Elimina</span>
+            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.deleted / findings.length) * 100 : 0}%` }} /></div>
+            <strong>{findingsStatus.deleted}</strong>
           </div>
-          <div className="summaryMetricLine">
-            <span>Procesos TO BE</span>
-            <strong>{processesToBe.length}</strong>
+          <div className="summaryMiniRow">
+            <span>Agrega</span>
+            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.added / findings.length) * 100 : 0}%` }} /></div>
+            <strong>{findingsStatus.added}</strong>
           </div>
         </div>
+        <p>Clasificación según la columna Estado.</p>
       </article>
 
-      <article className="summaryInsightCard">
-        <div className="summaryInsightHeader">
+      <article className="summaryBottomCard summaryCOECard">
+        <div className="summaryBottomHeader">
           <div>
             <span>COE</span>
-            <h3>Costo operativo estimado</h3>
+            <h3>COE mensual</h3>
           </div>
           <Badge status="En validación">AS IS / TO BE</Badge>
         </div>
-        <div className="summaryMetricStack coeSummaryStack">
-          <div className="summaryMetricLine primary">
-            <span>Total COE AS IS</span>
-            <strong>${formatCurrency(asIsCOE)}</strong>
+        <strong className="summaryCOEValue">${formatCurrency(Math.abs(coeDelta))}</strong>
+        <div className="summaryCOEPill">{Math.abs(coePercent).toFixed(1)}%</div>
+        <p>{coeDelta >= 0 ? "Reducción estimada frente al AS IS." : "Incremento estimado frente al AS IS."}</p>
+      </article>
+
+      <article className="summaryBottomCard summaryActivitiesCard">
+        <div className="summaryBottomHeader">
+          <div>
+            <span>Actividades</span>
+            <h3>Estado de actividades</h3>
           </div>
-          <div className="summaryMetricLine">
-            <span>Total COE TO BE</span>
-            <strong>${formatCurrency(toBeCOE)}</strong>
+          <Badge status="En revisión">{coeAsIs.length + coeToBe.length} registros</Badge>
+        </div>
+        <div className="summaryActivityCreative">
+          <div>
+            <strong>{activityStatus.maintained}</strong>
+            <span>Mantenidas</span>
           </div>
-          <div className="summaryMetricLine saved">
-            <span>Diferencia estimada</span>
-            <strong>${formatCurrency(coeDelta)}</strong>
+          <div>
+            <strong>{activityStatus.deleted}</strong>
+            <span>Eliminadas</span>
+          </div>
+          <div>
+            <strong>{activityStatus.added}</strong>
+            <span>Agregadas</span>
           </div>
         </div>
+        <div className="summaryActivityLine">
+          <i style={{ width: `${Math.min(100, Math.max(5, activityStatus.maintained * 4))}%` }} />
+          <i style={{ width: `${Math.min(100, Math.max(5, activityStatus.deleted * 4))}%` }} />
+          <i style={{ width: `${Math.min(100, Math.max(5, activityStatus.added * 4))}%` }} />
+        </div>
+        <p>Lectura consolidada de AS IS y TO BE.</p>
       </article>
     </div>
   );
@@ -2750,3 +2787,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_V2_ESTADOS_FILTROS_FINAL
+
+
+// RESUMEN_V2_HOMOGENEO_4X4_FINAL
