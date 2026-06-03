@@ -11741,3 +11741,233 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   left: 50% !important;
   transform: translateX(-50%) !important;
 }
+
+
+/* ==========================================================
+   RESUMEN_V10_RIV_AJUSTES_VISUALES_FINAL
+   RIV + tarjetas resumen corregidas.
+   ========================================================== */
+
+/* Marca RIV */
+.brandSub,
+.portalHeroCopy p,
+.portalWelcome h2,
+.portalWelcome p {
+  letter-spacing: normal;
+}
+
+/* 1. Avance general: gauge pintado según avance */
+.dashboardGaugeWrap.paintedGauge {
+  width: 128px !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+}
+
+.dashboardGaugeSvg {
+  width: 118px !important;
+  height: 74px !important;
+  display: block !important;
+  overflow: visible !important;
+}
+
+.dashboardGaugeBaseArc,
+.dashboardGaugeProgressArc {
+  fill: none !important;
+  stroke-linecap: round !important;
+  stroke-width: 13 !important;
+}
+
+.dashboardGaugeBaseArc {
+  stroke: #dfe7ea !important;
+}
+
+.dashboardGaugeProgressArc {
+  stroke: var(--brand) !important;
+  transition: stroke-dasharray .35s ease !important;
+}
+
+.dashboardGaugeNeedleSvg {
+  stroke: #516d72 !important;
+  stroke-width: 4 !important;
+  stroke-linecap: round !important;
+  transition: transform .35s ease !important;
+}
+
+.dashboardGaugeNeedleHub {
+  fill: #516d72 !important;
+}
+
+/* 2. Termómetro centrado, leyenda conservada a la derecha sin montarse */
+.dashboardWidgetCard:has(.thermoWidget) .dashboardWidgetGraphic {
+  justify-content: center !important;
+  align-items: center !important;
+  overflow: visible !important;
+}
+
+.thermoWidget {
+  width: 156px !important;
+  grid-template-columns: 30px 30px 82px !important;
+  gap: 7px !important;
+  margin: 0 auto !important;
+  justify-content: center !important;
+  align-items: end !important;
+  transform: none !important;
+  left: auto !important;
+}
+
+.dashboardWidgetGraphic > .thermoWidget {
+  left: auto !important;
+  transform: none !important;
+}
+
+.thermoScale,
+.thermoTube {
+  height: 66px !important;
+}
+
+.thermoLegend {
+  width: 82px !important;
+  min-width: 82px !important;
+  font-size: 0.58rem !important;
+  gap: 4px !important;
+}
+
+.thermoLegend span {
+  white-space: nowrap !important;
+}
+
+/* 3. Bloqueos: sin ola, solo carita + línea */
+.cleanBlocker .miniSmileGauge {
+  display: none !important;
+}
+
+.miniBlockerFaceOnly {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 54px !important;
+  gap: 2px !important;
+  color: #0B4E58 !important;
+  -webkit-text-fill-color: #0B4E58 !important;
+}
+
+.miniBlockerFaceOnly .miniSmileFace {
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+}
+
+.miniBlockerFaceOnly strong {
+  font-size: 0.68rem !important;
+  color: #0B4E58 !important;
+  -webkit-text-fill-color: #0B4E58 !important;
+}
+
+.cleanBlocker .miniSparkline {
+  margin-top: 0 !important;
+}
+
+/* 4. Pendiente prioritario: elimina cualquier píldora/botón turquesa residual */
+.summaryTopMirrorGrid .priorityPendingWhiteCard .badgeRow,
+.summaryTopMirrorGrid .priorityPendingWhiteCard .badge,
+.summaryTopMirrorGrid .priorityPendingWhiteCard [class*="badge"],
+.summaryTopMirrorGrid .priorityPendingWhiteCard button,
+.summaryTopMirrorGrid .priorityPendingWhiteCard .sideLinkButton,
+.summaryTopMirrorGrid .priorityPendingWhiteCard a.sideLinkButton {
+  display: none !important;
+}
+
+.summaryTopMirrorGrid .priorityPendingWhiteCard.clickable {
+  padding-bottom: 20px !important;
+}
+
+/* 5. Radar: gráfico a la izquierda y leyenda al lado para que no se pierda abajo */
+.summaryMirrorPage .summaryRadarCard .summaryRadarMini,
+.summaryRadarCard .summaryRadarMini {
+  transform: none !important;
+  margin: 0 !important;
+  max-height: none !important;
+  height: 126px !important;
+  overflow: hidden !important;
+}
+
+.summaryRadarCard .summaryRadarMini .dashboardRadarWrap {
+  display: grid !important;
+  grid-template-columns: minmax(92px, 1fr) 76px !important;
+  grid-template-areas:
+    "radar systems"
+    "radar legend" !important;
+  column-gap: 7px !important;
+  align-items: center !important;
+  width: 100% !important;
+  height: 126px !important;
+  max-width: 100% !important;
+}
+
+.summaryRadarCard .summaryRadarMini .dashboardRadarSvg {
+  grid-area: radar !important;
+  width: 126px !important;
+  height: 126px !important;
+  max-width: 100% !important;
+  justify-self: center !important;
+}
+
+.summaryRadarCard .summaryRadarMini .radarSystemLegend {
+  grid-area: systems !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 3px !important;
+  align-self: end !important;
+}
+
+.summaryRadarCard .summaryRadarMini .radarSystemItem {
+  min-height: 18px !important;
+  padding: 3px 5px !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 5px !important;
+}
+
+.summaryRadarCard .summaryRadarMini .radarSystemItem span,
+.summaryRadarCard .summaryRadarMini .radarSystemItem strong {
+  font-size: 0.52rem !important;
+  line-height: 1 !important;
+}
+
+.summaryRadarCard .summaryRadarMini .radarLegend {
+  grid-area: legend !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 3px !important;
+  align-self: start !important;
+  justify-self: stretch !important;
+  margin: 4px 0 0 !important;
+}
+
+.summaryRadarCard .summaryRadarMini .radarLegend span {
+  font-size: 0.52rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+/* 6. Homogeneidad fina de tarjetas inferiores */
+.summaryBottomCard .summaryBottomHeader h3,
+.dashboardWidgetHeader span {
+  font-size: 0.84rem !important;
+  line-height: 1.12 !important;
+}
+
+.summaryBottomCard p,
+.dashboardWidgetFooter {
+  font-size: 0.64rem !important;
+  line-height: 1.12 !important;
+}
+
+/* Evita que el gauge viejo interfiera */
+.dashboardGaugeTrack,
+.dashboardGaugeFill,
+.dashboardGaugeMask {
+  display: none !important;
+}

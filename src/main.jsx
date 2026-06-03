@@ -131,7 +131,7 @@ function Sidebar({ view, setView, project }) {
         <Logo src={project.logoGSE} fallback="GSE" />
         <div>
           <div className="brandTitle">GSE&CO.</div>
-          <div className="brandSub">Ruta de Avance Visible™</div>
+          <div className="brandSub">RIV · Ruta de Implementación Visible™</div>
         </div>
       </div>
 
@@ -190,7 +190,7 @@ function Header({ project, connected }) {
         <div className="headerText">
           <div className="eyebrow">{project.service}</div>
           <h1>{company}</h1>
-          <p>Seguimiento ejecutivo del proyecto · Ruta de Avance Visible™</p>
+          <p>Seguimiento ejecutivo del proyecto · RIV · Ruta de Implementación Visible™</p>
         </div>
       </div>
 
@@ -209,7 +209,7 @@ function PortalProject({ project, milestones, pending, setView }) {
   const role = project.contactRole || "Responsable del proyecto";
   const completed = milestones.filter((m) => m.status === "Finalizado" || m.status === "Aprobado").length;
   const disorder = Math.max(0, 100 - (Number(project.progress) || 0));
-  const welcome = project.welcomeMessage || "Bienvenido a tu Ruta de Avance Visible™. Aquí podrás revisar el avance del proyecto, los hitos trabajados, los pendientes activos y los entregables construidos por GSE para ordenar tu empresa.";
+  const welcome = project.welcomeMessage || "Bienvenido a tu RIV · Ruta de Implementación Visible™. Aquí podrás revisar el avance del proyecto, los hitos trabajados, los pendientes activos y los entregables construidos por GSE para ordenar tu empresa.";
 
   return (
     <div className="portalPage">
@@ -228,7 +228,7 @@ function PortalProject({ project, milestones, pending, setView }) {
             Portal privado del proyecto
           </div>
 
-          <h2>Bienvenido a tu Ruta de Avance Visible™</h2>
+          <h2>Bienvenido a tu RIV · Ruta de Implementación Visible™</h2>
           <p>{welcome}</p>
 
           <div className="portalClientBox">
@@ -307,17 +307,18 @@ function PortalProject({ project, milestones, pending, setView }) {
 
 function DashboardMiniGauge({ value = 0 }) {
   const safe = Math.max(0, Math.min(Number(value) || 0, 100));
-  const angle = Math.round((safe / 100) * 180);
+  const radius = 46;
+  const circumference = Math.PI * radius;
+  const dash = (safe / 100) * circumference;
+
   return (
-    <div className="dashboardGaugeWrap">
-      <div className="dashboardGaugeTrack">
-        <div
-          className="dashboardGaugeFill"
-          style={{ background: `conic-gradient(from 180deg, var(--brand) 0deg ${angle}deg, #dfe7ea ${angle}deg 180deg, transparent 180deg 360deg)` }}
-        />
-        <div className="dashboardGaugeMask" />
-        <div className="dashboardGaugeNeedle" style={{ transform: `translateX(-50%) rotate(${angle - 90}deg)` }} />
-      </div>
+    <div className="dashboardGaugeWrap paintedGauge" style={{ "--gauge-value": safe }}>
+      <svg className="dashboardGaugeSvg" viewBox="0 0 120 74" role="img" aria-label={`Avance general ${safe}%`}>
+        <path className="dashboardGaugeBaseArc" d="M14 60 A46 46 0 0 1 106 60" pathLength="100" />
+        <path className="dashboardGaugeProgressArc" d="M14 60 A46 46 0 0 1 106 60" pathLength="100" style={{ strokeDasharray: `${safe} 100` }} />
+        <line className="dashboardGaugeNeedleSvg" x1="60" y1="60" x2="60" y2="24" style={{ transform: `rotate(${(safe / 100) * 180 - 90}deg)`, transformOrigin: "60px 60px" }} />
+        <circle className="dashboardGaugeNeedleHub" cx="60" cy="60" r="5.6" />
+      </svg>
       <div className="dashboardGaugeLabels"><span>0</span><span>100%</span></div>
     </div>
   );
@@ -382,20 +383,16 @@ function DashboardMiniPending({ pending = 0, done = 0 }) {
 function DashboardMiniBlockers({ blocked = 0 }) {
   const safeBlocked = Math.max(0, Number(blocked) || 0);
   const mood = safeBlocked > 0 ? "Atención" : "All Good";
-  const ratio = safeBlocked > 0 ? Math.min(95, 30 + safeBlocked * 18) : 82;
-  const angle = Math.round((ratio / 100) * 180);
   const linePoints = safeBlocked > 0
     ? "0,20 18,19 36,18 54,17 72,15 90,18 108,21 120,23"
     : "0,22 18,22 36,22 54,20 72,20 90,13 108,11 120,8";
   const markerLeft = safeBlocked > 0 ? Math.min(92, 22 + safeBlocked * 17) : 12;
 
   return (
-    <div className={`miniBlockerWidget ${safeBlocked > 0 ? "hasBlocks" : "noBlocks"}`}>
-      <div className="miniSmileGauge" style={{ background: `conic-gradient(from 180deg, var(--brand) 0deg ${angle}deg, #dfe7ea ${angle}deg 180deg, transparent 180deg 360deg)` }}>
-        <div className="miniSmileCenter">
-          <div className="miniSmileFace">{safeBlocked > 0 ? "😐" : "😊"}</div>
-          <strong>{mood}</strong>
-        </div>
+    <div className={`miniBlockerWidget cleanBlocker ${safeBlocked > 0 ? "hasBlocks" : "noBlocks"}`}>
+      <div className="miniBlockerFaceOnly">
+        <div className="miniSmileFace">{safeBlocked > 0 ? "😐" : "😊"}</div>
+        <strong>{mood}</strong>
       </div>
       <div className="miniSparkline">
         <span className={`sparkCheck ${safeBlocked > 0 ? "alert" : "ok"}`}>{safeBlocked > 0 ? "!" : "✓"}</span>
@@ -2523,10 +2520,6 @@ function UpdatesPanel({ project, updates, setView, pending = [] }) {
             <span><strong>Responsable:</strong> {mainPending.owner}</span>
             <span><strong>Fecha:</strong> {mainPending.dueDate}</span>
           </div>
-
-          <div className="badgeRow">
-            <Badge status={mainPending.status}>{mainPending.status}</Badge>
-          </div>
         </div>
       )}
 
@@ -3190,3 +3183,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RESUMEN_V9_HOMOGENEO_CLICK_PENDIENTE_FINAL
+
+
+// RESUMEN_V10_RIV_AJUSTES_VISUALES_FINAL
