@@ -10796,3 +10796,436 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     max-height: 220px !important;
   }
 }
+
+/* ==========================================================
+   RESUMEN_V7_PROPORCIONES_PREMIUM_FINAL
+   Ajuste visual tipo referencia: centro en una sola tarjeta
+   con Hitos + matriz interna, alturas homogéneas y KPIs compactos.
+   ========================================================== */
+
+/* Página resumen más densa y de un solo vistazo */
+.summaryMirrorPage {
+  gap: 20px !important;
+}
+
+/* 4 tarjetas superiores iguales, más compactas */
+.dashboardKpiGrid.fourCards,
+.dashboardKpiGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  margin-bottom: 4px !important;
+}
+
+.dashboardWidgetCard {
+  min-height: 164px !important;
+  height: 164px !important;
+  padding: 14px 16px 12px !important;
+  border-radius: 18px !important;
+  gap: 6px !important;
+  overflow: hidden !important;
+}
+
+.dashboardWidgetHeader span {
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+  color: #102F37 !important;
+}
+
+.dashboardWidgetValue {
+  font-size: 1.82rem !important;
+  font-weight: 800 !important;
+  color: #0B4E58 !important;
+}
+
+.dashboardWidgetGraphic {
+  min-height: 72px !important;
+  max-height: 78px !important;
+  overflow: hidden !important;
+}
+
+.dashboardWidgetFooter {
+  font-size: 0.72rem !important;
+  color: #557176 !important;
+}
+
+/* Widgets superiores con proporciones distintas y contenidas */
+.dashboardGaugeTrack {
+  width: 104px !important;
+  height: 52px !important;
+}
+
+.dashboardGaugeNeedle {
+  height: 38px !important;
+}
+
+.dashboardGaugeLabels {
+  font-size: 0.66rem !important;
+  margin-top: 4px !important;
+}
+
+.thermoWidget {
+  grid-template-columns: 30px minmax(0, 1fr) 82px !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.thermoScale,
+.thermoTube {
+  height: 76px !important;
+}
+
+.thermoTube {
+  width: 20px !important;
+}
+
+.thermoBulb {
+  width: 28px !important;
+  height: 28px !important;
+  bottom: -8px !important;
+}
+
+.thermoLegend {
+  font-size: 0.64rem !important;
+  gap: 4px !important;
+}
+
+.miniPendingChart {
+  gap: 6px !important;
+}
+
+.miniPendingRow {
+  grid-template-columns: 70px minmax(0, 1fr) 18px !important;
+  font-size: 0.68rem !important;
+}
+
+.miniPendingBar {
+  height: 9px !important;
+}
+
+.miniPendingLine {
+  height: 30px !important;
+}
+
+.miniBlockerWidget {
+  gap: 4px !important;
+}
+
+.miniSmileGauge {
+  width: 96px !important;
+  height: 48px !important;
+}
+
+.miniSmileCenter {
+  width: 68px !important;
+  height: 68px !important;
+}
+
+.miniSmileFace {
+  font-size: 1.05rem !important;
+}
+
+.miniSmileCenter strong {
+  font-size: 0.68rem !important;
+}
+
+/* Centro: una sola tarjeta grande con Hitos + Matriz dentro */
+.summaryTopMirrorGrid.executiveSummaryLayout,
+.executiveSummaryLayout.hitosFirst.summaryTopMirrorGrid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 2.9fr) minmax(290px, 0.95fr) !important;
+  gap: 18px !important;
+  align-items: stretch !important;
+  margin-top: 0 !important;
+}
+
+.summaryHitosCombinedCard {
+  min-height: 318px !important;
+  height: 318px !important;
+  padding: 0 !important;
+  border-radius: 24px !important;
+  border: 1px solid rgba(0, 184, 181, 0.20) !important;
+  background: radial-gradient(circle at top left, rgba(0,184,181,.07), transparent 18rem), #ffffff !important;
+  box-shadow: 0 18px 42px rgba(3, 54, 57, 0.07) !important;
+  overflow: hidden !important;
+}
+
+.summaryHitosCombinedInner {
+  height: 100% !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 2.25fr) minmax(260px, 0.76fr) !important;
+  gap: 0 !important;
+}
+
+/* Quita efecto de tarjeta individual para que parezca una sola tarjeta */
+.summaryHitosCombinedCard .hitosProgressCard,
+.summaryHitosCombinedCard .summaryHitosStatusCard {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  margin: 0 !important;
+}
+
+.summaryHitosCombinedCard .summaryHitosStatusCard {
+  border-left: 1px solid rgba(0, 184, 181, 0.16) !important;
+  padding: 18px 16px !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressCard {
+  padding: 18px 20px !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressLayout {
+  height: 100% !important;
+  grid-template-columns: minmax(130px, 0.35fr) minmax(0, 1fr) !important;
+  gap: 18px !important;
+  align-items: center !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressStat {
+  align-self: center !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressValue {
+  font-size: clamp(3.2rem, 5.2vw, 5.7rem) !important;
+  line-height: 0.9 !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressLabel {
+  font-size: 1rem !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressSubcopy {
+  font-size: 0.86rem !important;
+  line-height: 1.45 !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressHeader h2 {
+  font-size: 1.08rem !important;
+  margin: 0 0 4px !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressHeader p {
+  font-size: 0.84rem !important;
+  line-height: 1.32 !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressHeader .badge,
+.summaryHitosCombinedCard .hitosProgressHeader [class*="badge"] {
+  transform: scale(.82) !important;
+  transform-origin: right center !important;
+}
+
+.summaryHitosCombinedCard .hitosTrackLabel.named {
+  min-width: 104px !important;
+  padding: 10px 11px !important;
+  border-radius: 16px !important;
+}
+
+.summaryHitosCombinedCard .hitosTrackLabelsNamed {
+  gap: 10px !important;
+}
+
+.summaryHitosCombinedCard .hitosNamesScroller {
+  padding-bottom: 6px !important;
+}
+
+.summaryHitosCombinedCard .hitoCode {
+  font-size: .72rem !important;
+}
+
+.summaryHitosCombinedCard .hitoName {
+  font-size: .72rem !important;
+  line-height: 1.18 !important;
+}
+
+.summaryHitosCombinedCard .summaryHitosStatusHeader h3 {
+  font-size: .92rem !important;
+  line-height: 1.15 !important;
+  max-width: 180px !important;
+}
+
+.summaryHitosCombinedCard .summaryHitosStatusTableWrap {
+  max-height: 248px !important;
+  border-radius: 16px !important;
+}
+
+.summaryHitosCombinedCard .summaryHitosStatusTable {
+  font-size: .72rem !important;
+}
+
+.summaryHitosCombinedCard .summaryHitosStatusTable th {
+  font-size: .62rem !important;
+  padding: 8px 7px !important;
+}
+
+.summaryHitosCombinedCard .summaryHitosStatusTable td {
+  padding: 9px 7px !important;
+}
+
+.summaryHitosCombinedCard .summaryHitoStatusPill {
+  min-width: 70px !important;
+  padding: 5px 8px !important;
+  font-size: .58rem !important;
+}
+
+/* Panel derecho con la misma altura del bloque central */
+.summaryTopMirrorGrid .executiveRightPanel {
+  height: 318px !important;
+  min-height: 318px !important;
+  display: grid !important;
+  grid-template-rows: 1fr 1fr !important;
+  gap: 18px !important;
+  position: static !important;
+}
+
+.summaryTopMirrorGrid .executiveSideCard {
+  min-height: 0 !important;
+  height: 100% !important;
+  padding: 20px 22px !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+}
+
+.summaryTopMirrorGrid .executiveSideCard h3 {
+  font-size: 1.18rem !important;
+  line-height: 1.12 !important;
+  margin: 8px 0 6px !important;
+}
+
+.summaryTopMirrorGrid .sideCardIconLine {
+  gap: 9px !important;
+}
+
+.summaryTopMirrorGrid .sideCardIconLine span {
+  font-size: .92rem !important;
+}
+
+.summaryTopMirrorGrid .sideIcon {
+  width: 34px !important;
+  height: 34px !important;
+}
+
+.summaryTopMirrorGrid .sideMeetButton,
+.summaryTopMirrorGrid .sideLinkButton {
+  min-height: 40px !important;
+  padding: 10px 14px !important;
+  border-radius: 16px !important;
+  font-size: .86rem !important;
+}
+
+.summaryTopMirrorGrid .sidePendingMeta {
+  font-size: .74rem !important;
+  gap: 3px !important;
+}
+
+/* Tarjetas inferiores espejo: altura más proporcionada */
+.summaryMirrorPage .summaryBottomGrid.fourCards,
+.summaryMirrorPage .summaryBottomGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+  margin-top: 0 !important;
+}
+
+.summaryMirrorPage .summaryBottomCard {
+  min-height: 260px !important;
+  height: 260px !important;
+  padding: 18px 20px !important;
+  border-radius: 22px !important;
+  overflow: hidden !important;
+}
+
+.summaryBottomCard .summaryBottomHeader h3 {
+  font-size: 1rem !important;
+  line-height: 1.16 !important;
+}
+
+.summaryBigNumber {
+  font-size: 2.8rem !important;
+}
+
+.summaryMirrorPage .summaryRadarCard .summaryRadarMini {
+  transform: scale(0.68) !important;
+  transform-origin: top center !important;
+  margin: -14px auto -70px !important;
+}
+
+.summaryMiniRow {
+  grid-template-columns: 74px minmax(0,1fr) 24px !important;
+  gap: 7px !important;
+}
+
+.summaryMiniRow span {
+  font-size: .7rem !important;
+}
+
+.summaryMiniTrack {
+  height: 7px !important;
+}
+
+.summaryCOEValue {
+  font-size: clamp(2.8rem, 4.2vw, 4.2rem) !important;
+}
+
+.summaryActivityCreative > div {
+  min-height: 66px !important;
+}
+
+.summaryActivityCreative strong {
+  font-size: 1.75rem !important;
+}
+
+.summaryActivityCreative span {
+  font-size: .62rem !important;
+}
+
+@media (max-width: 1320px) {
+  .summaryTopMirrorGrid.executiveSummaryLayout,
+  .executiveSummaryLayout.hitosFirst.summaryTopMirrorGrid {
+    grid-template-columns: 1fr !important;
+  }
+  .summaryHitosCombinedCard {
+    height: auto !important;
+    min-height: 318px !important;
+  }
+  .summaryHitosCombinedInner {
+    grid-template-columns: 1fr !important;
+  }
+  .summaryHitosCombinedCard .summaryHitosStatusCard {
+    border-left: 0 !important;
+    border-top: 1px solid rgba(0,184,181,.16) !important;
+    min-height: 230px !important;
+  }
+  .summaryTopMirrorGrid .executiveRightPanel {
+    height: auto !important;
+    min-height: 0 !important;
+    grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+    grid-template-rows: none !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .dashboardKpiGrid.fourCards,
+  .dashboardKpiGrid,
+  .summaryMirrorPage .summaryBottomGrid.fourCards,
+  .summaryMirrorPage .summaryBottomGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboardKpiGrid.fourCards,
+  .dashboardKpiGrid,
+  .summaryMirrorPage .summaryBottomGrid.fourCards,
+  .summaryMirrorPage .summaryBottomGrid,
+  .summaryTopMirrorGrid .executiveRightPanel {
+    grid-template-columns: 1fr !important;
+  }
+  .dashboardWidgetCard,
+  .summaryMirrorPage .summaryBottomCard {
+    height: auto !important;
+    min-height: 210px !important;
+  }
+}

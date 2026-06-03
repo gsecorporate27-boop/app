@@ -2993,16 +2993,20 @@ function App() {
               <KpiCards project={project} milestones={milestones} pending={pending} setView={setView} />
 
               <div className="executiveSummaryLayout hitosFirst summaryTopMirrorGrid">
-                <div className="executiveSummaryMain summaryHitosColumn">
-                  <MilestonesExecutive
-                    milestones={milestones}
-                    setView={setView}
-                    selectedHito={selectedHito}
-                    setSelectedHito={setSelectedHito}
-                  />
-                </div>
+                <section className="card summaryHitosCombinedCard">
+                  <div className="summaryHitosCombinedInner">
+                    <div className="executiveSummaryMain summaryHitosColumn">
+                      <MilestonesExecutive
+                        milestones={milestones}
+                        setView={setView}
+                        selectedHito={selectedHito}
+                        setSelectedHito={setSelectedHito}
+                      />
+                    </div>
 
-                <HitosStatusMatrix milestones={milestones} setView={setView} setSelectedHito={setSelectedHito} />
+                    <HitosStatusMatrix milestones={milestones} setView={setView} setSelectedHito={setSelectedHito} />
+                  </div>
+                </section>
 
                 <UpdatesPanel project={project} updates={updates} pending={pending} setView={setView} />
               </div>
@@ -3161,3 +3165,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RESUMEN_V6_HITOS_MATRIZ_ESTADOS_FINAL
+
+
+// RESUMEN_V7_PROPORCIONES_PREMIUM_FINAL
