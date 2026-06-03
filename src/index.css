@@ -11229,3 +11229,277 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     min-height: 210px !important;
   }
 }
+
+/* ==========================================================
+   RESUMEN_V8_COMPACTO_NUMEROS_ACTIVIDADES_FINAL
+   Ajusta contenido para que no se corte y corrige números de actividades.
+   ========================================================== */
+
+/* Tarjetas superiores: contenido más compacto y visible */
+.dashboardKpiGrid.fourCards,
+.dashboardKpiGrid {
+  gap: 14px !important;
+}
+
+.dashboardWidgetCard {
+  min-height: 176px !important;
+  height: 176px !important;
+  padding: 12px 14px 10px !important;
+  gap: 3px !important;
+  overflow: hidden !important;
+}
+
+.dashboardWidgetHeader span {
+  font-size: 0.76rem !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+}
+
+.dashboardWidgetValue {
+  font-size: 1.48rem !important;
+  line-height: 0.92 !important;
+  margin: 0 !important;
+}
+
+.dashboardWidgetGraphic {
+  flex: 0 0 92px !important;
+  min-height: 86px !important;
+  max-height: 92px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+
+.dashboardWidgetFooter {
+  margin-top: auto !important;
+  min-height: 14px !important;
+  font-size: 0.62rem !important;
+  line-height: 1.08 !important;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  white-space: normal !important;
+}
+
+/* Mini gauge más pequeño para que entre pie de tarjeta */
+.dashboardGaugeTrack {
+  width: 88px !important;
+  height: 44px !important;
+}
+
+.dashboardGaugeMask {
+  width: 58px !important;
+  height: 58px !important;
+  bottom: -14px !important;
+}
+
+.dashboardGaugeNeedle {
+  height: 31px !important;
+  width: 2.5px !important;
+}
+
+.dashboardGaugeNeedle::after {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.dashboardGaugeLabels {
+  font-size: 0.58rem !important;
+  margin-top: 2px !important;
+}
+
+/* Termómetro más compacto */
+.thermoWidget {
+  grid-template-columns: 26px 28px minmax(58px, 74px) !important;
+  gap: 6px !important;
+  align-items: center !important;
+}
+
+.thermoScale,
+.thermoTube {
+  height: 66px !important;
+}
+
+.thermoScale {
+  font-size: 0.56rem !important;
+}
+
+.thermoTube {
+  width: 18px !important;
+}
+
+.thermoBulb {
+  width: 24px !important;
+  height: 24px !important;
+  bottom: -7px !important;
+}
+
+.thermoMarker {
+  width: 11px !important;
+  height: 8px !important;
+}
+
+.thermoLegend {
+  font-size: 0.56rem !important;
+  gap: 3px !important;
+}
+
+.swatch {
+  width: 7px !important;
+  height: 7px !important;
+  margin-right: 4px !important;
+}
+
+/* Pendientes y bloqueos: compactos */
+.miniPendingChart {
+  gap: 4px !important;
+}
+
+.miniPendingRow {
+  grid-template-columns: 60px minmax(0,1fr) 16px !important;
+  gap: 5px !important;
+  font-size: 0.58rem !important;
+}
+
+.miniPendingBar {
+  height: 8px !important;
+}
+
+.miniPendingLine {
+  height: 26px !important;
+}
+
+.miniBlockerWidget {
+  gap: 2px !important;
+}
+
+.miniSmileGauge {
+  width: 84px !important;
+  height: 42px !important;
+}
+
+.miniSmileCenter {
+  width: 58px !important;
+  height: 58px !important;
+}
+
+.miniSmileFace {
+  font-size: 0.98rem !important;
+}
+
+.miniSmileCenter strong {
+  font-size: 0.6rem !important;
+}
+
+.miniSparkline {
+  gap: 6px !important;
+}
+
+.sparkCheck {
+  width: 15px !important;
+  height: 15px !important;
+  font-size: 0.58rem !important;
+}
+
+.miniSparkline svg {
+  height: 24px !important;
+}
+
+/* Panel derecho: textos y botones más pequeños para que no se pierdan */
+.summaryTopMirrorGrid .executiveRightPanel {
+  gap: 14px !important;
+}
+
+.summaryTopMirrorGrid .executiveSideCard {
+  padding: 15px 18px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 5px !important;
+}
+
+.summaryTopMirrorGrid .sideIcon {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.summaryTopMirrorGrid .sideCardIconLine {
+  gap: 8px !important;
+}
+
+.summaryTopMirrorGrid .sideCardIconLine span {
+  font-size: 0.78rem !important;
+  line-height: 1.1 !important;
+}
+
+.summaryTopMirrorGrid .executiveSideCard h3 {
+  font-size: 1.02rem !important;
+  line-height: 1.08 !important;
+  margin: 4px 0 2px !important;
+}
+
+.summaryTopMirrorGrid .executiveSideCard p {
+  font-size: 0.75rem !important;
+  line-height: 1.15 !important;
+  margin: 0 !important;
+}
+
+.summaryTopMirrorGrid .sidePendingMeta {
+  font-size: 0.66rem !important;
+  line-height: 1.16 !important;
+  gap: 1px !important;
+}
+
+.summaryTopMirrorGrid .priorityPendingWhiteCard .badgeRow {
+  margin: 2px 0 4px !important;
+}
+
+.summaryTopMirrorGrid .priorityPendingWhiteCard .badgeRow .badge,
+.summaryTopMirrorGrid .priorityPendingWhiteCard .badgeRow [class*="badge"] {
+  min-height: 24px !important;
+  min-width: 78px !important;
+  padding: 5px 10px !important;
+  font-size: 0.58rem !important;
+}
+
+.summaryTopMirrorGrid .sideMeetButton,
+.summaryTopMirrorGrid .sideLinkButton {
+  min-height: 32px !important;
+  padding: 8px 12px !important;
+  border-radius: 14px !important;
+  font-size: 0.72rem !important;
+  margin-top: auto !important;
+}
+
+/* Asegura que los números de actividades aparezcan y no hereden colores invisibles */
+.summaryActivitiesCard .summaryActivityCreative strong {
+  display: block !important;
+  color: #00877f !important;
+  -webkit-text-fill-color: #00877f !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-size: 1.55rem !important;
+  line-height: 0.95 !important;
+  font-weight: 700 !important;
+}
+
+.summaryActivitiesCard .summaryActivityCreative span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  font-size: 0.58rem !important;
+}
+
+.summaryActivitiesCard .summaryActivityCreative > div {
+  min-height: 58px !important;
+  padding: 8px 5px !important;
+}
+
+.summaryActivitiesCard .summaryActivityLine {
+  margin-top: 4px !important;
+}
+
+@media (max-width: 980px) {
+  .dashboardWidgetCard {
+    height: auto !important;
+    min-height: 176px !important;
+  }
+}

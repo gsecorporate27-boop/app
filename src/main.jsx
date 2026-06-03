@@ -611,12 +611,23 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
     }, { pending: 0, inProcess: 0, completed: 0 });
   };
 
+  const summarizeActivityStatus = (rows = []) => {
+    const hasText = (value, words) => words.some((word) => normalizeSystemName(value).includes(word));
+    return rows.reduce((acc, item) => {
+      const status = item.status || item.estado || item.observation || item.observacion || item["OBSERVACIÓN"] || "";
+      if (hasText(status, ["mantiene", "mantenido", "mantenida", "mantener", "se mantiene"])) acc.maintained += 1;
+      else if (hasText(status, ["elimina", "eliminado", "eliminada", "eliminar"])) acc.deleted += 1;
+      else if (hasText(status, ["agrega", "agregado", "agregada", "agregar", "nuevo", "nueva"])) acc.added += 1;
+      return acc;
+    }, { maintained: 0, deleted: 0, added: 0 });
+  };
+
   const asIsCOE = totalCost(coeAsIs);
   const toBeCOE = totalCost(coeToBe);
   const coeDelta = asIsCOE - toBeCOE;
   const coePercent = asIsCOE > 0 ? (coeDelta / asIsCOE) * 100 : 0;
   const findingsStatus = summarizeStatus(findings);
-  const activityStatus = summarizeStatus([...coeAsIs, ...coeToBe]);
+  const activityStatus = summarizeActivityStatus([...coeAsIs, ...coeToBe]);
 
   return (
     <div className="summaryBottomGrid fourCards">
@@ -3168,3 +3179,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RESUMEN_V7_PROPORCIONES_PREMIUM_FINAL
+
+
+// RESUMEN_V8_COMPACTO_NUMEROS_ACTIVIDADES_FINAL
