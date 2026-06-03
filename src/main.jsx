@@ -3383,3 +3383,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_V11_TAGS_LEGIBLES_TOTAL_SIN_DUPLICAR_FINAL
+
+
+// ENTREGABLES_GSE_V5_BOTON_TURQUESA_FINAL

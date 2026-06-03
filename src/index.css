@@ -12979,3 +12979,61 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* ==========================================================
+   ENTREGABLES_GSE_V5_BOTON_TURQUESA_FINAL
+   Botón Ver entregable en Entregables GSE con estilo turquesa.
+   ========================================================== */
+
+.deliverablesSection .deliverableCard a.secondaryLink,
+.deliverablesSection .deliverableCard a.routeSecondaryLinkFixed,
+.deliverablesGrid .deliverableCard a.secondaryLink,
+.deliverablesGrid .deliverableCard a.routeSecondaryLinkFixed {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  min-height: 42px !important;
+  padding: 10px 18px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  border: 1px solid rgba(0, 184, 181, 0.30) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.92rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  box-shadow: 0 14px 30px rgba(0, 184, 181, 0.18) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.deliverablesSection .deliverableCard a.secondaryLink *,
+.deliverablesSection .deliverableCard a.routeSecondaryLinkFixed *,
+.deliverablesGrid .deliverableCard a.secondaryLink *,
+.deliverablesGrid .deliverableCard a.routeSecondaryLinkFixed * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.deliverablesSection .deliverableCard a.secondaryLink svg,
+.deliverablesSection .deliverableCard a.routeSecondaryLinkFixed svg,
+.deliverablesGrid .deliverableCard a.secondaryLink svg,
+.deliverablesGrid .deliverableCard a.routeSecondaryLinkFixed svg {
+  stroke: #ffffff !important;
+}
+
+.deliverablesSection .deliverableCard a.secondaryLink:hover,
+.deliverablesSection .deliverableCard a.routeSecondaryLinkFixed:hover,
+.deliverablesGrid .deliverableCard a.secondaryLink:hover,
+.deliverablesGrid .deliverableCard a.routeSecondaryLinkFixed:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 18px 34px rgba(0, 184, 181, 0.24) !important;
+}
