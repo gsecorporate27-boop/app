@@ -417,7 +417,12 @@ function mapFindings(rows) {
       impact: getRowValue(row, ["Impacto"]),
       image: getRowValue(row, ["Imagen", "ImagenPreview", "Imagen previa", "URLImagen"]),
     };
-  }).filter((x) => x.finding || x.description || x.processArea || x.area || x.management);
+  }).filter((x) => {
+    // Mantener todas las filas no vacías que llegan desde Google Sheets.
+    // Antes se descartaban filas cuando el hallazgo no venía en una columna específica,
+    // lo que podía dejar visibles solo algunos registros aunque la hoja tuviera más.
+    return Object.entries(x).some(([key, value]) => key !== "id" && cleanText(value));
+  });
 }
 
 function mapPending(rows) {
@@ -645,3 +650,5 @@ export async function loadSheetData() {
 // RESUMEN_V6_HITOS_MATRIZ_ESTADOS_FINAL
 
 // HALLAZGOS_V4_GERENCIA_ENTREGABLES_MENU_FINAL
+
+// HALLAZGOS_V9_LECTURA_COMPLETA_TAGS_2_FILAS_FINAL

@@ -12721,3 +12721,91 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     padding: 8px 11px !important;
   }
 }
+
+/* ==========================================================
+   HALLAZGOS_V9_LECTURA_COMPLETA_TAGS_2_FILAS_FINAL
+   Corrige lectura completa de filas y convierte metadatos en etiquetas turquesas.
+   ========================================================== */
+
+.findingWhiteCard .findingVisibleMetaGrid.findingTagList.findingCompactTags,
+.findingWhiteCard .findingTagList.findingCompactTags {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin: 18px 0 14px !important;
+  width: 100% !important;
+  align-items: stretch !important;
+}
+
+.findingWhiteCard .findingVisibleMetaGrid.findingTagList.findingCompactTags > div,
+.findingWhiteCard .findingTagList.findingCompactTags > div {
+  min-width: 0 !important;
+  min-height: 54px !important;
+  padding: 9px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(0, 184, 181, 0.26) !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  box-shadow: 0 12px 28px rgba(0, 184, 181, 0.13) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  overflow: hidden !important;
+}
+
+.findingWhiteCard .findingVisibleMetaGrid.findingTagList.findingCompactTags span,
+.findingWhiteCard .findingTagList.findingCompactTags span {
+  display: block !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.82) !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.58rem !important;
+  line-height: 1 !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+  margin: 0 0 4px !important;
+  white-space: nowrap !important;
+}
+
+.findingWhiteCard .findingVisibleMetaGrid.findingTagList.findingCompactTags strong,
+.findingWhiteCard .findingTagList.findingCompactTags strong {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.72rem !important;
+  line-height: 1.13 !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
+  word-break: normal !important;
+}
+
+.findingWhiteCard .findingVisibleMetaGrid.findingTagList.findingCompactTags > div::before,
+.findingWhiteCard .findingTagList.findingCompactTags > div::before {
+  display: none !important;
+}
+
+.findingWhiteCard .findingWhiteHeader h3,
+.findingsGridWhite .findingWhiteCard .findingWhiteHeader h3 {
+  font-size: clamp(1.05rem, 1.35vw, 1.34rem) !important;
+  font-weight: 650 !important;
+  line-height: 1.18 !important;
+}
+
+@media (max-width: 920px) {
+  .findingWhiteCard .findingVisibleMetaGrid.findingTagList.findingCompactTags,
+  .findingWhiteCard .findingTagList.findingCompactTags {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .findingWhiteCard .findingVisibleMetaGrid.findingTagList.findingCompactTags,
+  .findingWhiteCard .findingTagList.findingCompactTags {
+    grid-template-columns: 1fr !important;
+  }
+}
