@@ -10562,3 +10562,61 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   color: #557176 !important;
   -webkit-text-fill-color: #557176 !important;
 }
+
+
+/* ==========================================================
+   HALLAZGOS_V3_ESTADOS_TITULOS_FINAL
+   Estados: Pendiente / En proceso / Completado
+   y títulos de tarjetas más pequeños.
+   ========================================================== */
+
+/* Tarjetas de hallazgos: títulos más pequeños y menos pesados */
+.findingsGridWhite .findingWhiteCard .findingWhiteHeader h3,
+.findingWhiteCard .findingWhiteHeader h3 {
+  font-size: clamp(1.12rem, 1.55vw, 1.48rem) !important;
+  line-height: 1.16 !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.025em !important;
+  max-width: 92% !important;
+}
+
+/* Tarjetas de hallazgos con menos altura visual */
+.findingsGridWhite .findingWhiteCard,
+.findingWhiteCard {
+  min-height: 190px !important;
+}
+
+.findingsGridWhite .findingWhiteHeader,
+.findingWhiteHeader {
+  padding: 24px 28px !important;
+}
+
+/* Badges de estado visibles y homogéneos */
+.findingWhiteCard .badgeRow .badge,
+.findingWhiteCard .badgeRow [class*="badge"],
+.findingsGridWhite .badgeRow .badge,
+.findingsGridWhite .badgeRow [class*="badge"] {
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(0, 184, 181, 0.28) !important;
+}
+
+/* Tarjeta resumen de estado con nombres nuevos */
+.findingsMiniCounterGrid small {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 0.72rem !important;
+}
+
+/* Títulos de resumen más suaves */
+.findingsSummaryCard > span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-weight: 800 !important;
+}
+
+.findingsSummaryCard > strong,
+.findingsMiniCounterGrid strong {
+  font-weight: 700 !important;
+}

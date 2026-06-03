@@ -1744,19 +1744,28 @@ function Findings({ findings = [] }) {
   const [processFilter, setProcessFilter] = useState("Todos");
   const [statusFilter, setStatusFilter] = useState("Todos");
 
+  const getFindingStatusGroup = (status = "") => {
+    const value = normalizeSystemName(status);
+    if (value.includes("completado") || value.includes("finalizado") || value.includes("terminado") || value.includes("solucionado")) return "Completado";
+    if (value.includes("proceso") || value.includes("desarrollo") || value.includes("desarollo") || value.includes("revision")) return "En proceso";
+    return "Pendiente";
+  };
+
   const priorities = useMemo(() => findings.map((item) => item.priority).filter(Boolean), [findings]);
   const processes = useMemo(() => findings.map((item) => item.processArea || item.area).filter(Boolean), [findings]);
-  const statuses = useMemo(() => findings.map((item) => item.status).filter(Boolean), [findings]);
+  const statuses = useMemo(() => {
+    const sheetStatuses = findings.map((item) => item.status).filter(Boolean);
+    return [...new Set(["Pendiente", "En proceso", "Completado", ...sheetStatuses])];
+  }, [findings]);
 
   const statusSummary = useMemo(() => {
-    const isMatch = (value, words) => words.some((word) => normalizeSystemName(value).includes(word));
     return findings.reduce((acc, item) => {
-      const status = item.status || "";
-      if (isMatch(status, ["mantiene", "mantenido", "mantenida", "mantener", "se mantiene"])) acc.maintained += 1;
-      if (isMatch(status, ["elimina", "eliminado", "eliminada", "eliminar"])) acc.deleted += 1;
-      if (isMatch(status, ["agrega", "agregado", "agregada", "agregar", "nuevo", "nueva"])) acc.added += 1;
+      const group = getFindingStatusGroup(item.status);
+      if (group === "Pendiente") acc.pending += 1;
+      if (group === "En proceso") acc.inProcess += 1;
+      if (group === "Completado") acc.completed += 1;
       return acc;
-    }, { maintained: 0, deleted: 0, added: 0 });
+    }, { pending: 0, inProcess: 0, completed: 0 });
   }, [findings]);
 
   const filteredFindings = useMemo(() => {
@@ -1765,9 +1774,10 @@ function Findings({ findings = [] }) {
       const process = item.processArea || item.area || "";
       const priority = item.priority || "";
       const status = item.status || "";
+      const statusGroup = getFindingStatusGroup(status);
       const matchesPriority = priorityFilter === "Todos" || priority === priorityFilter;
       const matchesProcess = processFilter === "Todos" || process === processFilter;
-      const matchesStatus = statusFilter === "Todos" || status === statusFilter;
+      const matchesStatus = statusFilter === "Todos" || status === statusFilter || statusGroup === statusFilter;
       const searchable = normalizeSystemName([
         item.id,
         process,
@@ -1777,6 +1787,7 @@ function Findings({ findings = [] }) {
         item.solutionType || item.system,
         item.owner,
         status,
+        statusGroup,
         priority,
       ].join(" "));
       return matchesPriority && matchesProcess && matchesStatus && (!query || searchable.includes(query));
@@ -1803,9 +1814,9 @@ function Findings({ findings = [] }) {
         <article className="findingsSummaryCard">
           <span>Estado de hallazgos</span>
           <div className="findingsMiniCounterGrid">
-            <div><strong>{statusSummary.maintained}</strong><small>Mantiene</small></div>
-            <div><strong>{statusSummary.deleted}</strong><small>Elimina</small></div>
-            <div><strong>{statusSummary.added}</strong><small>Agrega</small></div>
+            <div><strong>{statusSummary.pending}</strong><small>Pendiente</small></div>
+            <div><strong>{statusSummary.inProcess}</strong><small>En proceso</small></div>
+            <div><strong>{statusSummary.completed}</strong><small>Completado</small></div>
           </div>
           <p>Según la columna Estado.</p>
         </article>
@@ -3084,3 +3095,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // PENDIENTES_V3_BADGES_DESCRIPCION_VISIBLE_FINAL
+
+
+// HALLAZGOS_V3_ESTADOS_TITULOS_FINAL
