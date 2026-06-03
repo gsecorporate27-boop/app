@@ -1915,6 +1915,31 @@ function Findings({ findings = [] }) {
     });
   }, [findings, searchTerm, priorityFilter, processFilter, statusFilter, managementFilter, areaFilter, ownerFilter]);
 
+  const visibleDeliverableSummary = useMemo(() => {
+    const initial = categories.reduce((acc, category) => {
+      acc[category.key] = { label: category.label, gse: 0, client: 0 };
+      return acc;
+    }, {});
+
+    return filteredFindings.reduce((acc, item) => {
+      const gseKey = getCategoryKey(item.deliverableGSE || "");
+      const clientKey = getCategoryKey(item.deliverableClient || "");
+
+      if (acc[gseKey]) acc[gseKey].gse += item.deliverableGSE ? 1 : 0;
+      if (acc[clientKey]) acc[clientKey].client += item.deliverableClient ? 1 : 0;
+
+      return acc;
+    }, initial);
+  }, [filteredFindings]);
+
+  const visibleDeliverableTotals = useMemo(() => {
+    return Object.values(visibleDeliverableSummary).reduce((acc, item) => {
+      acc.gse += item.gse;
+      acc.client += item.client;
+      return acc;
+    }, { gse: 0, client: 0 });
+  }, [visibleDeliverableSummary]);
+
   return (
     <section className="card premiumSectionCard findingsPremiumSection">
       <div className="sectionHeader">
@@ -1943,29 +1968,47 @@ function Findings({ findings = [] }) {
         </article>
       </div>
 
-      <article className="findingsDeliverablesSummaryCard">
-        <div className="findingsDeliverablesHeader">
-          <div>
-            <span>Entregables vinculados a hallazgos</span>
-            <h3>GSE: {deliverableTotals.gse} · Cliente: {deliverableTotals.client}</h3>
-          </div>
-          <Badge status="En validación">GSE / Cliente</Badge>
-        </div>
+      <div className="findingsDeliverablesSplitGrid">
+        <article className="findingsDeliverableTotalCard">
+          <span>Total entregables GSE</span>
+          <strong>{visibleDeliverableTotals.gse}</strong>
+          <p>Entregables internos asociados a los hallazgos filtrados.</p>
+        </article>
 
-        <div className="findingsDeliverablesGrid">
-          {Object.values(deliverableSummary).map((item) => (
-            <div className="findingsDeliverableMiniCard" key={item.label}>
-              <span>{item.label}</span>
-              <div>
-                <strong>{item.gse}</strong><small>GSE</small>
+        <article className="findingsDeliverableBreakdownCard">
+          <span>Cantidad GSE</span>
+          <div className="findingsDeliverableBreakdownRows">
+            {Object.values(visibleDeliverableSummary).map((item) => (
+              <div key={`gse-${item.label}`}>
+                <span>{item.label}</span>
+                <div><i style={{ width: `${visibleDeliverableTotals.gse ? (item.gse / visibleDeliverableTotals.gse) * 100 : 0}%` }} /></div>
+                <strong>{item.gse}</strong>
               </div>
-              <div>
-                <strong>{item.client}</strong><small>Cliente</small>
+            ))}
+          </div>
+          <p>Según la columna EntregableGSE.</p>
+        </article>
+
+        <article className="findingsDeliverableTotalCard client">
+          <span>Total entregables cliente</span>
+          <strong>{visibleDeliverableTotals.client}</strong>
+          <p>Entregables solicitados al cliente según el filtro activo.</p>
+        </article>
+
+        <article className="findingsDeliverableBreakdownCard client">
+          <span>Cantidad cliente</span>
+          <div className="findingsDeliverableBreakdownRows">
+            {Object.values(visibleDeliverableSummary).map((item) => (
+              <div key={`client-${item.label}`}>
+                <span>{item.label}</span>
+                <div><i style={{ width: `${visibleDeliverableTotals.client ? (item.client / visibleDeliverableTotals.client) * 100 : 0}%` }} /></div>
+                <strong>{item.client}</strong>
               </div>
-            </div>
-          ))}
-        </div>
-      </article>
+            ))}
+          </div>
+          <p>Según la columna EntregableCliente.</p>
+        </article>
+      </div>
 
       <div className="premiumFilters findingsFilters findingsFiltersTwoRows">
         <label className="searchFilter findingsSearchFilter">
@@ -3283,3 +3326,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_V4_GERENCIA_ENTREGABLES_MENU_FINAL
+
+
+// HALLAZGOS_V5_ENTREGABLES_DIVIDIDOS_FILTROS_FINAL
