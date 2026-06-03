@@ -424,7 +424,7 @@ function mapPending(rows) {
     imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
     technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
     validationClient: getRowValue(row, [
-      "ValidacionCliente", "ValidaciónCliente", "Validacion Cliente", "Validación Cliente",
+      "ValidacionDeCliente", "ValidaciónDeCliente", "Validacion De Cliente", "Validación De Cliente", "ValidacionCliente", "ValidaciónCliente", "Validacion Cliente", "Validación Cliente",
       "Validado", "AprobacionCliente", "AprobaciónCliente", "Aprobacion Cliente", "Aprobación Cliente"
     ]),
   })).filter((x) => x.request);
@@ -627,3 +627,5 @@ export async function loadSheetData() {
 // ENTREGABLES_V4_BADGES_VISIBLES_FINAL
 
 // COE_V9_TIPO_PROCESO_FINAL
+
+// PENDIENTES_V2_VALIDACION_CLIENTE_FINAL

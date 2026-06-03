@@ -1912,7 +1912,10 @@ function PendingClient({ pending, compact = false, setView }) {
   const [pendingValidation, setPendingValidation] = useState({});
   const [savingValidation, setSavingValidation] = useState({});
   const [validationMessage, setValidationMessage] = useState({});
-  const items = compact ? pending.slice(0, 4) : pending;
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("Todos");
+  const [validationFilter, setValidationFilter] = useState("Todos");
+
   const pendingWebhookUrl = safeUrl(import.meta.env.VITE_PENDING_WEBHOOK_URL || import.meta.env.VITE_DOCUMENTS_WEBHOOK_URL || "");
   const spreadsheetId = getActiveSpreadsheetId();
 
@@ -1920,6 +1923,65 @@ function PendingClient({ pending, compact = false, setView }) {
     const key = item.request || item.id || "";
     return pendingValidation[key] ?? item.validationClient ?? "";
   };
+
+  const normalizeValidation = (value) => {
+    const text = normalizeSystemName(value || "");
+    if (text.includes("validado") || text.includes("completado") || text.includes("finalizado")) return "Completado";
+    if (text.includes("pendiente") || !text) return "Pendiente";
+    return value;
+  };
+
+  const statusOptions = useMemo(() => pending.map((item) => item.status).filter(Boolean), [pending]);
+  const validationOptions = useMemo(() => {
+    const values = pending.map((item) => normalizeValidation(getValidationStatus(item))).filter(Boolean);
+    return [...new Set(["Completado", "Pendiente", ...values])];
+  }, [pending, pendingValidation]);
+
+  const filteredPending = useMemo(() => {
+    const query = normalizeSystemName(searchTerm);
+    return pending.filter((item) => {
+      const validationStatus = normalizeValidation(getValidationStatus(item));
+      const matchesStatus = statusFilter === "Todos" || item.status === statusFilter;
+      const matchesValidation = validationFilter === "Todos" || validationStatus === validationFilter;
+      const searchable = normalizeSystemName([
+        item.request,
+        item.owner,
+        item.dueDate,
+        item.status,
+        item.blocks,
+        item.description,
+        validationStatus,
+      ].join(" "));
+      return matchesStatus && matchesValidation && (!query || searchable.includes(query));
+    });
+  }, [pending, searchTerm, statusFilter, validationFilter, pendingValidation]);
+
+  const summary = useMemo(() => {
+    return pending.reduce((acc, item) => {
+      const statusText = normalizeSystemName(item.status || "");
+      const validationText = normalizeSystemName(normalizeValidation(getValidationStatus(item)));
+
+      if (statusText.includes("finalizado") || statusText.includes("completado") || statusText.includes("terminado")) {
+        acc.finalized += 1;
+      } else if (statusText.includes("desarrollo") || statusText.includes("desarollo") || statusText.includes("revision")) {
+        acc.development += 1;
+      } else if (statusText.includes("bloqueado")) {
+        acc.blocked += 1;
+      } else {
+        acc.pending += 1;
+      }
+
+      if (validationText.includes("completado") || validationText.includes("validado")) {
+        acc.completedValidation += 1;
+      } else {
+        acc.pendingValidation += 1;
+      }
+
+      return acc;
+    }, { pending: 0, development: 0, finalized: 0, blocked: 0, completedValidation: 0, pendingValidation: 0 });
+  }, [pending, pendingValidation]);
+
+  const items = compact ? pending.slice(0, 4) : filteredPending;
 
   const handleValidatePending = async (item, value = "Validado") => {
     const key = item.request || item.id || "";
@@ -1951,7 +2013,7 @@ function PendingClient({ pending, compact = false, setView }) {
           pendiente: item.request,
           responsable: item.owner,
           fecha: item.dueDate,
-          campo: "ValidacionCliente",
+          campo: "ValidacionDeCliente",
           valor: value,
           validacionCliente: value,
           fechaValidacion: new Date().toISOString(),
@@ -1984,21 +2046,89 @@ function PendingClient({ pending, compact = false, setView }) {
   };
 
   return (
-    <section className="card premiumSectionCard">
+    <section className="card premiumSectionCard pendingClientSection">
       <div className="sectionHeader">
         <div>
           <h2>Pendientes del cliente</h2>
           <p>Acciones necesarias para avanzar sin retrasos. Haz clic para ver descripción y enlace de aprobación.</p>
         </div>
+        {!compact && <Badge status="En validación">{filteredPending.length} visibles</Badge>}
       </div>
-      <div className="badgeRow"><Badge status="En validación">{pending.length} activos</Badge></div>
+
+      {!compact && (
+        <>
+          <div className="pendingSummaryGrid">
+            <article className="pendingSummaryCard">
+              <span>Total de pendientes</span>
+              <strong>{pending.length}</strong>
+              <p>Acciones registradas para seguimiento del cliente.</p>
+            </article>
+
+            <article className="pendingSummaryCard">
+              <span>Estado</span>
+              <div className="pendingMiniRows">
+                <div>
+                  <span>Pendiente</span>
+                  <div className="pendingMiniTrack"><i style={{ width: `${pending.length ? (summary.pending / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.pending}</strong>
+                </div>
+                <div>
+                  <span>En desarrollo</span>
+                  <div className="pendingMiniTrack soft"><i style={{ width: `${pending.length ? (summary.development / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.development}</strong>
+                </div>
+                <div>
+                  <span>Finalizado</span>
+                  <div className="pendingMiniTrack success"><i style={{ width: `${pending.length ? (summary.finalized / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.finalized}</strong>
+                </div>
+              </div>
+              <p>Según el estado del pendiente.</p>
+            </article>
+
+            <article className="pendingSummaryCard">
+              <span>Validación del cliente</span>
+              <div className="pendingMiniRows">
+                <div>
+                  <span>Completado</span>
+                  <div className="pendingMiniTrack success"><i style={{ width: `${pending.length ? (summary.completedValidation / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.completedValidation}</strong>
+                </div>
+                <div>
+                  <span>Pendiente</span>
+                  <div className="pendingMiniTrack"><i style={{ width: `${pending.length ? (summary.pendingValidation / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.pendingValidation}</strong>
+                </div>
+              </div>
+              <p>Según la columna ValidacionDeCliente.</p>
+            </article>
+          </div>
+
+          <div className="premiumFilters pendingFilters oneLinePendingFilters">
+            <label className="searchFilter pendingSearchFilter">
+              <span>Buscar</span>
+              <div className="searchInputWrap compact">
+                <Search size={18} />
+                <input
+                  value={searchTerm}
+                  onChange={(event) => setSearchTerm(event.target.value)}
+                  placeholder="Buscar pendiente, responsable o bloqueo"
+                />
+              </div>
+            </label>
+            <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={statusOptions} />
+            <FilterSelect label="Validado" value={validationFilter} onChange={setValidationFilter} options={validationOptions} />
+          </div>
+        </>
+      )}
 
       <div className="pendingList">
         {items.map((item) => {
           const isOpen = openPending === item.request;
           const link = safeUrl(item.link);
           const validationStatus = getValidationStatus(item);
-          const isValidated = String(validationStatus || "").toLowerCase().includes("validado");
+          const normalizedValidation = normalizeValidation(validationStatus);
+          const isValidated = normalizedValidation === "Completado";
           const key = item.request || item.id || `${item.owner}-${item.dueDate}`;
 
           return (
@@ -2030,7 +2160,7 @@ function PendingClient({ pending, compact = false, setView }) {
                 <Badge status={item.status}>{item.status}</Badge>
 
                 {isValidated ? (
-                  <Badge status="Finalizado">Validado</Badge>
+                  <Badge status="Finalizado">Completado</Badge>
                 ) : (
                   <button
                     className="pendingValidatePill"
@@ -2071,6 +2201,10 @@ function PendingClient({ pending, compact = false, setView }) {
           );
         })}
       </div>
+
+      {!compact && filteredPending.length === 0 && (
+        <div className="emptyState">No hay pendientes que coincidan con los filtros seleccionados.</div>
+      )}
 
       {compact && pending.length > 4 && (
         <button className="plainAction" onClick={() => setView?.("pendientes")}>
@@ -2944,3 +3078,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // COE_V11_NUMEROS_IGUAL_LISTA_MAESTRA
+
+
+// PENDIENTES_V2_VALIDACION_CLIENTE_FINAL

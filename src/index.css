@@ -10247,3 +10247,171 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
   align-items: end !important;
   width: 100% !important;
 }
+
+
+/* ==========================================================
+   PENDIENTES_V2_VALIDACION_CLIENTE_FINAL
+   Pendientes del cliente: 3 tarjetas + buscador + filtros.
+   ========================================================== */
+
+.pendingSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin: 22px 0;
+}
+
+.pendingSummaryCard {
+  min-height: 205px;
+  padding: 26px 28px;
+  border-radius: 28px;
+  border: 1px solid rgba(0, 184, 181, 0.24);
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem), #ffffff !important;
+  box-shadow: 0 22px 46px rgba(0, 59, 63, 0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #102F37 !important;
+}
+
+.pendingSummaryCard,
+.pendingSummaryCard * {
+  color: #102F37 !important;
+}
+
+.pendingSummaryCard > span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.pendingSummaryCard > strong {
+  color: #00877f !important;
+  -webkit-text-fill-color: #00877f !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 0.9;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  margin: 8px 0;
+}
+
+.pendingSummaryCard > p {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 0.86rem;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.pendingMiniRows {
+  display: grid;
+  gap: 11px;
+  margin: 10px 0;
+}
+
+.pendingMiniRows > div {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 32px;
+  gap: 9px;
+  align-items: center;
+}
+
+.pendingMiniRows span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.pendingMiniRows strong {
+  color: #0B4E58 !important;
+  -webkit-text-fill-color: #0B4E58 !important;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: right;
+}
+
+.pendingMiniTrack {
+  height: 11px;
+  border-radius: 999px;
+  background: #dfe7ea;
+  overflow: hidden;
+}
+
+.pendingMiniTrack i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #007f7d, #00b8b5);
+}
+
+.pendingMiniTrack.soft i {
+  background: linear-gradient(90deg, #7ddbd8, #00b8b5);
+}
+
+.pendingMiniTrack.success i {
+  background: linear-gradient(90deg, #00877f, #4ddbd7);
+}
+
+.pendingFilters.oneLinePendingFilters,
+.premiumFilters.pendingFilters.oneLinePendingFilters {
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1fr) minmax(160px, 0.55fr) minmax(160px, 0.55fr) !important;
+  gap: 12px !important;
+  align-items: end !important;
+  width: 100% !important;
+  margin: 22px 0 !important;
+}
+
+.pendingFilters.oneLinePendingFilters .searchFilter,
+.pendingFilters.oneLinePendingFilters .pendingSearchFilter,
+.pendingFilters.oneLinePendingFilters .filter {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.pendingFilters.oneLinePendingFilters .searchInputWrap,
+.pendingFilters.oneLinePendingFilters .searchInputWrap.compact,
+.pendingFilters.oneLinePendingFilters .filter select {
+  min-height: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.pendingFilters.oneLinePendingFilters .filter span,
+.pendingFilters.oneLinePendingFilters .searchFilter > span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 11px !important;
+}
+
+.pendingClientSection .pendingCard {
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.06), transparent 14rem), #ffffff !important;
+  color: #102F37 !important;
+}
+
+.pendingClientSection .pendingCard .itemTitle {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+}
+
+.pendingClientSection .pendingCard .muted,
+.pendingClientSection .pendingCard .pendingMeta {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+}
+
+@media (max-width: 1080px) {
+  .pendingSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .pendingFilters.oneLinePendingFilters,
+  .premiumFilters.pendingFilters.oneLinePendingFilters {
+    grid-template-columns: 1fr !important;
+  }
+}
