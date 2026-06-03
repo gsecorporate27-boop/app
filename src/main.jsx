@@ -3081,3 +3081,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // PENDIENTES_V2_VALIDACION_CLIENTE_FINAL
+
+
+// PENDIENTES_V3_BADGES_DESCRIPCION_VISIBLE_FINAL

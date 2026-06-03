@@ -10415,3 +10415,150 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     grid-template-columns: 1fr !important;
   }
 }
+
+
+/* ==========================================================
+   PENDIENTES_V3_BADGES_DESCRIPCION_VISIBLE_FINAL
+   Corrige badges de estado y descripción desplegable.
+   ========================================================== */
+
+.pendingClientSection .pendingCard .pendingActionRow .badge,
+.pendingClientSection .pendingCard .pendingActionRow [class*="badge"],
+.pendingClientSection .pendingCard .badgeRow.pendingActionRow .badge,
+.pendingClientSection .pendingCard .badgeRow.pendingActionRow [class*="badge"],
+.pendingList .pendingCard .pendingActionRow .badge,
+.pendingList .pendingCard .pendingActionRow [class*="badge"] {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: max-content !important;
+  min-width: 104px !important;
+  min-height: 34px !important;
+  padding: 8px 17px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  border: 1px solid rgba(0, 184, 181, 0.28) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.78rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  box-shadow: 0 12px 28px rgba(0, 184, 181, 0.18) !important;
+}
+
+.pendingClientSection .pendingCard .pendingActionRow .badge *,
+.pendingClientSection .pendingCard .pendingActionRow [class*="badge"] *,
+.pendingList .pendingCard .pendingActionRow .badge *,
+.pendingList .pendingCard .pendingActionRow [class*="badge"] * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.pendingClientSection .pendingValidatePill,
+.pendingList .pendingValidatePill {
+  min-width: 104px !important;
+  min-height: 34px !important;
+  padding: 8px 17px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(0, 184, 181, 0.28) !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.78rem !important;
+  font-weight: 850 !important;
+  box-shadow: 0 12px 28px rgba(0, 184, 181, 0.18) !important;
+}
+
+.pendingClientSection .pendingActionRow,
+.pendingList .pendingActionRow {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  flex-wrap: wrap !important;
+  margin: 14px 0 10px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.pendingClientSection .pendingDetails,
+.pendingList .pendingDetails {
+  margin-top: 16px !important;
+  padding: 20px 22px !important;
+  border-radius: 22px !important;
+  border: 1px solid rgba(0, 184, 181, 0.20) !important;
+  background: #eefafa !important;
+  color: #102F37 !important;
+  -webkit-text-fill-color: initial !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.65) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.pendingClientSection .pendingDetails .detailBlock,
+.pendingClientSection .pendingDetails .routeDetailTextBlock,
+.pendingList .pendingDetails .detailBlock,
+.pendingList .pendingDetails .routeDetailTextBlock {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+}
+
+.pendingClientSection .pendingDetails strong,
+.pendingList .pendingDetails strong {
+  display: block !important;
+  margin-bottom: 9px !important;
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.94rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.01em !important;
+}
+
+.pendingClientSection .pendingDetails p,
+.pendingClientSection .pendingDetails span,
+.pendingList .pendingDetails p,
+.pendingList .pendingDetails span {
+  color: #3d5b63 !important;
+  -webkit-text-fill-color: #3d5b63 !important;
+  font-size: 1rem !important;
+  line-height: 1.48 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.pendingClientSection .pendingDetails .secondaryLink,
+.pendingList .pendingDetails .secondaryLink {
+  margin-top: 14px !important;
+  background: rgba(0, 184, 181, 0.08) !important;
+  color: #007f7d !important;
+  -webkit-text-fill-color: #007f7d !important;
+  border: 1px solid rgba(0, 184, 181, 0.22) !important;
+}
+
+.pendingClientSection .pendingCard:not(.selected) .pendingDetails,
+.pendingClientSection .pendingCard.selected .pendingDetails,
+.pendingClientSection .pendingCard.clientValidated .pendingDetails {
+  background: #eefafa !important;
+  color: #102F37 !important;
+}
+
+.pendingClientSection .pendingCard .itemTitle {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+}
+
+.pendingClientSection .pendingCard .muted,
+.pendingClientSection .pendingCard .pendingMeta,
+.pendingClientSection .pendingCard .pendingMeta * {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+}
