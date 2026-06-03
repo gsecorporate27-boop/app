@@ -1812,6 +1812,7 @@ function Findings({ findings = [] }) {
   const [managementFilter, setManagementFilter] = useState("Todos");
   const [areaFilter, setAreaFilter] = useState("Todos");
   const [ownerFilter, setOwnerFilter] = useState("Todos");
+  const [deliverableFilter, setDeliverableFilter] = useState("Todos");
 
   const getFindingStatusGroup = (status = "") => {
     const value = normalizeSystemName(status);
@@ -1839,6 +1840,10 @@ function Findings({ findings = [] }) {
   const managements = useMemo(() => findings.map((item) => item.management || item.gerencia).filter(Boolean), [findings]);
   const areas = useMemo(() => findings.map((item) => item.areaDetail || item.area).filter(Boolean), [findings]);
   const owners = useMemo(() => findings.map((item) => item.owner || item.responsible).filter(Boolean), [findings]);
+  const deliverables = useMemo(() => {
+    const values = findings.flatMap((item) => [item.deliverableGSE, item.deliverableClient]).filter(Boolean);
+    return [...new Set(["Política", "Procedimiento", "Indicador", "Perfiles", "Rediseño de procesos", ...values])];
+  }, [findings]);
   const statuses = useMemo(() => {
     const sheetStatuses = findings.map((item) => item.status).filter(Boolean);
     return [...new Set(["Pendiente", "En proceso", "Completado", ...sheetStatuses])];
@@ -1895,6 +1900,11 @@ function Findings({ findings = [] }) {
       const matchesManagement = managementFilter === "Todos" || management === managementFilter;
       const matchesArea = areaFilter === "Todos" || area === areaFilter;
       const matchesOwner = ownerFilter === "Todos" || owner === ownerFilter;
+      const deliverableGSE = item.deliverableGSE || "";
+      const deliverableClient = item.deliverableClient || "";
+      const deliverableGroupGSE = categories.find((category) => category.key === getCategoryKey(deliverableGSE))?.label || deliverableGSE;
+      const deliverableGroupClient = categories.find((category) => category.key === getCategoryKey(deliverableClient))?.label || deliverableClient;
+      const matchesDeliverable = deliverableFilter === "Todos" || deliverableGSE === deliverableFilter || deliverableClient === deliverableFilter || deliverableGroupGSE === deliverableFilter || deliverableGroupClient === deliverableFilter;
       const searchable = normalizeSystemName([
         item.id,
         management,
@@ -1911,9 +1921,9 @@ function Findings({ findings = [] }) {
         statusGroup,
         priority,
       ].join(" "));
-      return matchesPriority && matchesProcess && matchesStatus && matchesManagement && matchesArea && matchesOwner && (!query || searchable.includes(query));
+      return matchesPriority && matchesProcess && matchesStatus && matchesManagement && matchesArea && matchesOwner && matchesDeliverable && (!query || searchable.includes(query));
     });
-  }, [findings, searchTerm, priorityFilter, processFilter, statusFilter, managementFilter, areaFilter, ownerFilter]);
+  }, [findings, searchTerm, priorityFilter, processFilter, statusFilter, managementFilter, areaFilter, ownerFilter, deliverableFilter]);
 
   const visibleDeliverableSummary = useMemo(() => {
     const initial = categories.reduce((acc, category) => {
@@ -1964,7 +1974,7 @@ function Findings({ findings = [] }) {
             <div><strong>{statusSummary.inProcess}</strong><small>En proceso</small></div>
             <div><strong>{statusSummary.completed}</strong><small>Completado</small></div>
           </div>
-          <p>Según la columna Estado.</p>
+          <p>Lectura actual de avance de los hallazgos.</p>
         </article>
       </div>
 
@@ -1986,7 +1996,7 @@ function Findings({ findings = [] }) {
               </div>
             ))}
           </div>
-          <p>Según la columna EntregableGSE.</p>
+          <p>Clasificación de entregables internos.</p>
         </article>
 
         <article className="findingsDeliverableTotalCard client">
@@ -2006,7 +2016,7 @@ function Findings({ findings = [] }) {
               </div>
             ))}
           </div>
-          <p>Según la columna EntregableCliente.</p>
+          <p>Clasificación de entregables requeridos.</p>
         </article>
       </div>
 
@@ -2028,6 +2038,7 @@ function Findings({ findings = [] }) {
         <FilterSelect label="Gerencia" value={managementFilter} onChange={setManagementFilter} options={managements} />
         <FilterSelect label="Área" value={areaFilter} onChange={setAreaFilter} options={areas} />
         <FilterSelect label="Responsable" value={ownerFilter} onChange={setOwnerFilter} options={owners} />
+        <FilterSelect label="Entregable" value={deliverableFilter} onChange={setDeliverableFilter} options={deliverables} />
       </div>
 
       <div className="findingsGridWhite">
@@ -2060,22 +2071,23 @@ function Findings({ findings = [] }) {
                 <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={20} />
               </button>
 
+              <div className="findingVisibleMetaGrid">
+                {management && <div><span>Gerencia</span><strong>{management}</strong></div>}
+                {area && <div><span>Área</span><strong>{area}</strong></div>}
+                {owner && <div><span>Responsable</span><strong>{owner}</strong></div>}
+                <div><span>Entregable GSE</span><strong>{item.deliverableGSE || "-"}</strong></div>
+                <div><span>Entregable cliente</span><strong>{item.deliverableClient || "-"}</strong></div>
+              </div>
+
+              {link && (
+                <a className="secondaryLink findingLink findingLinkOutside" href={link} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>
+                  Abrir evidencia o carpeta <ExternalLink size={15} />
+                </a>
+              )}
+
               {isOpen && (
                 <div className="findingFixedExpanded">
                   <div className="findingFixedScroll">
-                    {(management || area || owner) && (
-                      <div className="findingDetailGrid">
-                        {management && <div><strong>Gerencia</strong><span>{management}</span></div>}
-                        {area && <div><strong>Área</strong><span>{area}</span></div>}
-                        {owner && <div><strong>Responsable</strong><span>{owner}</span></div>}
-                      </div>
-                    )}
-                    {(item.deliverableGSE || item.deliverableClient) && (
-                      <div className="findingDetailGrid">
-                        {item.deliverableGSE && <div><strong>Entregable GSE</strong><span>{item.deliverableGSE}</span></div>}
-                        {item.deliverableClient && <div><strong>Entregable cliente</strong><span>{item.deliverableClient}</span></div>}
-                      </div>
-                    )}
                     {item.description && (
                       <div className="findingDetailBlock">
                         <strong>Descripción técnica del hallazgo</strong>
@@ -2096,11 +2108,6 @@ function Findings({ findings = [] }) {
                         </div>
                       )}
                     </div>
-                    {link && (
-                      <a className="secondaryLink findingLink" href={link} target="_blank" rel="noreferrer">
-                        Abrir evidencia o carpeta <ExternalLink size={15} />
-                      </a>
-                    )}
                     {!item.description && !recommendation && !solutionType && !owner && !link && (
                       <p className="muted">Agrega descripción, recomendación, responsable o link en la pestaña Hallazgos para mostrar más detalle.</p>
                     )}
@@ -3329,3 +3336,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_V5_ENTREGABLES_DIVIDIDOS_FILTROS_FINAL
+
+
+// HALLAZGOS_V6_FILTRO_ENTREGABLE_META_VISIBLE_FINAL
