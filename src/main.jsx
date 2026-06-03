@@ -115,8 +115,8 @@ function Sidebar({ view, setView, project }) {
     [ClipboardCheck, "Lista Maestra de Procesos", "procesos"],
     [BarChart3, "COE", "coe"],
     [Search, "Hallazgos", "hallazgos"],
-    [AlertTriangle, "Pendientes", "pendientes"],
-    [FileText, "Entregables", "entregables"],
+    [AlertTriangle, "Pendientes clientes", "pendientes"],
+    [FileText, "Entregables GSE", "entregables"],
     [UploadCloud, "Carga de documentos", "documentos"],
     [BookOpen, "Lo que vas a recibir", "educacion"],
   ];
@@ -1809,6 +1809,9 @@ function Findings({ findings = [] }) {
   const [priorityFilter, setPriorityFilter] = useState("Todos");
   const [processFilter, setProcessFilter] = useState("Todos");
   const [statusFilter, setStatusFilter] = useState("Todos");
+  const [managementFilter, setManagementFilter] = useState("Todos");
+  const [areaFilter, setAreaFilter] = useState("Todos");
+  const [ownerFilter, setOwnerFilter] = useState("Todos");
 
   const getFindingStatusGroup = (status = "") => {
     const value = normalizeSystemName(status);
@@ -1817,8 +1820,25 @@ function Findings({ findings = [] }) {
     return "Pendiente";
   };
 
+  const categories = [
+    { key: "politicas", label: "Políticas", words: ["politica", "politicas", "política", "políticas"] },
+    { key: "procedimientos", label: "Procedimientos", words: ["procedimiento", "procedimientos", "manual", "manuales"] },
+    { key: "indicador", label: "Indicador", words: ["indicador", "indicadores", "kpi", "kpís", "kpis"] },
+    { key: "perfiles", label: "Perfiles", words: ["perfil", "perfiles", "cargo", "cargos"] },
+    { key: "rediseno", label: "Rediseño de procesos", words: ["rediseno", "rediseño", "redisenio", "rediseñar", "redisenar", "proceso", "procesos"] },
+  ];
+
+  const getCategoryKey = (value = "") => {
+    const text = normalizeSystemName(value);
+    const match = categories.find((category) => category.words.some((word) => text.includes(normalizeSystemName(word))));
+    return match?.key || "otros";
+  };
+
   const priorities = useMemo(() => findings.map((item) => item.priority).filter(Boolean), [findings]);
-  const processes = useMemo(() => findings.map((item) => item.processArea || item.area).filter(Boolean), [findings]);
+  const processes = useMemo(() => findings.map((item) => item.processArea || item.process || item.area).filter(Boolean), [findings]);
+  const managements = useMemo(() => findings.map((item) => item.management || item.gerencia).filter(Boolean), [findings]);
+  const areas = useMemo(() => findings.map((item) => item.areaDetail || item.area).filter(Boolean), [findings]);
+  const owners = useMemo(() => findings.map((item) => item.owner || item.responsible).filter(Boolean), [findings]);
   const statuses = useMemo(() => {
     const sheetStatuses = findings.map((item) => item.status).filter(Boolean);
     return [...new Set(["Pendiente", "En proceso", "Completado", ...sheetStatuses])];
@@ -1834,31 +1854,66 @@ function Findings({ findings = [] }) {
     }, { pending: 0, inProcess: 0, completed: 0 });
   }, [findings]);
 
+  const deliverableSummary = useMemo(() => {
+    const initial = categories.reduce((acc, category) => {
+      acc[category.key] = { label: category.label, gse: 0, client: 0 };
+      return acc;
+    }, {});
+
+    return findings.reduce((acc, item) => {
+      const gseKey = getCategoryKey(item.deliverableGSE || "");
+      const clientKey = getCategoryKey(item.deliverableClient || "");
+
+      if (acc[gseKey]) acc[gseKey].gse += item.deliverableGSE ? 1 : 0;
+      if (acc[clientKey]) acc[clientKey].client += item.deliverableClient ? 1 : 0;
+
+      return acc;
+    }, initial);
+  }, [findings]);
+
+  const deliverableTotals = useMemo(() => {
+    return Object.values(deliverableSummary).reduce((acc, item) => {
+      acc.gse += item.gse;
+      acc.client += item.client;
+      return acc;
+    }, { gse: 0, client: 0 });
+  }, [deliverableSummary]);
+
   const filteredFindings = useMemo(() => {
     const query = normalizeSystemName(searchTerm);
     return findings.filter((item) => {
-      const process = item.processArea || item.area || "";
+      const process = item.processArea || item.process || item.area || "";
+      const area = item.areaDetail || item.area || "";
+      const management = item.management || item.gerencia || "";
+      const owner = item.owner || item.responsible || "";
       const priority = item.priority || "";
       const status = item.status || "";
       const statusGroup = getFindingStatusGroup(status);
       const matchesPriority = priorityFilter === "Todos" || priority === priorityFilter;
       const matchesProcess = processFilter === "Todos" || process === processFilter;
       const matchesStatus = statusFilter === "Todos" || status === statusFilter || statusGroup === statusFilter;
+      const matchesManagement = managementFilter === "Todos" || management === managementFilter;
+      const matchesArea = areaFilter === "Todos" || area === areaFilter;
+      const matchesOwner = ownerFilter === "Todos" || owner === ownerFilter;
       const searchable = normalizeSystemName([
         item.id,
+        management,
+        area,
         process,
         item.finding,
         item.description,
         item.recommendation || item.solution,
         item.solutionType || item.system,
-        item.owner,
+        owner,
+        item.deliverableGSE,
+        item.deliverableClient,
         status,
         statusGroup,
         priority,
       ].join(" "));
-      return matchesPriority && matchesProcess && matchesStatus && (!query || searchable.includes(query));
+      return matchesPriority && matchesProcess && matchesStatus && matchesManagement && matchesArea && matchesOwner && (!query || searchable.includes(query));
     });
-  }, [findings, searchTerm, priorityFilter, processFilter, statusFilter]);
+  }, [findings, searchTerm, priorityFilter, processFilter, statusFilter, managementFilter, areaFilter, ownerFilter]);
 
   return (
     <section className="card premiumSectionCard findingsPremiumSection">
@@ -1888,7 +1943,31 @@ function Findings({ findings = [] }) {
         </article>
       </div>
 
-      <div className="premiumFilters findingsFilters oneLineFindingsFilters">
+      <article className="findingsDeliverablesSummaryCard">
+        <div className="findingsDeliverablesHeader">
+          <div>
+            <span>Entregables vinculados a hallazgos</span>
+            <h3>GSE: {deliverableTotals.gse} · Cliente: {deliverableTotals.client}</h3>
+          </div>
+          <Badge status="En validación">GSE / Cliente</Badge>
+        </div>
+
+        <div className="findingsDeliverablesGrid">
+          {Object.values(deliverableSummary).map((item) => (
+            <div className="findingsDeliverableMiniCard" key={item.label}>
+              <span>{item.label}</span>
+              <div>
+                <strong>{item.gse}</strong><small>GSE</small>
+              </div>
+              <div>
+                <strong>{item.client}</strong><small>Cliente</small>
+              </div>
+            </div>
+          ))}
+        </div>
+      </article>
+
+      <div className="premiumFilters findingsFilters findingsFiltersTwoRows">
         <label className="searchFilter findingsSearchFilter">
           <span>Buscar</span>
           <div className="searchInputWrap compact">
@@ -1903,11 +1982,17 @@ function Findings({ findings = [] }) {
         <FilterSelect label="Prioridad" value={priorityFilter} onChange={setPriorityFilter} options={priorities} />
         <FilterSelect label="Proceso" value={processFilter} onChange={setProcessFilter} options={processes} />
         <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={statuses} />
+        <FilterSelect label="Gerencia" value={managementFilter} onChange={setManagementFilter} options={managements} />
+        <FilterSelect label="Área" value={areaFilter} onChange={setAreaFilter} options={areas} />
+        <FilterSelect label="Responsable" value={ownerFilter} onChange={setOwnerFilter} options={owners} />
       </div>
 
       <div className="findingsGridWhite">
         {filteredFindings.map((item) => {
-          const process = item.processArea || item.area || "Proceso no definido";
+          const process = item.processArea || item.process || item.area || "Proceso no definido";
+          const area = item.areaDetail || item.area;
+          const management = item.management || item.gerencia;
+          const owner = item.owner || item.responsible;
           const recommendation = item.recommendation || item.solution;
           const solutionType = item.solutionType || item.system;
           const link = safeUrl(item.link || item.image);
@@ -1935,6 +2020,19 @@ function Findings({ findings = [] }) {
               {isOpen && (
                 <div className="findingFixedExpanded">
                   <div className="findingFixedScroll">
+                    {(management || area || owner) && (
+                      <div className="findingDetailGrid">
+                        {management && <div><strong>Gerencia</strong><span>{management}</span></div>}
+                        {area && <div><strong>Área</strong><span>{area}</span></div>}
+                        {owner && <div><strong>Responsable</strong><span>{owner}</span></div>}
+                      </div>
+                    )}
+                    {(item.deliverableGSE || item.deliverableClient) && (
+                      <div className="findingDetailGrid">
+                        {item.deliverableGSE && <div><strong>Entregable GSE</strong><span>{item.deliverableGSE}</span></div>}
+                        {item.deliverableClient && <div><strong>Entregable cliente</strong><span>{item.deliverableClient}</span></div>}
+                      </div>
+                    )}
                     {item.description && (
                       <div className="findingDetailBlock">
                         <strong>Descripción técnica del hallazgo</strong>
@@ -1954,19 +2052,13 @@ function Findings({ findings = [] }) {
                           <span>{solutionType}</span>
                         </div>
                       )}
-                      {item.owner && (
-                        <div>
-                          <strong>Responsable sugerido</strong>
-                          <span>{item.owner}</span>
-                        </div>
-                      )}
                     </div>
                     {link && (
                       <a className="secondaryLink findingLink" href={link} target="_blank" rel="noreferrer">
                         Abrir evidencia o carpeta <ExternalLink size={15} />
                       </a>
                     )}
-                    {!item.description && !recommendation && !solutionType && !item.owner && !link && (
+                    {!item.description && !recommendation && !solutionType && !owner && !link && (
                       <p className="muted">Agrega descripción, recomendación, responsable o link en la pestaña Hallazgos para mostrar más detalle.</p>
                     )}
                   </div>
@@ -3186,3 +3278,8 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RESUMEN_V10_RIV_AJUSTES_VISUALES_FINAL
+
+// RESUMEN_V11_RADAR_HITOS_HOMOGENEO_FINAL
+
+
+// HALLAZGOS_V4_GERENCIA_ENTREGABLES_MENU_FINAL

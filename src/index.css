@@ -11971,3 +11971,269 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
 .dashboardGaugeMask {
   display: none !important;
 }
+
+/* ==========================================================
+   RESUMEN_V11_RADAR_HITOS_HOMOGENEO_FINAL
+   Ajusta radar hacia arriba y homogeneiza textos de Hitos.
+   ========================================================== */
+
+/* Tarjeta Avance por sistemas: sube el gráfico dentro de la tarjeta */
+.summaryRadarCard {
+  justify-content: flex-start !important;
+}
+
+.summaryRadarCard .summaryBottomHeader {
+  margin-bottom: 0 !important;
+}
+
+.summaryMirrorPage .summaryRadarCard .summaryRadarMini,
+.summaryRadarCard .summaryRadarMini {
+  height: 142px !important;
+  margin-top: -8px !important;
+  overflow: visible !important;
+}
+
+.summaryRadarCard .summaryRadarMini .dashboardRadarWrap {
+  height: 142px !important;
+  align-items: start !important;
+  padding-top: 0 !important;
+}
+
+.summaryRadarCard .summaryRadarMini .dashboardRadarSvg {
+  width: 132px !important;
+  height: 132px !important;
+  align-self: start !important;
+  margin-top: -4px !important;
+}
+
+.summaryRadarCard .summaryRadarMini .radarSystemLegend {
+  align-self: start !important;
+  margin-top: 4px !important;
+}
+
+.summaryRadarCard .summaryRadarMini .radarLegend {
+  align-self: start !important;
+  margin-top: 5px !important;
+}
+
+/* Hitos completados: todos los textos como tarjetas KPI, excepto el número 1/5 */
+.summaryHitosCombinedCard .hitosProgressHeader h2,
+.summaryHitosCombinedCard .hitosProgressHeader h2 *,
+.summaryHitosCombinedCard .hitosProgressLabel,
+.summaryHitosCombinedCard .hitosProgressHelp,
+.summaryHitosCombinedCard .hitoName,
+.summaryHitosCombinedCard .summaryHitosStatusHeader h3,
+.summaryHitosCombinedCard .summaryHitosStatusTable,
+.summaryHitosCombinedCard .summaryHitosStatusTable th,
+.summaryHitosCombinedCard .summaryHitosStatusTable td {
+  font-size: 0.84rem !important;
+  line-height: 1.16 !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressHeader h2,
+.summaryHitosCombinedCard .hitosProgressLabel,
+.summaryHitosCombinedCard .summaryHitosStatusHeader h3 {
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressHeader p,
+.summaryHitosCombinedCard .hitosProgressSubcopy,
+.summaryHitosCombinedCard .hitosProgressHelp {
+  font-size: 0.78rem !important;
+  line-height: 1.26 !important;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressLabel {
+  margin-top: 6px !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressSubcopy {
+  max-width: 132px !important;
+}
+
+.summaryHitosCombinedCard .hitosTrackLabel.named {
+  min-width: 98px !important;
+  min-height: 62px !important;
+  padding: 8px 9px !important;
+}
+
+.summaryHitosCombinedCard .hitoCode {
+  font-size: 0.64rem !important;
+  line-height: 1 !important;
+}
+
+.summaryHitosCombinedCard .hitoName {
+  font-size: 0.68rem !important;
+  line-height: 1.1 !important;
+  font-weight: 750 !important;
+}
+
+.summaryHitosCombinedCard .hitosNamesScroller {
+  margin-top: 8px !important;
+}
+
+.summaryHitosCombinedCard .hitosLineWrap.namedLine {
+  margin-top: 12px !important;
+}
+
+.summaryHitosCombinedCard .hitosProgressHelp {
+  margin-top: 12px !important;
+  max-width: 94% !important;
+}
+
+/* Mantener el número principal de hitos con jerarquía grande */
+.summaryHitosCombinedCard .hitosProgressValue {
+  font-size: clamp(3.2rem, 5.2vw, 5.7rem) !important;
+  line-height: 0.9 !important;
+  font-weight: 800 !important;
+}
+
+
+/* ==========================================================
+   HALLAZGOS_V4_GERENCIA_ENTREGABLES_MENU_FINAL
+   Hallazgos: Gerencia/Área/Responsable + entregables GSE/Cliente.
+   ========================================================== */
+
+.findingsDeliverablesSummaryCard {
+  margin: 22px 0;
+  padding: 24px 26px;
+  border-radius: 28px;
+  border: 1px solid rgba(0, 184, 181, 0.24);
+  background: radial-gradient(circle at top left, rgba(0, 184, 181, 0.08), transparent 16rem), #ffffff !important;
+  box-shadow: 0 22px 46px rgba(0, 59, 63, 0.06);
+}
+
+.findingsDeliverablesHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.findingsDeliverablesHeader span {
+  display: block;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.86rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.findingsDeliverablesHeader h3 {
+  margin: 5px 0 0;
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  font-weight: 800;
+}
+
+.findingsDeliverablesGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.findingsDeliverableMiniCard {
+  min-height: 104px;
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 184, 181, 0.22);
+  background: rgba(0, 184, 181, 0.055);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  align-items: center;
+}
+
+.findingsDeliverableMiniCard > span {
+  grid-column: 1 / -1;
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.18;
+  font-weight: 800;
+}
+
+.findingsDeliverableMiniCard div {
+  min-height: 52px;
+  border-radius: 15px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 184, 181, 0.16);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.findingsDeliverableMiniCard strong {
+  color: #00877f !important;
+  -webkit-text-fill-color: #00877f !important;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.32rem;
+  line-height: 1;
+  font-weight: 760;
+}
+
+.findingsDeliverableMiniCard small {
+  margin-top: 4px;
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 0.63rem;
+  font-weight: 800;
+}
+
+.findingsFiltersTwoRows,
+.premiumFilters.findingsFiltersTwoRows {
+  display: grid !important;
+  grid-template-columns: minmax(250px, 1fr) repeat(3, minmax(150px, 0.55fr)) !important;
+  gap: 12px !important;
+  align-items: end !important;
+  width: 100% !important;
+}
+
+.findingsFiltersTwoRows .filter,
+.findingsFiltersTwoRows .searchFilter {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.findingsFiltersTwoRows .searchInputWrap,
+.findingsFiltersTwoRows .searchInputWrap.compact,
+.findingsFiltersTwoRows .filter select {
+  min-height: 46px !important;
+  height: 46px !important;
+  border-radius: 16px !important;
+}
+
+.findingDetailGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 1180px) {
+  .findingsDeliverablesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .findingsFiltersTwoRows,
+  .premiumFilters.findingsFiltersTwoRows {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .findingsDeliverablesGrid,
+  .findingsFiltersTwoRows,
+  .premiumFilters.findingsFiltersTwoRows,
+  .findingDetailGrid {
+    grid-template-columns: 1fr !important;
+  }
+}

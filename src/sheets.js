@@ -370,8 +370,10 @@ function mapFindings(rows) {
   return rows.map((row, index) => {
     const processArea = getRowValue(row, [
       "ProcesoAreaImpactada", "Proceso / Área Impactada", "Proceso / Area Impactada",
-      "ProcesoArea", "Proceso Area", "Área Impactada", "Area Impactada", "Area", "Área", "Area 2"
+      "ProcesoArea", "Proceso Area", "Área Impactada", "Area Impactada", "Proceso", "Proceso Impactado", "Proceso impactado", "Area 2"
     ]);
+    const management = getRowValue(row, ["Gerencia", "GERENCIA", "Gerencia responsable", "Gerencia Responsable"]);
+    const areaDetail = getRowValue(row, ["Area", "Área", "AREA", "Área responsable", "Area responsable", "Area Responsable", "Área Responsable"]);
     const finding = getRowValue(row, [
       "HallazgoIdentificado", "Hallazgo Identificado", "Hallazgo", "Hallazgo identificado"
     ]);
@@ -387,13 +389,16 @@ function mapFindings(rows) {
       "TipoSolucion", "Tipo de Solución", "Tipo de Solucion", "Tipo Solucion", "Sistema", "Sistema que lo resuelve"
     ]);
     const owner = getRowValue(row, [
-      "ResponsableSugerido", "Responsable Sugerido", "Responsable", "Responsable sugerido"
+      "ResponsableSugerido", "Responsable Sugerido", "Responsable", "Responsable sugerido", "Responsable Hallazgo", "ResponsableHallazgo"
     ]);
 
     return {
       id: getRowValue(row, ["ID", "Id", "Codigo", "Código"]) || String(index + 1),
+      management,
+      gerencia: management,
       processArea,
-      area: processArea,
+      area: areaDetail || processArea,
+      areaDetail,
       finding,
       description,
       recommendation,
@@ -402,14 +407,17 @@ function mapFindings(rows) {
       solutionType,
       system: solutionType,
       owner,
+      responsible: owner,
       status: getRowValue(row, ["Estado"]),
+      deliverableGSE: getRowValue(row, ["EntregableGSE", "Entregable GSE", "EntregablesGSE", "Entregables GSE", "GSE"]),
+      deliverableClient: getRowValue(row, ["EntregableCliente", "Entregable Cliente", "EntregablesCliente", "Entregables Cliente", "Cliente"]),
       link: getRowValue(row, ["Link", "URL", "Enlace", "Documento", "Archivo", "Carpeta", "LinkHallazgo"]),
-    imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
-    technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
+      imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
+      technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
       impact: getRowValue(row, ["Impacto"]),
       image: getRowValue(row, ["Imagen", "ImagenPreview", "Imagen previa", "URLImagen"]),
     };
-  }).filter((x) => x.finding || x.description || x.processArea);
+  }).filter((x) => x.finding || x.description || x.processArea || x.area || x.management);
 }
 
 function mapPending(rows) {
@@ -635,3 +643,5 @@ export async function loadSheetData() {
 // HALLAZGOS_V3_ESTADOS_TITULOS_FINAL
 
 // RESUMEN_V6_HITOS_MATRIZ_ESTADOS_FINAL
+
+// HALLAZGOS_V4_GERENCIA_ENTREGABLES_MENU_FINAL
