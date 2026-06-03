@@ -12495,3 +12495,149 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ==========================================================
+   HALLAZGOS_V7_FILTROS_DEPENDIENTES_TAGS_FINAL
+   Filtros vinculados, entregables reales y metadatos como etiquetas.
+   ========================================================== */
+
+/* Las tarjetas de cantidad ya no muestran textos internos innecesarios */
+.compactDeliverableCards .findingsDeliverableTotalCard,
+.compactDeliverableCards .findingsDeliverableBreakdownCard {
+  min-height: 190px !important;
+  padding: 24px 26px !important;
+}
+
+.compactDeliverableCards .findingsDeliverableTotalCard > p,
+.compactDeliverableCards .findingsDeliverableBreakdownCard > p {
+  display: none !important;
+}
+
+.compactDeliverableCards .findingsDeliverableBreakdownRows {
+  gap: 8px !important;
+}
+
+.compactDeliverableCards .findingsDeliverableBreakdownRows > div {
+  grid-template-columns: 142px minmax(0, 1fr) 30px !important;
+  gap: 8px !important;
+}
+
+.compactDeliverableCards .findingsDeliverableBreakdownRows span {
+  font-size: 0.72rem !important;
+  line-height: 1.05 !important;
+}
+
+/* Filtros dependientes: dos filas limpias */
+.findingsFilters.dependentFindingFilters,
+.premiumFilters.findingsFilters.dependentFindingFilters {
+  display: grid !important;
+  grid-template-columns: minmax(260px, 1.2fr) repeat(3, minmax(150px, 0.7fr)) !important;
+  gap: 12px !important;
+  align-items: end !important;
+  width: 100% !important;
+}
+
+.findingsFilters.dependentFindingFilters .searchFilter,
+.findingsFilters.dependentFindingFilters .filter {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.findingsFilters.dependentFindingFilters .searchInputWrap,
+.findingsFilters.dependentFindingFilters .searchInputWrap.compact,
+.findingsFilters.dependentFindingFilters .filter select {
+  min-height: 45px !important;
+  height: 45px !important;
+  border-radius: 16px !important;
+}
+
+/* Título del hallazgo como subtítulo, menos pesado */
+.findingWhiteCard .findingWhiteHeader h3,
+.findingsGridWhite .findingWhiteCard .findingWhiteHeader h3 {
+  font-size: clamp(1.02rem, 1.35vw, 1.28rem) !important;
+  line-height: 1.18 !important;
+  font-weight: 620 !important;
+  letter-spacing: -0.012em !important;
+  margin: 10px 0 12px !important;
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+}
+
+/* Metadatos como etiquetas compactas, no tarjetas grandes */
+.findingVisibleMetaGrid.findingTagList,
+.findingTagList {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  margin: 12px 28px 10px !important;
+}
+
+.findingVisibleMetaGrid.findingTagList > div,
+.findingTagList > div {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  padding: 8px 11px !important;
+  border-radius: 999px !important;
+  background: rgba(0, 184, 181, 0.08) !important;
+  border: 1px solid rgba(0, 184, 181, 0.18) !important;
+  box-shadow: none !important;
+}
+
+.findingVisibleMetaGrid.findingTagList span,
+.findingTagList span {
+  color: #557176 !important;
+  -webkit-text-fill-color: #557176 !important;
+  font-size: 0.66rem !important;
+  line-height: 1 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+
+.findingVisibleMetaGrid.findingTagList strong,
+.findingTagList strong {
+  color: #102F37 !important;
+  -webkit-text-fill-color: #102F37 !important;
+  font-size: 0.78rem !important;
+  line-height: 1.05 !important;
+  font-weight: 650 !important;
+  white-space: normal !important;
+}
+
+.findingLinkOutside {
+  margin: 10px 28px 18px !important;
+  width: max-content !important;
+  max-width: calc(100% - 56px) !important;
+}
+
+@media (max-width: 1100px) {
+  .findingsFilters.dependentFindingFilters,
+  .premiumFilters.findingsFilters.dependentFindingFilters {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 680px) {
+  .findingsFilters.dependentFindingFilters,
+  .premiumFilters.findingsFilters.dependentFindingFilters {
+    grid-template-columns: 1fr !important;
+  }
+
+  .findingVisibleMetaGrid.findingTagList,
+  .findingTagList {
+    margin-left: 18px !important;
+    margin-right: 18px !important;
+  }
+
+  .findingLinkOutside {
+    margin-left: 18px !important;
+    margin-right: 18px !important;
+    max-width: calc(100% - 36px) !important;
+  }
+}
