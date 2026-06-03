@@ -2500,7 +2500,18 @@ function UpdatesPanel({ project, updates, setView, pending = [] }) {
       </div>
 
       {mainPending && (
-        <div className="executiveSideCard priorityPendingWhiteCard">
+        <div
+          className="executiveSideCard priorityPendingWhiteCard clickable"
+          role="button"
+          tabIndex={0}
+          onClick={() => setView?.("pendientes")}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              setView?.("pendientes");
+            }
+          }}
+        >
           <div className="sideCardIconLine">
             <div className="sideIcon warning"><AlertTriangle size={18} /></div>
             <span>Pendiente prioritario</span>
@@ -2516,12 +2527,6 @@ function UpdatesPanel({ project, updates, setView, pending = [] }) {
           <div className="badgeRow">
             <Badge status={mainPending.status}>{mainPending.status}</Badge>
           </div>
-
-          {safeUrl(mainPending.link) && (
-            <a className="sideLinkButton" href={safeUrl(mainPending.link)} target="_blank" rel="noreferrer">
-              Abrir documento <ExternalLink size={15} />
-            </a>
-          )}
         </div>
       )}
 
@@ -3182,3 +3187,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // RESUMEN_V8_COMPACTO_NUMEROS_ACTIVIDADES_FINAL
+
+
+// RESUMEN_V9_HOMOGENEO_CLICK_PENDIENTE_FINAL
