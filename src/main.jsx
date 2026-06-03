@@ -2088,21 +2088,18 @@ function Findings({ findings = [] }) {
                     <span>{process}</span>
                   </div>
                   <h3>{item.finding || "Hallazgo sin título"}</h3>
-                  <div className="badgeRow">
+                  <div className="badgeRow findingBadgesTwoRows">
                     {item.priority && <Badge status={item.priority === "Alta" ? "Bloqueado" : "En validación"}>Prioridad: {item.priority}</Badge>}
                     <Badge status={status}>{status}</Badge>
+                    <span className="badge findingMetaBadge">Gerencia: {management || "-"}</span>
+                    <span className="badge findingMetaBadge">Área: {area || "-"}</span>
+                    <span className="badge findingMetaBadge">Responsable: {owner || "-"}</span>
+                    <span className="badge findingMetaBadge">Entregable GSE: {cleanOptionValue(item.deliverableGSE) || "-"}</span>
+                    <span className="badge findingMetaBadge">Entregable cliente: {cleanOptionValue(item.deliverableClient) || "-"}</span>
                   </div>
                 </div>
                 <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={20} />
               </button>
-
-              <div className="findingVisibleMetaGrid findingTagList findingCompactTags">
-                <div><span>Gerencia</span><strong>{management || "-"}</strong></div>
-                <div><span>Área</span><strong>{area || "-"}</strong></div>
-                <div><span>Responsable</span><strong>{owner || "-"}</strong></div>
-                <div><span>Entregable GSE</span><strong>{cleanOptionValue(item.deliverableGSE) || "-"}</strong></div>
-                <div><span>Entregable cliente</span><strong>{cleanOptionValue(item.deliverableClient) || "-"}</strong></div>
-              </div>
 
               {link && (
                 <a className="secondaryLink findingLink findingLinkOutside" href={link} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>
@@ -3372,3 +3369,6 @@ createRoot(document.getElementById("root")).render(<App />);
 // HALLAZGOS_V8_TAGS_TURQUESAS_FILTRO_REAL_FINAL
 
 // HALLAZGOS_V9_LECTURA_COMPLETA_TAGS_2_FILAS_FINAL
+
+
+// HALLAZGOS_V10_TAGS_INLINE_2_FILAS_FINAL

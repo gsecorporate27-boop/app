@@ -12809,3 +12809,83 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ==========================================================
+   HALLAZGOS_V10_TAGS_INLINE_2_FILAS_FINAL
+   Metadatos como etiquetas pequeñas junto a prioridad/estado.
+   ========================================================== */
+
+.findingWhiteCard .findingBadgesTwoRows {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  align-items: center !important;
+  margin: 12px 0 0 !important;
+  max-width: 100% !important;
+}
+
+.findingWhiteCard .findingBadgesTwoRows .badge,
+.findingWhiteCard .findingBadgesTwoRows .findingMetaBadge {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 30px !important;
+  height: 30px !important;
+  padding: 7px 10px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(0, 184, 181, 0.28) !important;
+  box-shadow: 0 10px 22px rgba(0, 184, 181, 0.13) !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  text-transform: none !important;
+  letter-spacing: -0.01em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.findingWhiteCard .findingBadgesTwoRows .badge *,
+.findingWhiteCard .findingBadgesTwoRows .findingMetaBadge * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Oculta la grilla grande anterior si queda por caché o versión previa */
+.findingWhiteCard .findingVisibleMetaGrid.findingTagList.findingCompactTags,
+.findingWhiteCard .findingTagList.findingCompactTags {
+  display: none !important;
+}
+
+.findingWhiteCard .findingWhiteHeader {
+  padding-bottom: 18px !important;
+}
+
+.findingWhiteCard .findingWhiteHeader h3,
+.findingsGridWhite .findingWhiteCard .findingWhiteHeader h3 {
+  margin-bottom: 10px !important;
+}
+
+@media (max-width: 1180px) {
+  .findingWhiteCard .findingBadgesTwoRows {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .findingWhiteCard .findingBadgesTwoRows {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .findingWhiteCard .findingBadgesTwoRows {
+    grid-template-columns: 1fr !important;
+  }
+}
