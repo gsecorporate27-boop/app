@@ -12889,3 +12889,93 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ==========================================================
+   HALLAZGOS_V11_TAGS_LEGIBLES_TOTAL_SIN_DUPLICAR_FINAL
+   Tags más legibles y total de entregables sin doble conteo.
+   ========================================================== */
+
+.findingWhiteCard .findingBadgesTwoRows {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+  align-items: center !important;
+  margin: 12px 0 0 !important;
+  max-width: 100% !important;
+}
+
+.findingWhiteCard .findingBadgesTwoRows .badge,
+.findingWhiteCard .findingBadgesTwoRows .findingMetaBadge {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 32px !important;
+  height: 32px !important;
+  padding: 7px 12px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border: 1px solid rgba(0, 184, 181, 0.28) !important;
+  box-shadow: 0 10px 22px rgba(0, 184, 181, 0.13) !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-size: 0.58rem !important;
+  font-weight: 800 !important;
+  line-height: 1.05 !important;
+  text-transform: none !important;
+  letter-spacing: -0.015em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: normal !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  text-align: center !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+
+.findingWhiteCard .findingBadgesTwoRows .badge *,
+.findingWhiteCard .findingBadgesTwoRows .findingMetaBadge * {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.findingWhiteCard .findingBadgesTwoRows .findingMetaBadge {
+  font-size: 0.56rem !important;
+  padding-inline: 11px !important;
+}
+
+/* Mantiene las etiquetas en dos filas visuales en escritorio: 4 arriba y 3 abajo */
+.findingWhiteCard .findingWhiteHeader {
+  padding-bottom: 18px !important;
+}
+
+/* Evita que la tarjeta crezca demasiado aunque haya etiquetas largas */
+.findingWhiteCard {
+  min-height: 225px !important;
+}
+
+@media (max-width: 1180px) {
+  .findingWhiteCard .findingBadgesTwoRows {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .findingWhiteCard .findingBadgesTwoRows {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .findingWhiteCard .findingBadgesTwoRows .badge,
+  .findingWhiteCard .findingBadgesTwoRows .findingMetaBadge {
+    font-size: 0.6rem !important;
+    min-height: 34px !important;
+    height: auto !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .findingWhiteCard .findingBadgesTwoRows {
+    grid-template-columns: 1fr !important;
+  }
+}

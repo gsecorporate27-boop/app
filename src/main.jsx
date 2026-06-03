@@ -1970,6 +1970,14 @@ function Findings({ findings = [] }) {
   }, [filteredFindings]);
 
   const visibleDeliverableTotals = useMemo(() => {
+    return filteredFindings.reduce((acc, item) => {
+      if (cleanOptionValue(item.deliverableGSE || "")) acc.gse += 1;
+      if (cleanOptionValue(item.deliverableClient || "")) acc.client += 1;
+      return acc;
+    }, { gse: 0, client: 0 });
+  }, [filteredFindings]);
+
+  const visibleDeliverableCategoryTotals = useMemo(() => {
     return Object.values(visibleDeliverableSummary).reduce((acc, item) => {
       acc.gse += item.gse;
       acc.client += item.client;
@@ -2018,7 +2026,7 @@ function Findings({ findings = [] }) {
             {Object.values(visibleDeliverableSummary).map((item) => (
               <div key={`gse-${item.label}`}>
                 <span>{item.label}</span>
-                <div><i style={{ width: `${visibleDeliverableTotals.gse ? (item.gse / visibleDeliverableTotals.gse) * 100 : 0}%` }} /></div>
+                <div><i style={{ width: `${visibleDeliverableCategoryTotals.gse ? (item.gse / visibleDeliverableCategoryTotals.gse) * 100 : 0}%` }} /></div>
                 <strong>{item.gse}</strong>
               </div>
             ))}
@@ -2037,7 +2045,7 @@ function Findings({ findings = [] }) {
             {Object.values(visibleDeliverableSummary).map((item) => (
               <div key={`client-${item.label}`}>
                 <span>{item.label}</span>
-                <div><i style={{ width: `${visibleDeliverableTotals.client ? (item.client / visibleDeliverableTotals.client) * 100 : 0}%` }} /></div>
+                <div><i style={{ width: `${visibleDeliverableCategoryTotals.client ? (item.client / visibleDeliverableCategoryTotals.client) * 100 : 0}%` }} /></div>
                 <strong>{item.client}</strong>
               </div>
             ))}
@@ -2091,11 +2099,11 @@ function Findings({ findings = [] }) {
                   <div className="badgeRow findingBadgesTwoRows">
                     {item.priority && <Badge status={item.priority === "Alta" ? "Bloqueado" : "En validación"}>Prioridad: {item.priority}</Badge>}
                     <Badge status={status}>{status}</Badge>
-                    <span className="badge findingMetaBadge">Gerencia: {management || "-"}</span>
-                    <span className="badge findingMetaBadge">Área: {area || "-"}</span>
-                    <span className="badge findingMetaBadge">Responsable: {owner || "-"}</span>
-                    <span className="badge findingMetaBadge">Entregable GSE: {cleanOptionValue(item.deliverableGSE) || "-"}</span>
-                    <span className="badge findingMetaBadge">Entregable cliente: {cleanOptionValue(item.deliverableClient) || "-"}</span>
+                    <span className="badge findingMetaBadge" title={`Gerencia: ${management || "-"}`}>{management || "-"}</span>
+                    <span className="badge findingMetaBadge" title={`Área: ${area || "-"}`}>{area || "-"}</span>
+                    <span className="badge findingMetaBadge" title={`Responsable: ${owner || "-"}`}>{owner || "-"}</span>
+                    <span className="badge findingMetaBadge" title={`Entregable GSE: ${cleanOptionValue(item.deliverableGSE) || "-"}`}>{cleanOptionValue(item.deliverableGSE) || "-"}</span>
+                    <span className="badge findingMetaBadge" title={`Entregable cliente: ${cleanOptionValue(item.deliverableClient) || "-"}`}>{cleanOptionValue(item.deliverableClient) || "-"}</span>
                   </div>
                 </div>
                 <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={20} />
@@ -3372,3 +3380,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_V10_TAGS_INLINE_2_FILAS_FINAL
+
+
+// HALLAZGOS_V11_TAGS_LEGIBLES_TOTAL_SIN_DUPLICAR_FINAL
