@@ -598,14 +598,17 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
   }, 0);
 
   const summarizeStatus = (rows = []) => {
-    const isMatch = (value, words) => words.some((word) => normalizeSystemName(value).includes(word));
     return rows.reduce((acc, item) => {
-      const status = item.status || item.estado || item.observation || item.observacion || item["OBSERVACIÓN"] || "";
-      if (isMatch(status, ["mantiene", "mantenido", "mantenida", "mantener", "se mantiene"])) acc.maintained += 1;
-      if (isMatch(status, ["elimina", "eliminado", "eliminada", "eliminar"])) acc.deleted += 1;
-      if (isMatch(status, ["agrega", "agregado", "agregada", "agregar", "nuevo", "nueva"])) acc.added += 1;
+      const status = normalizeSystemName(item.status || item.estado || item.observation || item.observacion || item["OBSERVACIÓN"] || "");
+      if (status.includes("completado") || status.includes("finalizado") || status.includes("terminado") || status.includes("solucionado")) {
+        acc.completed += 1;
+      } else if (status.includes("proceso") || status.includes("desarrollo") || status.includes("desarollo") || status.includes("revision")) {
+        acc.inProcess += 1;
+      } else {
+        acc.pending += 1;
+      }
       return acc;
-    }, { maintained: 0, deleted: 0, added: 0 });
+    }, { pending: 0, inProcess: 0, completed: 0 });
   };
 
   const asIsCOE = totalCost(coeAsIs);
@@ -637,19 +640,19 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
         </div>
         <div className="summaryMiniBars">
           <div className="summaryMiniRow">
-            <span>Mantiene</span>
-            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.maintained / findings.length) * 100 : 0}%` }} /></div>
-            <strong>{findingsStatus.maintained}</strong>
+            <span>Pendiente</span>
+            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.pending / findings.length) * 100 : 0}%` }} /></div>
+            <strong>{findingsStatus.pending}</strong>
           </div>
           <div className="summaryMiniRow">
-            <span>Elimina</span>
-            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.deleted / findings.length) * 100 : 0}%` }} /></div>
-            <strong>{findingsStatus.deleted}</strong>
+            <span>En proceso</span>
+            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.inProcess / findings.length) * 100 : 0}%` }} /></div>
+            <strong>{findingsStatus.inProcess}</strong>
           </div>
           <div className="summaryMiniRow">
-            <span>Agrega</span>
-            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.added / findings.length) * 100 : 0}%` }} /></div>
-            <strong>{findingsStatus.added}</strong>
+            <span>Completado</span>
+            <div className="summaryMiniTrack"><i style={{ width: `${findings.length ? (findingsStatus.completed / findings.length) * 100 : 0}%` }} /></div>
+            <strong>{findingsStatus.completed}</strong>
           </div>
         </div>
         <p>Clasificación según la columna Estado.</p>
@@ -827,6 +830,61 @@ function MilestonesExecutive({ milestones, setView, selectedHito = "", setSelect
 
           <div className="hitosProgressHelp">Haz clic en cualquier hito para revisar su descripción, qué incluye y enlace dentro de la Ruta del proyecto.</div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+
+function HitosStatusMatrix({ milestones = [], setView, setSelectedHito }) {
+  const getStatusClass = (status = "") => {
+    const value = normalizeSystemName(status);
+    if (value.includes("completado") || value.includes("finalizado") || value.includes("terminado") || value.includes("aprobado")) return "completed";
+    if (value.includes("proceso") || value.includes("desarrollo") || value.includes("desarollo") || value.includes("revision")) return "process";
+    if (value.includes("pendiente") || value.includes("planificado")) return "planned";
+    return "planned";
+  };
+
+  return (
+    <section className="card summaryHitosStatusCard">
+      <div className="summaryHitosStatusHeader">
+        <h3>Detalle de estado de hitos del proyecto</h3>
+        <Badge status="En validación">{milestones.length} hitos</Badge>
+      </div>
+
+      <div className="summaryHitosStatusTableWrap">
+        <table className="summaryHitosStatusTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Hito</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {milestones.map((item, index) => {
+              const code = item.id ? `E${item.id}` : `E${index}`;
+              const status = item.status || "Planificado";
+              return (
+                <tr
+                  key={`${code}-${item.title}`}
+                  onClick={() => {
+                    setSelectedHito?.(item.title);
+                    setView?.("ruta");
+                  }}
+                >
+                  <td>{code}</td>
+                  <td>{item.title}</td>
+                  <td>
+                    <span className={`summaryHitoStatusPill ${getStatusClass(status)}`}>
+                      {status}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </section>
   );
@@ -2944,6 +3002,8 @@ function App() {
                   />
                 </div>
 
+                <HitosStatusMatrix milestones={milestones} setView={setView} setSelectedHito={setSelectedHito} />
+
                 <UpdatesPanel project={project} updates={updates} pending={pending} setView={setView} />
               </div>
 
@@ -3098,3 +3158,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_V3_ESTADOS_TITULOS_FINAL
+
+
+// RESUMEN_V6_HITOS_MATRIZ_ESTADOS_FINAL
