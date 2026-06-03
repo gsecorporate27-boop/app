@@ -1864,15 +1864,9 @@ function Findings({ findings = [] }) {
     const statusGroup = getFindingStatusGroup(status);
     const deliverableGSE = cleanOptionValue(item.deliverableGSE || "");
     const deliverableClient = cleanOptionValue(item.deliverableClient || "");
-    const deliverableCategoryLabels = [deliverableGSE, deliverableClient]
-      .flatMap((value) => getCategoryKeys(value))
-      .map((key) => categories.find((category) => category.key === key)?.label)
-      .filter(Boolean);
-
     const deliverableMatches = deliverableFilter === "Todos" ||
       deliverableGSE === deliverableFilter ||
-      deliverableClient === deliverableFilter ||
-      deliverableCategoryLabels.includes(deliverableFilter);
+      deliverableClient === deliverableFilter;
 
     return (
       (excludeField === "priority" || priorityFilter === "Todos" || priority === priorityFilter) &&
@@ -1914,12 +1908,7 @@ function Findings({ findings = [] }) {
       .flatMap((item) => [item.deliverableGSE, item.deliverableClient])
       .map(cleanOptionValue)
       .filter(Boolean);
-    const categoryValues = scoped
-      .flatMap((item) => [item.deliverableGSE, item.deliverableClient])
-      .flatMap((value) => getCategoryKeys(value))
-      .map((key) => categories.find((category) => category.key === key)?.label)
-      .filter(Boolean);
-    return [...new Set([...categoryValues, ...exactValues])];
+    return [...new Set(exactValues)];
   }, [findings, priorityFilter, processFilter, statusFilter, managementFilter, areaFilter, ownerFilter]);
 
   const filteredFindings = useMemo(() => {
@@ -2107,10 +2096,10 @@ function Findings({ findings = [] }) {
                 <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={20} />
               </button>
 
-              <div className="findingVisibleMetaGrid findingTagList">
-                {management && <div><span>Gerencia</span><strong>{management}</strong></div>}
-                {area && <div><span>Área</span><strong>{area}</strong></div>}
-                {owner && <div><span>Responsable</span><strong>{owner}</strong></div>}
+              <div className="findingVisibleMetaGrid findingTagList findingCompactTags">
+                <div><span>Gerencia</span><strong>{management || "-"}</strong></div>
+                <div><span>Área</span><strong>{area || "-"}</strong></div>
+                <div><span>Responsable</span><strong>{owner || "-"}</strong></div>
                 <div><span>Entregable GSE</span><strong>{cleanOptionValue(item.deliverableGSE) || "-"}</strong></div>
                 <div><span>Entregable cliente</span><strong>{cleanOptionValue(item.deliverableClient) || "-"}</strong></div>
               </div>
@@ -3378,3 +3367,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_V7_FILTROS_DEPENDIENTES_TAGS_FINAL
+
+
+// HALLAZGOS_V8_TAGS_TURQUESAS_FILTRO_REAL_FINAL

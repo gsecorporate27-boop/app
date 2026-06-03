@@ -12641,3 +12641,83 @@ div:has(> table.coeTable)::-webkit-scrollbar-track {
     max-width: calc(100% - 36px) !important;
   }
 }
+
+/* ==========================================================
+   HALLAZGOS_V8_TAGS_TURQUESAS_FILTRO_REAL_FINAL
+   Corrige etiquetas visibles y filtro Entregable con valores reales.
+   ========================================================== */
+
+.findingVisibleMetaGrid.findingTagList.findingCompactTags,
+.findingTagList.findingCompactTags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  margin: 12px 28px 10px !important;
+}
+
+.findingVisibleMetaGrid.findingTagList.findingCompactTags > div,
+.findingTagList.findingCompactTags > div {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 7px !important;
+  padding: 8px 13px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(90deg, #007f7d, #00b8b5) !important;
+  border: 1px solid rgba(0, 184, 181, 0.32) !important;
+  box-shadow: 0 12px 26px rgba(0, 184, 181, 0.15) !important;
+}
+
+.findingVisibleMetaGrid.findingTagList.findingCompactTags span,
+.findingTagList.findingCompactTags span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 0.86 !important;
+  font-size: 0.66rem !important;
+  line-height: 1 !important;
+  font-family: "Montserrat", sans-serif !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+}
+
+.findingVisibleMetaGrid.findingTagList.findingCompactTags strong,
+.findingTagList.findingCompactTags strong {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 0.76rem !important;
+  line-height: 1.08 !important;
+  font-weight: 800 !important;
+  white-space: normal !important;
+}
+
+/* El enlace se mantiene fuera y respira debajo de las etiquetas */
+.findingLinkOutside {
+  margin-top: 8px !important;
+}
+
+/* Evita que las etiquetas grandes antiguas reaparezcan como tarjetas */
+.findingVisibleMetaGrid.findingTagList.findingCompactTags > div::before,
+.findingTagList.findingCompactTags > div::before {
+  display: none !important;
+}
+
+@media (max-width: 680px) {
+  .findingVisibleMetaGrid.findingTagList.findingCompactTags,
+  .findingTagList.findingCompactTags {
+    margin-left: 18px !important;
+    margin-right: 18px !important;
+    gap: 8px !important;
+  }
+
+  .findingVisibleMetaGrid.findingTagList.findingCompactTags > div,
+  .findingTagList.findingCompactTags > div {
+    padding: 8px 11px !important;
+  }
+}
