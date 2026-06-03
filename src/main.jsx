@@ -1806,13 +1806,12 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
 function Findings({ findings = [] }) {
   const [open, setOpen] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [dateFilter, setDateFilter] = useState("Todos");
+  const [deliverableTypeFilter, setDeliverableTypeFilter] = useState("Todos");
   const [priorityFilter, setPriorityFilter] = useState("Todos");
-  const [processFilter, setProcessFilter] = useState("Todos");
-  const [statusFilter, setStatusFilter] = useState("Todos");
   const [managementFilter, setManagementFilter] = useState("Todos");
   const [areaFilter, setAreaFilter] = useState("Todos");
-  const [ownerFilter, setOwnerFilter] = useState("Todos");
-  const [deliverableFilter, setDeliverableFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("Todos");
 
   const getFindingStatusGroup = (status = "") => {
     const value = normalizeSystemName(status);
@@ -1823,7 +1822,7 @@ function Findings({ findings = [] }) {
 
   const categories = [
     { key: "politica", label: "Política", words: ["politica", "politicas", "política", "políticas"] },
-    { key: "procedimiento", label: "Procedimiento", words: ["procedimiento", "procedimientos", "manual", "manuales"] },
+    { key: "procedimiento", label: "Procedimiento", words: ["procedimiento", "procedimientos", "manual", "manuales", "instructivo", "instructivos"] },
     { key: "indicador", label: "Indicador", words: ["indicador", "indicadores", "kpi", "kpís", "kpis"] },
     { key: "perfiles", label: "Perfiles", words: ["perfil", "perfiles", "cargo", "cargos"] },
     { key: "rediseno", label: "Rediseño de procesos", words: ["rediseno", "rediseño", "redisenio", "rediseñar", "redisenar", "rediseño de procesos"] },
@@ -1844,38 +1843,49 @@ function Findings({ findings = [] }) {
       .map((category) => category.key);
   };
 
+  const getCategoryLabels = (item) => {
+    const keys = [
+      ...getCategoryKeys(item.deliverableGSE || ""),
+      ...getCategoryKeys(item.deliverableClient || ""),
+    ];
+    return [...new Set(keys)]
+      .map((key) => categories.find((category) => category.key === key)?.label)
+      .filter(Boolean);
+  };
+
   const getFindingField = (item, field) => {
+    if (field === "date") return item.deliveryDate || item.fechaMax || item.fechamax || "";
     if (field === "priority") return item.priority || "";
-    if (field === "process") return item.processArea || item.process || item.area || "";
     if (field === "status") return item.status || "";
     if (field === "management") return item.management || item.gerencia || "";
     if (field === "area") return item.areaDetail || item.area || "";
-    if (field === "owner") return item.owner || item.responsible || "";
     return "";
   };
 
+  const getDeliverableTypeMatches = (item) => {
+    const labels = getCategoryLabels(item);
+    const exactValues = [item.deliverableGSE, item.deliverableClient]
+      .map(cleanOptionValue)
+      .filter(Boolean);
+    return [...new Set([...labels, ...exactValues])];
+  };
+
   const matchesCurrentFilters = (item, excludeField = "") => {
-    const process = getFindingField(item, "process");
+    const deliveryDate = getFindingField(item, "date");
     const area = getFindingField(item, "area");
     const management = getFindingField(item, "management");
-    const owner = getFindingField(item, "owner");
     const priority = getFindingField(item, "priority");
     const status = getFindingField(item, "status");
     const statusGroup = getFindingStatusGroup(status);
-    const deliverableGSE = cleanOptionValue(item.deliverableGSE || "");
-    const deliverableClient = cleanOptionValue(item.deliverableClient || "");
-    const deliverableMatches = deliverableFilter === "Todos" ||
-      deliverableGSE === deliverableFilter ||
-      deliverableClient === deliverableFilter;
+    const deliverableTypeMatches = getDeliverableTypeMatches(item);
 
     return (
+      (excludeField === "date" || dateFilter === "Todos" || deliveryDate === dateFilter) &&
+      (excludeField === "deliverableType" || deliverableTypeFilter === "Todos" || deliverableTypeMatches.includes(deliverableTypeFilter)) &&
       (excludeField === "priority" || priorityFilter === "Todos" || priority === priorityFilter) &&
-      (excludeField === "process" || processFilter === "Todos" || process === processFilter) &&
-      (excludeField === "status" || statusFilter === "Todos" || status === statusFilter || statusGroup === statusFilter) &&
       (excludeField === "management" || managementFilter === "Todos" || management === managementFilter) &&
       (excludeField === "area" || areaFilter === "Todos" || area === areaFilter) &&
-      (excludeField === "owner" || ownerFilter === "Todos" || owner === ownerFilter) &&
-      (excludeField === "deliverable" || deliverableMatches)
+      (excludeField === "status" || statusFilter === "Todos" || status === statusFilter || statusGroup === statusFilter)
     );
   };
 
@@ -1888,11 +1898,10 @@ function Findings({ findings = [] }) {
     return [...new Set(values)];
   };
 
-  const priorities = useMemo(() => optionValuesFor("priority"), [findings, processFilter, statusFilter, managementFilter, areaFilter, ownerFilter, deliverableFilter]);
-  const processes = useMemo(() => optionValuesFor("process"), [findings, priorityFilter, statusFilter, managementFilter, areaFilter, ownerFilter, deliverableFilter]);
-  const managements = useMemo(() => optionValuesFor("management"), [findings, priorityFilter, processFilter, statusFilter, areaFilter, ownerFilter, deliverableFilter]);
-  const areas = useMemo(() => optionValuesFor("area"), [findings, priorityFilter, processFilter, statusFilter, managementFilter, ownerFilter, deliverableFilter]);
-  const owners = useMemo(() => optionValuesFor("owner"), [findings, priorityFilter, processFilter, statusFilter, managementFilter, areaFilter, deliverableFilter]);
+  const dateOptions = useMemo(() => optionValuesFor("date"), [findings, deliverableTypeFilter, priorityFilter, managementFilter, areaFilter, statusFilter]);
+  const priorities = useMemo(() => optionValuesFor("priority"), [findings, dateFilter, deliverableTypeFilter, managementFilter, areaFilter, statusFilter]);
+  const managements = useMemo(() => optionValuesFor("management"), [findings, dateFilter, deliverableTypeFilter, priorityFilter, areaFilter, statusFilter]);
+  const areas = useMemo(() => optionValuesFor("area"), [findings, dateFilter, deliverableTypeFilter, priorityFilter, managementFilter, statusFilter]);
   const statuses = useMemo(() => {
     const values = findings
       .filter((item) => matchesCurrentFilters(item, "status"))
@@ -1900,24 +1909,23 @@ function Findings({ findings = [] }) {
       .map(cleanOptionValue)
       .filter(Boolean);
     return [...new Set(values)];
-  }, [findings, priorityFilter, processFilter, managementFilter, areaFilter, ownerFilter, deliverableFilter]);
+  }, [findings, dateFilter, deliverableTypeFilter, priorityFilter, managementFilter, areaFilter]);
 
-  const deliverables = useMemo(() => {
-    const scoped = findings.filter((item) => matchesCurrentFilters(item, "deliverable"));
-    const exactValues = scoped
-      .flatMap((item) => [item.deliverableGSE, item.deliverableClient])
+  const deliverableTypes = useMemo(() => {
+    const values = findings
+      .filter((item) => matchesCurrentFilters(item, "deliverableType"))
+      .flatMap((item) => getDeliverableTypeMatches(item))
       .map(cleanOptionValue)
       .filter(Boolean);
-    return [...new Set(exactValues)];
-  }, [findings, priorityFilter, processFilter, statusFilter, managementFilter, areaFilter, ownerFilter]);
+    return [...new Set(values)];
+  }, [findings, dateFilter, priorityFilter, managementFilter, areaFilter, statusFilter]);
 
   const filteredFindings = useMemo(() => {
     const query = normalizeSystemName(searchTerm);
     return findings.filter((item) => {
-      const process = getFindingField(item, "process");
       const area = getFindingField(item, "area");
       const management = getFindingField(item, "management");
-      const owner = getFindingField(item, "owner");
+      const deliveryDate = getFindingField(item, "date");
       const priority = getFindingField(item, "priority");
       const status = getFindingField(item, "status");
       const statusGroup = getFindingStatusGroup(status);
@@ -1925,21 +1933,22 @@ function Findings({ findings = [] }) {
         item.id,
         management,
         area,
-        process,
+        deliveryDate,
+        item.processArea,
         item.finding,
         item.description,
         item.recommendation || item.solution,
         item.solutionType || item.system,
-        owner,
         item.deliverableGSE,
         item.deliverableClient,
+        ...getDeliverableTypeMatches(item),
         status,
         statusGroup,
         priority,
       ].join(" "));
       return matchesCurrentFilters(item) && (!query || searchable.includes(query));
     });
-  }, [findings, searchTerm, priorityFilter, processFilter, statusFilter, managementFilter, areaFilter, ownerFilter, deliverableFilter]);
+  }, [findings, searchTerm, dateFilter, deliverableTypeFilter, priorityFilter, managementFilter, areaFilter, statusFilter]);
 
   const statusSummary = useMemo(() => {
     return filteredFindings.reduce((acc, item) => {
@@ -2053,7 +2062,7 @@ function Findings({ findings = [] }) {
         </article>
       </div>
 
-      <div className="premiumFilters findingsFilters findingsFiltersTwoRows dependentFindingFilters">
+      <div className="premiumFilters findingsFilters findingsFiltersOrdered dependentFindingFilters">
         <label className="searchFilter findingsSearchFilter">
           <span>Buscar</span>
           <div className="searchInputWrap compact">
@@ -2061,31 +2070,28 @@ function Findings({ findings = [] }) {
             <input
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Buscar por hallazgo, proceso o recomendación"
+              placeholder="Buscar por hallazgo, fecha o entregable"
             />
           </div>
         </label>
+        <FilterSelect label="Fecha de entrega" value={dateFilter} onChange={setDateFilter} options={dateOptions} />
+        <FilterSelect label="Tipo de entregable" value={deliverableTypeFilter} onChange={setDeliverableTypeFilter} options={deliverableTypes} />
         <FilterSelect label="Prioridad" value={priorityFilter} onChange={setPriorityFilter} options={priorities} />
-        <FilterSelect label="Proceso" value={processFilter} onChange={setProcessFilter} options={processes} />
-        <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={statuses} />
         <FilterSelect label="Gerencia" value={managementFilter} onChange={setManagementFilter} options={managements} />
         <FilterSelect label="Área" value={areaFilter} onChange={setAreaFilter} options={areas} />
-        <FilterSelect label="Responsable" value={ownerFilter} onChange={setOwnerFilter} options={owners} />
-        <FilterSelect label="Entregable" value={deliverableFilter} onChange={setDeliverableFilter} options={deliverables} />
+        <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={statuses} />
       </div>
 
       <div className="findingsGridWhite">
         {filteredFindings.map((item) => {
-          const process = getFindingField(item, "process") || "Proceso no definido";
-          const area = getFindingField(item, "area");
-          const management = getFindingField(item, "management");
-          const owner = getFindingField(item, "owner");
+          const process = item.processArea || item.process || item.area || "Proceso no definido";
           const recommendation = item.recommendation || item.solution;
           const solutionType = item.solutionType || item.system;
           const link = safeUrl(item.link || item.image);
           const key = `${item.id}-${item.finding || item.description}`;
           const isOpen = open === key;
           const status = item.status || "Pendiente";
+          const deliveryDate = getFindingField(item, "date");
 
           return (
             <article key={key} className={`findingWhiteCard ${isOpen ? "selected" : ""}`}>
@@ -2096,14 +2102,10 @@ function Findings({ findings = [] }) {
                     <span>{process}</span>
                   </div>
                   <h3>{item.finding || "Hallazgo sin título"}</h3>
-                  <div className="badgeRow findingBadgesTwoRows">
+                  {deliveryDate && <p className="findingDeliveryDate">Fecha de entrega: {deliveryDate}</p>}
+                  <div className="badgeRow findingBadgesCompactOnly">
                     {item.priority && <Badge status={item.priority === "Alta" ? "Bloqueado" : "En validación"}>Prioridad: {item.priority}</Badge>}
                     <Badge status={status}>{status}</Badge>
-                    <span className="badge findingMetaBadge" title={`Gerencia: ${management || "-"}`}>{management || "-"}</span>
-                    <span className="badge findingMetaBadge" title={`Área: ${area || "-"}`}>{area || "-"}</span>
-                    <span className="badge findingMetaBadge" title={`Responsable: ${owner || "-"}`}>{owner || "-"}</span>
-                    <span className="badge findingMetaBadge" title={`Entregable GSE: ${cleanOptionValue(item.deliverableGSE) || "-"}`}>{cleanOptionValue(item.deliverableGSE) || "-"}</span>
-                    <span className="badge findingMetaBadge" title={`Entregable cliente: ${cleanOptionValue(item.deliverableClient) || "-"}`}>{cleanOptionValue(item.deliverableClient) || "-"}</span>
                   </div>
                 </div>
                 <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={20} />
@@ -2138,8 +2140,8 @@ function Findings({ findings = [] }) {
                         </div>
                       )}
                     </div>
-                    {!item.description && !recommendation && !solutionType && !owner && !link && (
-                      <p className="muted">Agrega descripción, recomendación, responsable o link en la pestaña Hallazgos para mostrar más detalle.</p>
+                    {!item.description && !recommendation && !solutionType && !link && (
+                      <p className="muted">Agrega descripción, recomendación o link en la pestaña Hallazgos para mostrar más detalle.</p>
                     )}
                   </div>
                 </div>
@@ -3386,3 +3388,6 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // ENTREGABLES_GSE_V5_BOTON_TURQUESA_FINAL
+
+
+// HALLAZGOS_V12_FILTROS_FECHAMAX_FINAL

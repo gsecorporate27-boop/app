@@ -409,6 +409,7 @@ function mapFindings(rows) {
       owner,
       responsible: owner,
       status: getRowValue(row, ["Estado"]),
+      deliveryDate: getRowValue(row, ["Fechamax", "FechaMax", "Fecha max", "Fecha máxima", "Fecha maxima", "Fecha de entrega", "FechaEntrega", "Fecha Entrega"]),
       deliverableGSE: getRowValue(row, ["EntregableGSE", "Entregable GSE", "EntregablesGSE", "Entregables GSE", "GSE"]),
       deliverableClient: getRowValue(row, ["EntregableCliente", "Entregable Cliente", "EntregablesCliente", "Entregables Cliente", "Cliente"]),
       link: getRowValue(row, ["Link", "URL", "Enlace", "Documento", "Archivo", "Carpeta", "LinkHallazgo"]),
@@ -652,3 +653,5 @@ export async function loadSheetData() {
 // HALLAZGOS_V4_GERENCIA_ENTREGABLES_MENU_FINAL
 
 // HALLAZGOS_V9_LECTURA_COMPLETA_TAGS_2_FILAS_FINAL
+
+// HALLAZGOS_V12_FILTROS_FECHAMAX_FINAL
