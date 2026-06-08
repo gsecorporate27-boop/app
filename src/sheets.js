@@ -4,10 +4,17 @@ function getSheetIdFromUrl() {
   return params.get("sheet") || params.get("sheetId") || "";
 }
 
-const SPREADSHEET_ID = getSheetIdFromUrl() || import.meta.env.VITE_SPREADSHEET_ID || "";
+function getSheetIdFromSession() {
+  try {
+    const session = JSON.parse(window.localStorage.getItem("gseClientSession") || "null");
+    return session?.sheetId || "";
+  } catch {
+    return "";
+  }
+}
 
 export function getActiveSpreadsheetId() {
-  return SPREADSHEET_ID;
+  return getSheetIdFromSession() || getSheetIdFromUrl() || import.meta.env.VITE_SPREADSHEET_ID || "";
 }
 
 export const demoData = {
@@ -37,6 +44,7 @@ export const demoData = {
   deliverables: [],
   updates: [],
   education: [],
+  meetings: [],
   processesAsIs: [],
   processesToBe: [],
   coeAsIs: [],
@@ -120,7 +128,7 @@ function getSpreadsheetId(rawValue) {
 }
 
 function csvUrl(sheetName) {
-  const { id, type } = getSpreadsheetId(SPREADSHEET_ID);
+  const { id, type } = getSpreadsheetId(getActiveSpreadsheetId());
   const encodedSheet = encodeURIComponent(sheetName);
 
   if (type === "published") {
@@ -363,6 +371,7 @@ function mapMilestones(rows) {
     imageProcess: getRowValue(row, ["ImagenProceso", "Imagen Proceso", "Imagen del Proceso", "LinkImagen", "Link Imagen", "Imagen", "Link"]),
     technicalSheet: getRowValue(row, ["FichaTecnica", "Ficha Técnica", "FichaTecnicaProceso", "LinkFichaTecnica", "Link Ficha Tecnica", "Link Ficha Técnica"]),
     targetDate: getRowValue(row, ["FechaObjetivo", "Fecha Objetivo", "Fecha objetivo", "Fecha", "FechaMeta"]),
+    open: getRowValue(row, ["Abierto", "Abierta", "EstadoDesbloqueo", "Desbloqueado", "Disponible"]),
   })).filter((x) => x.title);
 }
 
@@ -470,6 +479,18 @@ function mapUpdates(rows) {
   })).filter((x) => x.title || x.text);
 }
 
+function mapMeetings(rows) {
+  return rows.map((row, index) => ({
+    id: getRowValue(row, ["ID", "Id", "Codigo", "Código"]) || String(index + 1),
+    date: getRowValue(row, ["Fecha", "FechaReunion", "Fecha Reunión", "Fecha Reunion"]),
+    time: getRowValue(row, ["Hora", "HoraReunion", "Hora Reunión", "Hora Reunion"]),
+    title: getRowValue(row, ["Titulo", "Título", "Title", "Nombre", "Reunion", "Reunión"]),
+    status: getRowValue(row, ["Estado", "Status"]),
+    link: getRowValue(row, ["Link", "LinkMeet", "Link Meet", "URL", "Enlace"]),
+    observation: getRowValue(row, ["Observacion", "Observación", "Notas", "Comentario"]),
+  })).filter((x) => x.title || x.date || x.time || x.link);
+}
+
 function mapDocuments(rows) {
   return rows.map((row, index) => {
     const title = getRowValue(row, ["Titulo", "Título", "Title", "NombreTitulo", "Nombre Título"]);
@@ -567,15 +588,16 @@ function mapCOERows(rows) {
     cost: getRowValue(row, ["COSTO (xmin)", "Costo (xmin)", "Costo", "COSTO", "CostoXmin", "Costo xmin"]),
     frequency: getRowValue(row, ["FRECUENCIA", "Frecuencia"]),
     nav: getRowValue(row, ["NAV", "Nav", "nav", "GeneraValor", "Genera Valor", "Valor", "NoAgregaValor", "No agrega valor"]),
+    month: getRowValue(row, ["MES", "Mes", "month", "Month"]),
   })).filter((x) => x.code || x.process || x.processType || x.activity || x.participant || x.observation || x.nav);
 }
 
 export async function loadSheetData() {
-  if (!SPREADSHEET_ID) {
-    throw new Error("Falta configurar VITE_SPREADSHEET_ID o usar ?sheet=ID");
+  if (!getActiveSpreadsheetId()) {
+    throw new Error("Falta iniciar sesión o configurar VITE_SPREADSHEET_ID.");
   }
 
-  const [projectRawRows, milestoneRows, findingRows, pendingRows, deliverableRows, updateRows, educationRows, documentRows, processesAsIsRows, processesToBeRows, coeAsIsRows, coeToBeRows] = await Promise.all([
+  const [projectRawRows, milestoneRows, findingRows, pendingRows, deliverableRows, updateRows, educationRows, meetingRows, documentRows, processesAsIsRows, processesToBeRows, coeAsIsRows, coeToBeRows] = await Promise.all([
     fetchCsvRows("Proyecto"),
     fetchCsvSheet("Hitos"),
     fetchCsvSheet("Hallazgos"),
@@ -583,6 +605,7 @@ export async function loadSheetData() {
     fetchCsvSheet("Entregables"),
     fetchCsvSheet("Actualizaciones", false),
     fetchFirstAvailableSheet(["Educacion", "Educación", "Lo que vas a recibir", "Educacion Cliente"]),
+    fetchFirstAvailableSheet(["Reuniones", "ReunionesCliente", "Reuniones Cliente", "Agenda"]),
     fetchFirstAvailableSheet(["Documentos", "CargaDocumentos", "Carga de documentos", "Carga Documentos", "ChecklistDocumentos", "Checklist Documentos", "Checklist"]),
     fetchFirstAvailableSheet(["ProcesosASIS", "Procesos AS IS", "Procesos As Is", "Procesos AS-IS", "Procesos AS_IS", "ListaASIS", "Lista AS IS", "Lista AS-IS", "ASIS", "AS IS"]),
     fetchFirstAvailableSheet(["ProcesosTOBE", "Procesos TO BE", "Procesos To Be", "Procesos TO-BE", "Procesos TO_BE", "ListaTOBE", "Lista TO BE", "Lista TO-BE", "TOBE", "TO BE"]),
@@ -598,6 +621,7 @@ export async function loadSheetData() {
     deliverables: mapDeliverables(deliverableRows),
     updates: mapUpdates(updateRows),
     education: mapEducation(educationRows),
+    meetings: mapMeetings(meetingRows),
     documents: mapDocuments(documentRows),
     processesAsIs: mapProcessesAsIs(processesAsIsRows),
     processesToBe: mapProcessesToBe(processesToBeRows),

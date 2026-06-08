@@ -1,4 +1,4 @@
-
+﻿
 import React, { useEffect, useMemo, useState } from "react";
 // RESUMEN_HITOS_BARRA_FINAL
 // RADAR_5_SISTEMAS_GSE
@@ -8,27 +8,36 @@ import {
   AlertTriangle,
   ArrowRight,
   BarChart3,
+  Bell,
+  Brain,
   Building2,
   BookOpen,
+  CalendarDays,
   CheckCircle2,
   ClipboardCheck,
   ChevronRight,
   Clock3,
+  Eye,
+  EyeOff,
   ExternalLink,
   FileText,
   UploadCloud,
   FolderOpen,
   Flag,
+  Hourglass,
   Layers3,
   LockKeyhole,
   LogIn,
+  MapPin,
   Monitor,
+  Rocket,
   Search,
   ShieldCheck,
   Sparkles,
   Target,
   Users,
   Video,
+  MessageCircle,
 } from "lucide-react";
 import { loadSheetData, demoData, getActiveSpreadsheetId } from "./sheets";
 import "./index.css";
@@ -108,30 +117,40 @@ function Logo({ src, fallback, className = "" }) {
 }
 
 function Sidebar({ view, setView, project }) {
-  const items = [
-    [Sparkles, "Portal del proyecto", "portal"],
-    [BarChart3, "Resumen", "resumen"],
-    [Target, "Ruta del proyecto", "ruta"],
-    [ClipboardCheck, "Lista Maestra de Procesos", "procesos"],
-    [BarChart3, "COE", "coe"],
-    [Search, "Hallazgos", "hallazgos"],
-    [AlertTriangle, "Pendientes clientes", "pendientes"],
-    [FileText, "Entregables GSE", "entregables"],
-    [UploadCloud, "Carga de documentos", "documentos"],
-    [BookOpen, "Lo que vas a recibir", "educacion"],
+  const groups = [
+    { title: "", items: [[Sparkles, "Portal del proyecto", "portal"]] },
+    {
+      title: "Seguimiento",
+      items: [
+        [BarChart3, "Resumen", "resumen"],
+        [Target, "Ruta del proyecto", "ruta"],
+        [BarChart3, "COE", "coe"],
+        [Search, "Hallazgos", "hallazgos"],
+        [AlertTriangle, "Pendientes cliente", "pendientes"],
+      ],
+    },
+    { title: "Procesos", items: [[ClipboardCheck, "Lista Maestra de Procesos", "procesos"]] },
+    {
+      title: "Documentacion",
+      items: [
+        [FileText, "Entregables GSE", "entregables"],
+        [UploadCloud, "Carga de documentos", "documentos"],
+      ],
+    },
+    { title: "Informacion", items: [[BookOpen, "Lo que vas a recibir", "educacion"]] },
   ];
 
   const company = project.companyClient || project.client;
   const contact = project.contactName || project.generalManager || project.responsibleClient;
-  const role = project.contactRole || "Responsable del proyecto";
+  const role = project.contactRole || "cargo de empresa";
 
   return (
     <aside className="sidebar premiumSidebar">
       <div className="brand premiumBrand">
         <Logo src={project.logoGSE} fallback="GSE" />
         <div>
-          <div className="brandTitle">GSE&CO.</div>
-          <div className="brandSub">RIV · Ruta de Implementación Visible™</div>
+          <div className="brandTitle">GSE&CO - Ruta de Implementación Visible</div>
+          <div className="brandSub"></div>
         </div>
       </div>
 
@@ -152,27 +171,24 @@ function Sidebar({ view, setView, project }) {
           </div>
         </div>
 
-        <div className="clientProfileLine">
-          <Layers3 size={15} />
-          <div>
-            <span>{project.service}</span>
-            <small>Proyecto activo</small>
-          </div>
-        </div>
       </div>
 
       <nav className="nav premiumNav">
-        {items.map(([Icon, label, value]) => (
-          <button key={label} className={`navItem ${view === value ? "active" : ""}`} onClick={() => setView(value)}>
-            <Icon size={18} />
-            {label}
-          </button>
+        {groups.map((group, groupIndex) => (
+          <div className="navGroup" key={`${group.title}-${groupIndex}`}>
+            {group.title && <span className="navGroupTitle">{group.title}</span>}
+            {group.items.map(([Icon, label, value]) => (
+              <button key={label} className={`navItem ${view === value ? "active" : ""}`} onClick={() => setView(value)}>
+                <Icon size={17} />
+                {label}
+              </button>
+            ))}
+          </div>
         ))}
       </nav>
 
       <div className="sidebarCard premiumSidebarCard">
-        <div className="sidebarCardTitle"><ShieldCheck size={18} /> Portal privado</div>
-        <p>Avance, decisiones, entregables y próximos pasos del proyecto en un solo lugar.</p>
+        <Logo src={project.logoGSE} fallback="GSE" />
       </div>
     </aside>
   );
@@ -203,13 +219,24 @@ function Header({ project, connected }) {
 }
 
 function PortalProject({ project, milestones, pending, setView }) {
+  const cleanPortalText = (value = "") => String(value || "")
+    .replace(/á/g, "á")
+    .replace(/é/g, "é")
+    .replace(/í/g, "í")
+    .replace(/ó/g, "ó")
+    .replace(/ú/g, "ú")
+    .replace(/ñ/g, "ñ")
+    .replace(/·/g, "·")
+    .replace(/™/g, "™")
+    .replace(/Adminitrativa/gi, "Administrativa");
   const meetUrl = safeUrl(project.linkMeet);
   const company = project.companyClient || project.client;
   const contact = project.contactName || project.generalManager || project.responsibleClient;
-  const role = project.contactRole || "Responsable del proyecto";
+  const role = cleanPortalText(project.contactRole || "Responsable del proyecto");
   const completed = milestones.filter((m) => m.status === "Finalizado" || m.status === "Aprobado").length;
+  const completedPending = pending.filter(isPendingCompleted).length;
   const disorder = Math.max(0, 100 - (Number(project.progress) || 0));
-  const welcome = project.welcomeMessage || "Bienvenido a tu RIV · Ruta de Implementación Visible™. Aquí podrás revisar el avance del proyecto, los hitos trabajados, los pendientes activos y los entregables construidos por GSE para ordenar tu empresa.";
+  const welcome = cleanPortalText(project.welcomeMessage || "Bienvenido a tu Ruta de Implementación Visible. Aquí podrás revisar el avance del proyecto, los hitos trabajados, los pendientes activos y los entregables construidos por GSE para ordenar tu empresa.");
 
   return (
     <div className="portalPage">
@@ -217,18 +244,12 @@ function PortalProject({ project, milestones, pending, setView }) {
         <div className="portalOverlay"></div>
 
         <div className="portalContent">
-          <div className="portalLogos">
-            <Logo src={project.logoGSE} fallback="GSE" />
-            <div className="portalDivider"></div>
-            <Logo src={project.logoClient} fallback={company?.slice(0, 2) || "CL"} />
-          </div>
-
-          <div className="portalEyebrow">
-            <Sparkles size={16} />
-            Portal privado del proyecto
-          </div>
-
-          <h2>Bienvenido a tu RIV · Ruta de Implementación Visible™</h2>
+          <h2 className="portalRivTitle">
+            <span>Bienvenido a tu</span>
+            <span>Ruta de</span>
+            <span>Implementación</span>
+            <span>Visible</span>
+          </h2>
           <p>{welcome}</p>
 
           <div className="portalClientBox">
@@ -237,15 +258,12 @@ function PortalProject({ project, milestones, pending, setView }) {
               <strong>{company}</strong>
             </div>
             <div>
-              <span>Contacto principal</span>
+              <span>{role}</span>
               <strong>{contact || "Sin contacto definido"}</strong>
-              <small>{role}</small>
-            </div>
-            <div>
-              <span>Servicio</span>
-              <strong>{project.service}</strong>
             </div>
           </div>
+
+          <p className="portalSignature">Creado por GSE&CO</p>
 
           <div className="portalActions">
             <button className="primaryPortalButton" onClick={() => setView("resumen")}>
@@ -265,25 +283,39 @@ function PortalProject({ project, milestones, pending, setView }) {
 
         <div className="portalMetrics">
           <div className="portalMetricCard">
-            <span>Avance general</span>
-            <strong>{project.progress}%</strong>
-            <ProgressBar value={project.progress} status={project.status} />
+            <div>
+              <span>Avance General</span>
+              <strong>{project.progress}%</strong>
+              <ProgressBar value={project.progress} status={project.status} />
+            </div>
+            <Rocket size={28} />
           </div>
 
           <div className="portalMetricCard">
-            <span>Desorden restante</span>
-            <strong>{disorder}%</strong>
-            <ProgressBar value={disorder} status="Bloqueado" reverse />
+            <div>
+              <span>Desorden restante</span>
+              <strong>{disorder}%</strong>
+              <ProgressBar value={disorder} status="Bloqueado" reverse />
+            </div>
+            <Brain size={28} />
           </div>
 
           <div className="portalMetricCard">
-            <span>Hitos completados</span>
-            <strong>{completed}/{milestones.length}</strong>
+            <div>
+              <span>Hitos completados</span>
+              <strong>{completed}/{milestones.length}</strong>
+              <ProgressBar value={(completed / Math.max(1, milestones.length)) * 100} status="Finalizado" />
+            </div>
+            <Flag size={28} />
           </div>
 
           <div className="portalMetricCard">
-            <span>Pendientes activos</span>
-            <strong>{pending.length}</strong>
+            <div>
+              <span>Pendientes cliente</span>
+              <strong>{completedPending}/{pending.length}</strong>
+              <ProgressBar value={(completedPending / Math.max(1, pending.length)) * 100} status="En validación" />
+            </div>
+            <Hourglass size={28} />
           </div>
         </div>
       </section>
@@ -391,7 +423,7 @@ function DashboardMiniBlockers({ blocked = 0 }) {
   return (
     <div className={`miniBlockerWidget cleanBlocker ${safeBlocked > 0 ? "hasBlocks" : "noBlocks"}`}>
       <div className="miniBlockerFaceOnly">
-        <div className="miniSmileFace">{safeBlocked > 0 ? "😐" : "😊"}</div>
+        <div className="miniSmileFace">{safeBlocked > 0 ? "ðŸ˜" : "ðŸ˜Š"}</div>
         <strong>{mood}</strong>
       </div>
       <div className="miniSparkline">
@@ -705,6 +737,573 @@ function SummaryInsightCards({ project, milestones = [], deliverables = [], find
         <p>Lectura consolidada de AS IS y TO BE.</p>
       </article>
     </div>
+  );
+}
+
+function AppTopbar({ project, pending = [], meetings = [], updates = [], milestones = [], findings = [], deliverables = [], documents = [], education = [], processesAsIs = [], processesToBe = [], setView, setSelectedHito, setSelectedDeliverable, onLogout }) {
+  const [openPanel, setOpenPanel] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const meetUrl = safeUrl(project?.linkMeet);
+  const activePending = pending.filter(isPendingActive).length;
+
+  const meetingItems = [
+    ...meetings.map((item) => ({
+      title: item.title || "Reunion",
+      date: [item.date, item.time].filter(Boolean).join(" - ") || "Por definir",
+      link: safeUrl(item.link) || meetUrl,
+      status: item.status,
+    })),
+    {
+      title: project?.nextStep || "Proxima reunion",
+      date: project?.nextDate || "Por definir",
+      link: meetUrl,
+    },
+    ...updates
+      .filter((item) => normalizeSystemName(`${item.target || ""} ${item.title || ""} ${item.text || ""}`).includes("reunion"))
+      .slice(0, 3)
+      .map((item) => ({ title: item.title || "Reunion", date: item.text || "Por definir", link: meetUrl })),
+  ].filter((item) => item.title || item.date);
+
+  const pendingItems = pending.filter(isPendingActive).slice(0, 8);
+  const query = normalizeSystemName(searchTerm);
+  const searchResults = query ? [
+    ...milestones.map((item) => ({
+      type: "Hito",
+      title: item.title,
+      detail: [item.id, item.status, item.targetDate].filter(Boolean).join(" - "),
+      view: "ruta",
+      action: () => setSelectedHito?.(item.title || ""),
+      haystack: `${item.id} ${item.title} ${item.status} ${item.system} ${item.description}`,
+    })),
+    ...findings.map((item) => ({
+      type: "Hallazgo",
+      title: item.finding,
+      detail: [item.priority, item.status, item.management, item.areaDetail].filter(Boolean).join(" - "),
+      view: "hallazgos",
+      haystack: `${item.id} ${item.finding} ${item.description} ${item.priority} ${item.status} ${item.management} ${item.areaDetail}`,
+    })),
+    ...pending.map((item) => ({
+      type: "Pendiente",
+      title: item.request,
+      detail: [item.status, item.dueDate].filter(Boolean).join(" - "),
+      view: "pendientes",
+      haystack: `${item.request} ${item.status} ${item.owner} ${item.blocks} ${item.description}`,
+    })),
+    ...deliverables.map((item) => ({
+      type: "Entregable",
+      title: item.deliverable,
+      detail: [item.system, item.status, item.responsible].filter(Boolean).join(" - "),
+      view: "entregables",
+      action: () => setSelectedDeliverable?.(item.deliverable || ""),
+      haystack: `${item.deliverable} ${item.system} ${item.milestone} ${item.status} ${item.responsible}`,
+    })),
+    ...documents.map((item) => ({
+      type: "Documento",
+      title: item.item || item.title,
+      detail: [item.category, item.status].filter(Boolean).join(" - "),
+      view: "documentos",
+      haystack: `${item.title} ${item.item} ${item.category} ${item.status} ${item.detail}`,
+    })),
+    ...education.map((item) => ({
+      type: "Info",
+      title: item.deliverable,
+      detail: [item.system, item.status].filter(Boolean).join(" - "),
+      view: "educacion",
+      haystack: `${item.deliverable} ${item.system} ${item.milestone} ${item.whatIs} ${item.purpose}`,
+    })),
+    ...processesAsIs.map((item) => ({
+      type: "Proceso AS IS",
+      title: item.processName,
+      detail: [item.type, item.processCode].filter(Boolean).join(" - "),
+      view: "procesos",
+      haystack: `${item.processName} ${item.processCode} ${item.type} ${item.macroName} ${item.description}`,
+    })),
+    ...processesToBe.map((item) => ({
+      type: "Proceso TO BE",
+      title: item.processName,
+      detail: [item.type, item.status, item.processCode].filter(Boolean).join(" - "),
+      view: "procesos",
+      haystack: `${item.processName} ${item.processCode} ${item.type} ${item.status} ${item.macroName} ${item.changes}`,
+    })),
+  ]
+    .filter((item) => normalizeSystemName(item.haystack).includes(query))
+    .slice(0, 10) : [];
+
+  const goToResult = (item) => {
+    item.action?.();
+    setView?.(item.view);
+    setSearchTerm("");
+    setOpenPanel("");
+  };
+
+  return (
+    <div className="canvaTopbar appGlobalTopbar">
+      <div className="canvaActionWrap globalSearchWrap">
+        <label className="canvaSearch">
+          <Search size={18} />
+          <input
+            value={searchTerm}
+            onChange={(event) => {
+              setSearchTerm(event.target.value);
+              setOpenPanel(event.target.value ? "search" : "");
+            }}
+            onFocus={() => searchTerm && setOpenPanel("search")}
+            placeholder="Buscar"
+          />
+        </label>
+        {openPanel === "search" && (
+          <div className="canvaPopover canvaSearchResults">
+            <h4>Resultados</h4>
+            {searchResults.map((item, index) => (
+              <button className="canvaPopoverItem asButton" key={`${item.type}-${item.title}-${index}`} onClick={() => goToResult(item)}>
+                <Search size={16} />
+                <div>
+                  <strong>{item.title || "Sin titulo"}</strong>
+                  <span>{item.type}{item.detail ? ` - ${item.detail}` : ""}</span>
+                </div>
+              </button>
+            ))}
+            {!searchResults.length && <p className="canvaEmptyText">No hay resultados para esa busqueda.</p>}
+          </div>
+        )}
+      </div>
+
+      <div className="canvaTopActions">
+        <div className="canvaActionWrap">
+          <button className="canvaIconAction" onClick={() => setOpenPanel(openPanel === "meetings" ? "" : "meetings")} aria-label="Reuniones">
+            <Clock3 size={18} />
+            <span>Reuniones</span>
+          </button>
+          {openPanel === "meetings" && (
+            <div className="canvaPopover">
+              <h4>Reuniones</h4>
+              {meetingItems.map((item, index) => (
+                <div className="canvaPopoverItem" key={`${item.title}-${index}`}>
+                  <CalendarDays size={16} />
+                  <div>
+                    <strong>{item.title}</strong>
+                    <span>{item.date}</span>
+                    {item.status && <span>{item.status}</span>}
+                    {item.link && <a href={item.link} target="_blank" rel="noreferrer">Conectarse</a>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="canvaActionWrap">
+          <button className="canvaIconAction" onClick={() => setOpenPanel(openPanel === "pending" ? "" : "pending")} aria-label="Pendientes">
+            <Bell size={18} />
+            {activePending > 0 && <i>{activePending}</i>}
+            <span>Pendientes</span>
+          </button>
+          {openPanel === "pending" && (
+            <div className="canvaPopover right">
+              <h4>Pendientes</h4>
+              {pendingItems.map((item, index) => (
+                <button className="canvaPopoverItem asButton" key={`${item.request}-${index}`} onClick={() => setView?.("pendientes")}>
+                  <AlertTriangle size={16} />
+                  <div>
+                    <strong>{item.request}</strong>
+                    <span>{item.dueDate || "Por definir"} - {item.status || "Pendiente"}</span>
+                  </div>
+                </button>
+              ))}
+              {!pendingItems.length && <p className="canvaEmptyText">No hay pendientes activos.</p>}
+            </div>
+          )}
+        </div>
+
+        <Logo src={project?.logoClient} fallback={(project?.companyClient || project?.client || "CL").slice(0, 2)} className="canvaTopLogo" />
+        <span className="canvaUserName">{project?.contactName || project?.responsibleClient || "Cliente"}</span>
+        <button className="topbarLogoutButton" type="button" onClick={onLogout}>
+          Salir
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SummaryCanvaDashboard({ project, milestones = [], pending = [], findings = [], deliverables = [], processesAsIs = [], processesToBe = [], coeAsIs = [], coeToBe = [], updates = [], meetings = [], setView }) {
+  const [openPanel, setOpenPanel] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const projectProgress = Number(project?.progress) || 0;
+  const disorder = Math.max(0, 100 - projectProgress);
+  const completedMilestones = milestones.filter((item) => isCompletedStatus(item.status)).length;
+  const activePending = pending.filter(isPendingActive).length;
+  const meetUrl = safeUrl(project?.linkMeet);
+
+  const meetingItems = [
+    ...meetings.map((item) => ({
+      title: item.title || "Reunión",
+      date: [item.date, item.time].filter(Boolean).join(" · ") || "Por definir",
+      link: safeUrl(item.link) || meetUrl,
+      status: item.status,
+      observation: item.observation,
+    })),
+    {
+      title: project?.nextStep || "Próxima reunión",
+      date: project?.nextDate || "Por definir",
+      link: meetUrl,
+    },
+    ...updates
+      .filter((item) => normalizeSystemName(`${item.target || ""} ${item.title || ""} ${item.text || ""}`).includes("reunion"))
+      .slice(0, 3)
+      .map((item) => ({ title: item.title || "Reunión", date: item.text || "Por definir", link: meetUrl })),
+  ].filter((item) => item.title || item.date);
+
+  const pendingItems = pending.filter(isPendingActive).slice(0, 8);
+  const isMilestoneOpen = (item = {}, index = 0) => {
+    const explicit = normalizeSystemName(item.open || item.abierto || "");
+    if (explicit) return explicit === "si" || explicit === "sí" || explicit.includes("abierto") || explicit.includes("disponible");
+    return index < 4 || isCompletedStatus(item.status);
+  };
+  const routeSource = milestones.slice(0, 13);
+  const allMilestones = Array.from({ length: 13 }, (_, index) => {
+    const item = routeSource[index] || {};
+    const code = item.id || `E${index}`;
+    const title = item.title || "Por definir";
+    const status = item.status || (index < 4 ? "Abierto" : "Cerrado");
+    const unlocked = isMilestoneOpen(item, index);
+    return {
+      ...item,
+      id: code,
+      title,
+      status,
+      date: item.targetDate || item.date || "Fecha",
+      unlocked,
+      completed: isCompletedStatus(status),
+    };
+  });
+  const unlockedCount = allMilestones.filter((item) => item.unlocked).length;
+  const visibleCompletedMilestones = allMilestones.filter((item) => isCompletedStatus(item.status)).length;
+  const pinIndex = Math.max(0, allMilestones.findLastIndex((item) => item.unlocked));
+
+  const totalCost = (rows = []) => rows.reduce((sum, item) => {
+    const cost = parseNumericValue(item.cost ?? item.costo ?? item["COSTO (xmin)"] ?? 0);
+    const frequency = parseNumericValue(item.frequency ?? item.frecuencia ?? item.FRECUENCIA ?? 1) || 1;
+    return sum + (cost * frequency);
+  }, 0);
+  const asIsCOE = totalCost(coeAsIs);
+  const toBeCOE = totalCost(coeToBe);
+  const coeDelta = asIsCOE - toBeCOE;
+  const coePercent = asIsCOE > 0 ? (coeDelta / asIsCOE) * 100 : 0;
+
+  const statusClass = (status = "") => {
+    const text = normalizeSystemName(status);
+    if (text.includes("cerrado")) return "closed";
+    if (isCompletedStatus(status)) return "done";
+    if (text.includes("desarrollo") || text.includes("proceso")) return "active";
+    return "pending";
+  };
+  const countByStatus = (rows = []) => {
+    const buckets = new Map();
+    rows.forEach((item) => {
+      const label = item.status || "Sin estado";
+      buckets.set(label, (buckets.get(label) || 0) + 1);
+    });
+    return Array.from(buckets.entries()).map(([label, value]) => {
+      const text = normalizeSystemName(label);
+      const color = text.includes("complet") || text.includes("finaliz") || text.includes("aprob")
+        ? "#00b8b5"
+        : text.includes("desarrollo") || text.includes("proceso")
+          ? "#53676b"
+          : text.includes("pendiente")
+            ? "#b9c4c6"
+            : "#102f37";
+      return { label, value, color };
+    });
+  };
+
+  const systemMetrics = [
+    {
+      label: "Hallazgos",
+      total: findings.length,
+      value: findings.filter((item) => isCompletedStatus(item.status)).length,
+      note: "Completado",
+      segments: countByStatus(findings),
+    },
+    {
+      label: "Perfiles",
+      total: 0,
+      value: 0,
+      note: "Pendiente de datos",
+      segments: [],
+    },
+    {
+      label: "Nivel de empleabilidad",
+      total: 0,
+      value: 0,
+      note: "Pendiente de datos",
+      segments: [],
+    },
+    {
+      label: "Desempeño",
+      total: 0,
+      value: 0,
+      note: "Pendiente de datos",
+      segments: [],
+    },
+    {
+      label: "Masa Salarial",
+      total: 0,
+      value: 0,
+      note: "Pendiente de datos",
+      segments: [],
+    },
+  ];
+
+  const filteredDetail = milestones.filter((item) => {
+    const query = normalizeSystemName(searchTerm);
+    if (!query) return true;
+    return normalizeSystemName(`${item.id} ${item.title} ${item.status} ${item.system}`).includes(query);
+  });
+
+  return (
+    <section className="canvaSummary">
+      <div className="canvaWelcome">
+        <h2>Hola, {project?.contactName || project?.companyClient || project?.client || "Nombre del Cliente"}</h2>
+        <p>Bienvenido a tu Ruta de Implementación Visible (RIV)</p>
+      </div>
+
+      <div className="canvaKpiRow">
+        <button className="canvaKpiCard" onClick={() => setView?.("ruta")}>
+          <div><span>Avance General</span><strong>{projectProgress}%</strong></div>
+          <Rocket size={30} />
+        </button>
+        <button className="canvaKpiCard">
+          <div><span>Desorden Operativo</span><strong>{disorder.toFixed(2)}%</strong></div>
+          <AlertTriangle size={30} />
+        </button>
+        <button className="canvaKpiCard" onClick={() => setView?.("pendientes")}>
+          <div><span>Pendientes Cliente</span><strong>{activePending}</strong></div>
+          <Hourglass size={30} />
+        </button>
+      </div>
+
+      <div className="canvaMainGrid">
+        <article className="canvaPanel canvaMilestonePanel">
+          <div className="canvaPanelHeader">
+            <div>
+              <h3>Hitos Completados</h3>
+              <strong>{visibleCompletedMilestones}/{allMilestones.length}</strong>
+            </div>
+            <div>
+              <span>Desbloqueado hasta</span>
+              <strong>E{Math.max(0, unlockedCount)}/E12</strong>
+            </div>
+          </div>
+          <CanvaMilestonePath milestones={allMilestones} pinIndex={pinIndex} statusClass={statusClass} setView={setView} />
+        </article>
+
+        <article className="canvaPanel canvaCoePanel">
+          <div className="canvaPanelHeader">
+            <div>
+              <h3>COE</h3>
+              <strong>${formatCurrency(Math.abs(coeDelta))}</strong>
+              <strong>{Math.abs(coePercent).toFixed(0)}%</strong>
+            </div>
+            <div className="canvaLegend">
+              <span><i></i> COE AS IS</span>
+              <span><i className="muted"></i> COE TO BE</span>
+            </div>
+          </div>
+          <CanvaTrendChart coeAsIs={coeAsIs} coeToBe={coeToBe} asIs={asIsCOE} toBe={toBeCOE} progress={projectProgress} />
+        </article>
+
+        <article className="canvaPanel canvaSystemsPanel">
+          <h3>Avances por Sistema</h3>
+          <div className="canvaSystemGrid">
+            {systemMetrics.map((item) => (
+              <div className="canvaSystemMetric" key={item.label}>
+                <strong>{item.total}</strong>
+                <span>{item.label}</span>
+                <CanvaRing value={item.value} total={Math.max(item.total, item.value, 1)} segments={item.segments} />
+              </div>
+            ))}
+          </div>
+        </article>
+
+        <article className="canvaPanel canvaDetailPanel">
+          <h3>Detalle de Avance Hitos</h3>
+          <div className="canvaDetailTable">
+            <div className="canvaDetailHead"><span>ID</span><span>Nombre</span><span>Estado</span><span>Avance</span></div>
+            {(filteredDetail.length ? filteredDetail : milestones).map((item, index) => (
+              <button className="canvaDetailRow" key={`${item.id}-${index}`} onClick={() => setView?.("ruta")}>
+                <span>{item.id}</span>
+                <span>{item.title}</span>
+                <em className={statusClass(item.status)}>{item.status || "Pendiente"}</em>
+                <strong>{Number(item.progress) || 0}%</strong>
+              </button>
+            ))}
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
+
+function CanvaRing({ value = 0, total = 1, segments = [] }) {
+  const [activeSegment, setActiveSegment] = useState(null);
+  const cleanSegments = segments.filter((item) => item.value > 0);
+  const totalSegments = cleanSegments.reduce((sum, item) => sum + item.value, 0);
+  const active = activeSegment || cleanSegments.find((item) => normalizeSystemName(item.label).includes("complet") || normalizeSystemName(item.label).includes("finaliz") || normalizeSystemName(item.label).includes("aprob")) || (cleanSegments.length ? cleanSegments[0] : null);
+  let cursor = 0;
+  const segmentGradient = cleanSegments.map((item, index) => {
+    const start = cursor;
+    const end = cursor + (item.value / Math.max(1, totalSegments)) * 100;
+    cursor = end;
+    return `${item.color || "#b9c4c6"} ${start}% ${end}%`;
+  }).join(", ");
+  const percent = Math.max(0, Math.min(100, (Number(value) / Math.max(1, Number(total))) * 100));
+  return (
+    <div className={`canvaRingWrap ${cleanSegments.length ? "interactive" : "empty"}`}>
+      <div
+        className="canvaRing"
+        style={{ "--ring": `${percent}%`, "--segments": segmentGradient || "#dfe7e7 0% 100%" }}
+      >
+        {cleanSegments.map((item) => (
+          <button
+            type="button"
+            key={item.label}
+            aria-label={`${item.label}: ${item.value}`}
+            onClick={() => setActiveSegment(item)}
+          />
+        ))}
+        <span>{active ? active.value : value}</span>
+      </div>
+      <small className="canvaRingLabel">{active ? active.label : cleanSegments.length ? "Estado" : "Pendiente de datos"}</small>
+    </div>
+  );
+}
+
+function CanvaMilestonePath({ milestones = [], pinIndex = 0, statusClass, setView }) {
+  const topRow = milestones.slice(0, 6);
+  const bottomRow = milestones.slice(6, 13).reverse();
+  const renderNode = (item, originalIndex, extraClass = "") => (
+    <button
+      className={`canvaRouteNode ${extraClass} ${statusClass(item.status)} ${item.unlocked ? "unlocked" : "locked"} ${originalIndex === pinIndex ? "current" : ""}`}
+      key={`${item.id}-${originalIndex}`}
+      onClick={() => setView?.("ruta")}
+    >
+      {originalIndex === pinIndex && <MapPin className="canvaRoutePin" size={38} />}
+      <span>{String(item.id).replace(".0", "")}</span>
+      <ChevronRight size={13} />
+      <strong>{item.title}</strong>
+      <small>{item.date}</small>
+      <em>{item.unlocked ? "Abierto" : "Cerrado"}</em>
+    </button>
+  );
+
+  return (
+    <div className="canvaRoutePath" style={{ "--pin-index": pinIndex }}>
+      <div className="canvaRouteRow top">
+        {topRow.map((item, index) => renderNode(item, index))}
+      </div>
+      <div className="canvaRouteTurn" aria-hidden="true"></div>
+      <div className="canvaRouteRow bottom">
+        {bottomRow.map((item) => renderNode(item, milestones.indexOf(item)))}
+      </div>
+    </div>
+  );
+}
+
+function CanvaTrendChart({ coeAsIs = [], coeToBe = [], asIs = 0, toBe = 0, progress = 0 }) {
+  const normalizeMonth = (value = "") => {
+    const raw = String(value || "").trim();
+    if (!raw) return "";
+    const numeric = Number(raw);
+    if (Number.isFinite(numeric) && numeric > 0) return `Mes ${numeric}`;
+    return raw;
+  };
+  const costFor = (item = {}) => {
+    const cost = parseNumericValue(item.cost ?? item.costo ?? item["COSTO (xmin)"] ?? 0);
+    const frequency = parseNumericValue(item.frequency ?? item.frecuencia ?? item.FRECUENCIA ?? 1) || 1;
+    return cost * frequency;
+  };
+  const totalsByMonth = (rows = []) => rows.reduce((acc, item) => {
+    const month = normalizeMonth(item.month || item.mes || item.MES);
+    if (!month) return acc;
+    acc.set(month, (acc.get(month) || 0) + costFor(item));
+    return acc;
+  }, new Map());
+
+  const asIsMap = totalsByMonth(coeAsIs);
+  const toBeMap = totalsByMonth(coeToBe);
+  const monthLabels = [...new Set([...asIsMap.keys(), ...toBeMap.keys()])].slice(0, 6);
+
+  if (monthLabels.length) {
+    const asIsValues = monthLabels.map((month) => asIsMap.get(month) || 0);
+    const toBeValues = monthLabels.map((month) => toBeMap.get(month) || 0);
+    const hasRealCost = [...asIsValues, ...toBeValues].some((value) => value > 0);
+    if (hasRealCost) {
+      return <CanvaTrendSvg labels={monthLabels} asIsValues={asIsValues} toBeValues={toBeValues} />;
+    }
+  }
+
+  const base = Number(asIs) || Math.max(40, 90 - progress);
+  const target = Number(toBe) || Math.max(15, base * 0.68);
+  const labels = ["Mes 1", "Mes 2", "Mes 3", "Mes 4", "Mes 5", "Mes 6"];
+  const asIsValues = labels.map((month, index) => base * (0.72 + Math.sin(index * 1.35) * 0.16 + (index === 3 ? 0.34 : 0)));
+  const toBeValues = labels.map((month, index) => target * (0.70 + Math.sin(index * 1.35) * 0.13 + (index === 3 ? 0.24 : 0)));
+  return <CanvaTrendSvg labels={labels} asIsValues={asIsValues} toBeValues={toBeValues} />;
+}
+
+function CanvaTrendSvg({ labels = [], asIsValues = [], toBeValues = [] }) {
+  const max = Math.max(...asIsValues, ...toBeValues, 1);
+  const costLabel = (value) => {
+    if (value >= 1000) return `$${Math.round(value / 1000)}k`;
+    return `$${Math.round(value)}`;
+  };
+  const pointsFor = (values) => values.map((value, index) => {
+    const step = labels.length > 1 ? 220 / (labels.length - 1) : 44;
+    const x = 42 + index * step;
+    const y = 142 - (value / max) * 100;
+    return { x, y };
+  });
+  const pathFor = (values) => {
+    const points = pointsFor(values);
+    if (!points.length) return "";
+    if (points.length === 1) return `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`;
+    return points.reduce((path, point, index) => {
+      if (index === 0) return `M ${point.x.toFixed(1)} ${point.y.toFixed(1)}`;
+      const previous = points[index - 1];
+      const previousControl = points[index - 2] || previous;
+      const nextControl = points[index + 1] || point;
+      const tension = 0.18;
+      const c1x = previous.x + (point.x - previousControl.x) * tension;
+      const c1y = previous.y + (point.y - previousControl.y) * tension;
+      const c2x = point.x - (nextControl.x - previous.x) * tension;
+      const c2y = point.y - (nextControl.y - previous.y) * tension;
+      return `${path} C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${point.x.toFixed(1)} ${point.y.toFixed(1)}`;
+    }, "");
+  };
+
+  return (
+    <svg className="canvaTrendChart" viewBox="0 0 292 178" role="img" aria-label="Tendencia COE de seis meses">
+      <text className="axisTitle" x="8" y="18">CLI</text>
+      <line className="axisLine" x1="34" x2="34" y1="36" y2="144" />
+      <line className="axisLine" x1="34" x2="268" y1="144" y2="144" />
+      {[0, 1, 2].map((line) => {
+        const y = 48 + line * 42;
+        const value = max * (1 - (y - 42) / 100);
+        return (
+          <React.Fragment key={line}>
+            <line x1="34" x2="268" y1={y} y2={y} />
+            <text className="axisValue" x="4" y={y + 4}>{costLabel(Math.max(0, value))}</text>
+          </React.Fragment>
+        );
+      })}
+      <path d={pathFor(toBeValues)} className="toBe" />
+      <path d={pathFor(asIsValues)} className="asIs" />
+      {labels.map((month, index) => {
+        const step = labels.length > 1 ? 220 / (labels.length - 1) : 44;
+        return <text key={month} x={42 + index * step} y="164">{String(month).replace("Mes ", "")}</text>;
+      })}
+      <text x="242" y="172">Mes</text>
+    </svg>
   );
 }
 
@@ -1120,13 +1719,21 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
         <>
           <div className="routeSummaryGrid">
             <article className="routeSummaryCard">
-              <span>Total de hitos</span>
-              <strong>{milestones.length}</strong>
+              <div>
+                <span>Total de Hitos</span>
+                <strong>{milestones.length}</strong>
+              </div>
+              <div className="routeSummaryIcon" aria-hidden="true">
+                <MapPin size={18} />
+                <MapPin size={18} />
+                <MapPin size={18} />
+                <Flag size={28} />
+              </div>
               <p>Hitos cargados en la ruta de avance.</p>
             </article>
 
             <article className="routeSummaryCard routeStatusSummaryCard">
-              <span>Estado de hitos</span>
+              <span>Estado de Hitos</span>
               <div className="routeMiniStatusRows threeStatus">
                 <div>
                   <span>Finalizado</span>
@@ -1194,7 +1801,6 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
               <div className="milestoneContent">
                 <h3>{m.id ? `E${m.id}: ` : ""}{m.title}</h3>
                 <div className="badgeRow">
-                  {m.system && <Badge status="En validación">{m.system}</Badge>}
                   <Badge status={m.status}>{m.status}</Badge>
                 </div>
                 {m.targetDate && (
@@ -1317,7 +1923,7 @@ function Timeline({ milestones, deliverables = [], detailed = false, setView, se
 
                   {!descriptionText && !includesGSEText && !includesClientText && !safeUrl(m.link) && relatedDeliverables.length === 0 && (
                     <p className="muted">
-                      Agrega Descripcion, QueIncluyeGSE, QueIncluyeCliente, Link o entregables relacionados para mostrar el detalle de este hito.
+                      Agrega Descripción, QueIncluyeGSE, QueIncluyeCliente, Link o entregables relacionados para mostrar el detalle de este hito.
                     </p>
                   )}
                 </div>
@@ -1627,29 +2233,48 @@ function COEDashboard({ coeAsIs = [], coeToBe = [] }) {
   const asIsNavSummary = useMemo(() => summarizeNav(filteredAsIs), [filteredAsIs]);
   const toBeNavSummary = useMemo(() => summarizeNav(filteredToBe), [filteredToBe]);
 
-  const MiniCounterGroup = ({ summary }) => (
-    <div className="coeMiniCounterGrid">
-      <div><strong>{summary.maintained}</strong><small>Mantenidas</small></div>
-      <div><strong>{summary.deleted}</strong><small>Eliminadas</small></div>
-      <div><strong>{summary.added}</strong><small>Agregadas</small></div>
+  const maxActivityCount = Math.max(
+    1,
+    asIsActivityStatusSummary.maintained,
+    asIsActivityStatusSummary.deleted,
+    asIsActivityStatusSummary.added,
+    toBeActivityStatusSummary.maintained,
+    toBeActivityStatusSummary.deleted,
+    toBeActivityStatusSummary.added
+  );
+
+  const maxNavCount = Math.max(
+    1,
+    asIsNavSummary.value,
+    asIsNavSummary.noValue,
+    toBeNavSummary.value,
+    toBeNavSummary.noValue
+  );
+
+  const CoeBarMetric = ({ label, value, max }) => (
+    <div className="coeInsightBarMetric">
+      <span>{label}</span>
+      <div className="coeInsightBarTrack">
+        <i style={{ width: `${Math.max(value > 0 ? 4 : 0, (value / Math.max(1, max)) * 100)}%` }} />
+      </div>
+      <strong>{value}</strong>
     </div>
   );
 
   const ActivitySummaryRow = ({ title, summary }) => (
-    <div className="coeInsightRow">
+    <div className="coeInsightRow coeBarSummaryGroup">
       <span>{title}</span>
-      <MiniCounterGroup summary={summary} />
+      <CoeBarMetric label="Mantenidas" value={summary.maintained} max={maxActivityCount} />
+      <CoeBarMetric label="Eliminadas" value={summary.deleted} max={maxActivityCount} />
+      <CoeBarMetric label="Agregadas" value={summary.added} max={maxActivityCount} />
     </div>
   );
 
   const NavSummaryRow = ({ title, summary }) => (
-    <div className="coeInsightRow">
+    <div className="coeInsightRow coeBarSummaryGroup">
       <span>{title}</span>
-      <div className="coeMiniCounterGrid nav">
-        <div><strong>{summary.value}</strong><small>Generan valor</small></div>
-        <div><strong>{summary.noValue}</strong><small>No generan valor</small></div>
-        <div><strong>{summary.unclassified}</strong><small>Sin clasificar</small></div>
-      </div>
+      <CoeBarMetric label="Generar Valor" value={summary.value} max={maxNavCount} />
+      <CoeBarMetric label="No generan valor" value={summary.noValue} max={maxNavCount} />
     </div>
   );
 
@@ -2006,31 +2631,48 @@ function Findings({ findings = [] }) {
 
       <div className="findingsSummaryGrid">
         <article className="findingsSummaryCard">
-          <span>Hallazgos totales</span>
-          <strong>{filteredFindings.length}</strong>
+          <div>
+            <span>Total de Hallazgos</span>
+            <strong>{filteredFindings.length}</strong>
+          </div>
+          <div className="findingsSummaryIcon" aria-hidden="true">
+            <MapPin size={18} />
+            <MapPin size={18} />
+            <MapPin size={18} />
+            <Flag size={28} />
+          </div>
           <p>Total visible según los filtros activos.</p>
         </article>
 
-        <article className="findingsSummaryCard">
-          <span>Estado de hallazgos</span>
-          <div className="findingsMiniCounterGrid">
-            <div><strong>{statusSummary.pending}</strong><small>Pendiente</small></div>
-            <div><strong>{statusSummary.inProcess}</strong><small>En proceso</small></div>
-            <div><strong>{statusSummary.completed}</strong><small>Completado</small></div>
+        <article className="findingsSummaryCard findingsStatusSummaryCard">
+          <span>Estado de Hallazgos</span>
+          <div className="findingsStatusRows">
+            <div>
+              <span>Completado</span>
+              <div><i style={{ width: `${filteredFindings.length ? (statusSummary.completed / filteredFindings.length) * 100 : 0}%` }} /></div>
+              <strong>{statusSummary.completed}</strong>
+            </div>
+            <div>
+              <span>Pendiente</span>
+              <div><i style={{ width: `${filteredFindings.length ? (statusSummary.pending / filteredFindings.length) * 100 : 0}%` }} /></div>
+              <strong>{statusSummary.pending}</strong>
+            </div>
+            <div>
+              <span>En desarrollo</span>
+              <div><i style={{ width: `${filteredFindings.length ? (statusSummary.inProcess / filteredFindings.length) * 100 : 0}%` }} /></div>
+              <strong>{statusSummary.inProcess}</strong>
+            </div>
           </div>
           <p>Lectura actual de avance de los hallazgos filtrados.</p>
         </article>
       </div>
 
       <div className="findingsDeliverablesSplitGrid compactDeliverableCards">
-        <article className="findingsDeliverableTotalCard">
-          <span>Total entregables GSE</span>
-          <strong>{visibleDeliverableTotals.gse}</strong>
-          <p>Entregables internos visibles.</p>
-        </article>
-
-        <article className="findingsDeliverableBreakdownCard">
-          <span>Cantidad GSE</span>
+        <article className="findingsDeliverableDashboardCard">
+          <div className="findingsDeliverableDashboardHeader">
+            <span>Entregables GSE</span>
+            <strong>{visibleDeliverableTotals.gse}</strong>
+          </div>
           <div className="findingsDeliverableBreakdownRows">
             {Object.values(visibleDeliverableSummary).map((item) => (
               <div key={`gse-${item.label}`}>
@@ -2042,14 +2684,11 @@ function Findings({ findings = [] }) {
           </div>
         </article>
 
-        <article className="findingsDeliverableTotalCard client">
-          <span>Total entregables cliente</span>
-          <strong>{visibleDeliverableTotals.client}</strong>
-          <p>Entregables requeridos visibles.</p>
-        </article>
-
-        <article className="findingsDeliverableBreakdownCard client">
-          <span>Cantidad cliente</span>
+        <article className="findingsDeliverableDashboardCard client">
+          <div className="findingsDeliverableDashboardHeader">
+            <span>Entregables cliente</span>
+            <strong>{visibleDeliverableTotals.client}</strong>
+          </div>
           <div className="findingsDeliverableBreakdownRows">
             {Object.values(visibleDeliverableSummary).map((item) => (
               <div key={`client-${item.label}`}>
@@ -2177,7 +2816,7 @@ function PendingClient({ pending, compact = false, setView }) {
 
   const normalizeValidation = (value) => {
     const text = normalizeSystemName(value || "");
-    if (text.includes("validado") || text.includes("completado") || text.includes("finalizado")) return "Completado";
+    if (text.includes("implementado") || text.includes("validado") || text.includes("completado") || text.includes("finalizado")) return "Implementado";
     if (text.includes("pendiente") || !text) return "Pendiente";
     return value;
   };
@@ -2185,7 +2824,7 @@ function PendingClient({ pending, compact = false, setView }) {
   const statusOptions = useMemo(() => pending.map((item) => item.status).filter(Boolean), [pending]);
   const validationOptions = useMemo(() => {
     const values = pending.map((item) => normalizeValidation(getValidationStatus(item))).filter(Boolean);
-    return [...new Set(["Completado", "Pendiente", ...values])];
+    return [...new Set(["Implementado", "Pendiente", ...values])];
   }, [pending, pendingValidation]);
 
   const filteredPending = useMemo(() => {
@@ -2214,22 +2853,22 @@ function PendingClient({ pending, compact = false, setView }) {
 
       if (statusText.includes("finalizado") || statusText.includes("completado") || statusText.includes("terminado")) {
         acc.finalized += 1;
-      } else if (statusText.includes("desarrollo") || statusText.includes("desarollo") || statusText.includes("revision")) {
-        acc.development += 1;
       } else if (statusText.includes("bloqueado")) {
         acc.blocked += 1;
+      } else if (statusText.includes("revision") || statusText.includes("revisión") || statusText.includes("desarrollo") || statusText.includes("desarollo") || statusText.includes("proceso")) {
+        acc.review += 1;
       } else {
         acc.pending += 1;
       }
 
-      if (validationText.includes("completado") || validationText.includes("validado")) {
-        acc.completedValidation += 1;
+      if (validationText.includes("implementado") || validationText.includes("completado") || validationText.includes("validado")) {
+        acc.implemented += 1;
       } else {
-        acc.pendingValidation += 1;
+        acc.pendingImplementation += 1;
       }
 
       return acc;
-    }, { pending: 0, development: 0, finalized: 0, blocked: 0, completedValidation: 0, pendingValidation: 0 });
+    }, { pending: 0, review: 0, finalized: 0, blocked: 0, implemented: 0, pendingImplementation: 0 });
   }, [pending, pendingValidation]);
 
   const items = compact ? pending.slice(0, 4) : filteredPending;
@@ -2300,8 +2939,8 @@ function PendingClient({ pending, compact = false, setView }) {
     <section className="card premiumSectionCard pendingClientSection">
       <div className="sectionHeader">
         <div>
-          <h2>Pendientes del cliente</h2>
-          <p>Acciones necesarias para avanzar sin retrasos. Haz clic para ver descripción y enlace de aprobación.</p>
+          <h2>Pendientes cliente</h2>
+          <p>Acciones necesarias para avanzar sin retrasos. Haz clic para ver descripción y enlace relacionado.</p>
         </div>
         {!compact && <Badge status="En validación">{filteredPending.length} visibles</Badge>}
       </div>
@@ -2319,17 +2958,22 @@ function PendingClient({ pending, compact = false, setView }) {
               <span>Estado</span>
               <div className="pendingMiniRows">
                 <div>
+                  <span>Bloqueado</span>
+                  <div className="pendingMiniTrack blocked"><i style={{ width: `${pending.length ? (summary.blocked / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.blocked}</strong>
+                </div>
+                <div>
                   <span>Pendiente</span>
                   <div className="pendingMiniTrack"><i style={{ width: `${pending.length ? (summary.pending / pending.length) * 100 : 0}%` }} /></div>
                   <strong>{summary.pending}</strong>
                 </div>
                 <div>
-                  <span>En desarrollo</span>
-                  <div className="pendingMiniTrack soft"><i style={{ width: `${pending.length ? (summary.development / pending.length) * 100 : 0}%` }} /></div>
-                  <strong>{summary.development}</strong>
+                  <span>En revisión</span>
+                  <div className="pendingMiniTrack review"><i style={{ width: `${pending.length ? (summary.review / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.review}</strong>
                 </div>
                 <div>
-                  <span>Finalizado</span>
+                  <span>Terminado</span>
                   <div className="pendingMiniTrack success"><i style={{ width: `${pending.length ? (summary.finalized / pending.length) * 100 : 0}%` }} /></div>
                   <strong>{summary.finalized}</strong>
                 </div>
@@ -2338,20 +2982,20 @@ function PendingClient({ pending, compact = false, setView }) {
             </article>
 
             <article className="pendingSummaryCard">
-              <span>Validación del cliente</span>
+              <span>Implementó</span>
               <div className="pendingMiniRows">
                 <div>
-                  <span>Completado</span>
-                  <div className="pendingMiniTrack success"><i style={{ width: `${pending.length ? (summary.completedValidation / pending.length) * 100 : 0}%` }} /></div>
-                  <strong>{summary.completedValidation}</strong>
+                  <span>Implementado</span>
+                  <div className="pendingMiniTrack success"><i style={{ width: `${pending.length ? (summary.implemented / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.implemented}</strong>
                 </div>
                 <div>
                   <span>Pendiente</span>
-                  <div className="pendingMiniTrack"><i style={{ width: `${pending.length ? (summary.pendingValidation / pending.length) * 100 : 0}%` }} /></div>
-                  <strong>{summary.pendingValidation}</strong>
+                  <div className="pendingMiniTrack"><i style={{ width: `${pending.length ? (summary.pendingImplementation / pending.length) * 100 : 0}%` }} /></div>
+                  <strong>{summary.pendingImplementation}</strong>
                 </div>
               </div>
-              <p>Según la columna ValidacionDeCliente.</p>
+              <p>Seguimiento de implementación del pendiente.</p>
             </article>
           </div>
 
@@ -2368,7 +3012,7 @@ function PendingClient({ pending, compact = false, setView }) {
               </div>
             </label>
             <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={statusOptions} />
-            <FilterSelect label="Validado" value={validationFilter} onChange={setValidationFilter} options={validationOptions} />
+            <FilterSelect label="Implementó" value={validationFilter} onChange={setValidationFilter} options={validationOptions} />
           </div>
         </>
       )}
@@ -2379,7 +3023,7 @@ function PendingClient({ pending, compact = false, setView }) {
           const link = safeUrl(item.link);
           const validationStatus = getValidationStatus(item);
           const normalizedValidation = normalizeValidation(validationStatus);
-          const isValidated = normalizedValidation === "Completado";
+          const isValidated = normalizedValidation === "Implementado";
           const key = item.request || item.id || `${item.owner}-${item.dueDate}`;
 
           return (
@@ -2411,15 +3055,15 @@ function PendingClient({ pending, compact = false, setView }) {
                 <Badge status={item.status}>{item.status}</Badge>
 
                 {isValidated ? (
-                  <Badge status="Finalizado">Completado</Badge>
+                  <Badge status="Finalizado">Implementado</Badge>
                 ) : (
                   <button
                     className="pendingValidatePill"
                     type="button"
                     disabled={Boolean(savingValidation[key])}
-                    onClick={() => handleValidatePending(item, "Validado")}
+                    onClick={() => handleValidatePending(item, "Implementado")}
                   >
-                    {savingValidation[key] ? "Guardando..." : "Validar"}
+                    {savingValidation[key] ? "Guardando..." : "Implementó"}
                   </button>
                 )}
 
@@ -2428,6 +3072,18 @@ function PendingClient({ pending, compact = false, setView }) {
                 )}
               </div>
 
+              {link && (
+                <a
+                  className="secondaryLink pendingLinkOutside"
+                  href={link}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Abrir documento relacionado <ExternalLink size={15} />
+                </a>
+              )}
+
               {!compact && isOpen && (
                 <div className="pendingDetails" onClick={(e) => e.stopPropagation()}>
                   {item.description && (
@@ -2435,12 +3091,6 @@ function PendingClient({ pending, compact = false, setView }) {
                       <strong>Descripción</strong>
                       <p>{item.description}</p>
                     </div>
-                  )}
-
-                  {link && (
-                    <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer">
-                      Abrir documento para aprobación <ExternalLink size={15} />
-                    </a>
                   )}
 
                   {!item.description && !link && (
@@ -2471,10 +3121,12 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
   const [statusFilter, setStatusFilter] = useState("Todos");
   const [responsibleFilter, setResponsibleFilter] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
+  const [openDeliverable, setOpenDeliverable] = useState("");
 
   const systems = [...new Set(deliverables.map((d) => d.system).filter(Boolean))];
   const statuses = [...new Set(deliverables.map((d) => d.status).filter(Boolean))];
   const responsibles = [...new Set(deliverables.map((d) => d.responsible).filter(Boolean))];
+  const milestones = [...new Set(deliverables.map((d) => d.milestone).filter(Boolean))];
 
   const summary = useMemo(() => {
     const isFinalized = (status = "") => {
@@ -2506,7 +3158,7 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
   const filtered = deliverables.filter((item) => {
     const systemOk = systemFilter === "Todos" || item.system === systemFilter;
     const statusOk = statusFilter === "Todos" || item.status === statusFilter;
-    const responsibleOk = responsibleFilter === "Todos" || item.responsible === responsibleFilter;
+    const responsibleOk = responsibleFilter === "Todos" || item.milestone === responsibleFilter;
     const searchableText = [
       item.system,
       item.milestone,
@@ -2525,7 +3177,7 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
     <section className="card premiumSectionCard deliverablesSection">
       <div className="sectionHeader">
         <div>
-          <h2>{compact ? "Entregables principales" : "Entregables"}</h2>
+          <h2>{compact ? "Entregables principales" : "Entregables GSE"}</h2>
           <p>Vista por sistema e hito, con acceso al documento cuando esté disponible.</p>
         </div>
       </div>
@@ -2537,23 +3189,6 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
               <span>Total de entregables</span>
               <strong>{deliverables.length}</strong>
               <p>Documentos y productos registrados en la matriz.</p>
-            </article>
-
-            <article className="deliverablesSummaryCard">
-              <span>Responsable</span>
-              <div className="deliverablesMiniRows">
-                <div>
-                  <span>GSE</span>
-                  <div className="deliverablesMiniTrack"><i style={{ width: `${deliverables.length ? (summary.gse / deliverables.length) * 100 : 0}%` }} /></div>
-                  <strong>{summary.gse}</strong>
-                </div>
-                <div>
-                  <span>Cliente</span>
-                  <div className="deliverablesMiniTrack soft"><i style={{ width: `${deliverables.length ? (summary.client / deliverables.length) * 100 : 0}%` }} /></div>
-                  <strong>{summary.client}</strong>
-                </div>
-              </div>
-              <p>Según la columna Responsable.</p>
             </article>
 
             <article className="deliverablesSummaryCard">
@@ -2592,7 +3227,7 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
               </div>
             </label>
             <FilterSelect label="Sistema" value={systemFilter} onChange={setSystemFilter} options={systems} />
-            <FilterSelect label="Responsable" value={responsibleFilter} onChange={setResponsibleFilter} options={responsibles} />
+            <FilterSelect label="Hito" value={responsibleFilter} onChange={setResponsibleFilter} options={milestones} />
             <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={statuses} />
           </div>
         </>
@@ -2604,25 +3239,37 @@ function Deliverables({ deliverables = [], selectedDeliverable, setSelectedDeliv
         {items.map((item) => {
           const link = safeUrl(item.link);
           const selected = selectedDeliverable === item.deliverable;
+          const deliverableKey = `${item.system}-${item.milestone}-${item.deliverable}`;
+          const isOpen = openDeliverable === deliverableKey;
           return (
             <div
               className={`deliverableCard ${selected ? "selected" : ""} ${compact ? "clickable" : ""}`}
-              key={`${item.system}-${item.milestone}-${item.deliverable}`}
+              key={deliverableKey}
               onClick={() => {
                 if (compact) {
                   setSelectedDeliverable?.(item.deliverable);
                   setView?.("entregables");
+                  return;
                 }
+                setOpenDeliverable(isOpen ? "" : deliverableKey);
               }}
             >
-              <div className="area">{item.system}</div>
+              <div className="deliverableCardTop">
+                <div className="area">{item.system}</div>
+                {!compact && <ChevronRight className={`chevron ${isOpen ? "open" : ""}`} size={18} />}
+              </div>
               <div className="itemTitle">{item.deliverable}</div>
               <div className="badgeRow"><Badge status={item.status}>{item.status}</Badge></div>
               {item.milestone && <div className="muted">Hito: {item.milestone}</div>}
               {item.responsible && <div className="muted"><strong>Responsable:</strong> {item.responsible}</div>}
               <ProgressBar value={item.progress} status={item.status} />
               <div className="muted">{item.progress}% de avance</div>
-              {item.observation && <p className="observation">{item.observation}</p>}
+              {!compact && item.observation && isOpen && (
+                <div className="deliverableDescriptionPanel" onClick={(e) => e.stopPropagation()}>
+                  <strong>Descripción</strong>
+                  <p className="observation">{item.observation}</p>
+                </div>
+              )}
               {link && (
                 <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
                   Ver entregable <ExternalLink size={15} />
@@ -2716,7 +3363,9 @@ function UpdatesPanel({ project, updates, setView, pending = [] }) {
 function Education({ education = [] }) {
   const [systemFilter, setSystemFilter] = useState("Todos");
   const [milestoneFilter, setMilestoneFilter] = useState("Todos");
+  const [statusFilter, setStatusFilter] = useState("Todos");
   const [searchTerm, setSearchTerm] = useState("");
+  const [openEducationCard, setOpenEducationCard] = useState("");
 
   const systemOrder = [
     "Sistema 1: Operación sin Caos",
@@ -2735,11 +3384,23 @@ function Education({ education = [] }) {
   ];
 
   const milestones = [...new Set(education.map((d) => d.milestone).filter(Boolean))];
+  const statuses = [...new Set(education.map((d) => d.status).filter(Boolean))];
   const search = String(searchTerm || "").trim().toLowerCase();
+  const getEducationStatusBucket = (status = "") => {
+    const normalized = normalizeSystemName(status);
+    if (normalized.includes("finalizado") || normalized.includes("terminado") || normalized.includes("aprobado")) return "Terminado";
+    if (normalized.includes("desarrollo") || normalized.includes("proceso")) return "En desarrollo";
+    return "Pendiente";
+  };
+  const statusCounts = ["Pendiente", "En desarrollo", "Terminado"].map((status) => ({
+    status,
+    count: education.filter((item) => getEducationStatusBucket(item.status) === status).length,
+  }));
 
   const filtered = education.filter((item) => {
     const systemOk = systemFilter === "Todos" || item.system === systemFilter;
     const milestoneOk = milestoneFilter === "Todos" || item.milestone === milestoneFilter;
+    const statusOk = statusFilter === "Todos" || item.status === statusFilter || getEducationStatusBucket(item.status) === statusFilter;
     const searchableText = [
       item.system,
       item.milestone,
@@ -2750,42 +3411,60 @@ function Education({ education = [] }) {
       item.status,
     ].join(" ").toLowerCase();
     const searchOk = !search || searchableText.includes(search);
-    return systemOk && milestoneOk && searchOk;
+    return systemOk && milestoneOk && statusOk && searchOk;
   });
 
-  const grouped = orderedSystems
-    .map((system) => ({
-      system,
-      items: filtered.filter((item) => normalizeSystem(item.system) === system),
-    }))
-    .filter((group) => group.items.length > 0);
-
-  const ungrouped = filtered.filter((item) => !normalizeSystem(item.system));
+  const grouped = filtered.reduce((acc, item) => {
+    const milestone = String(item.milestone || "Sin hito asignado").trim() || "Sin hito asignado";
+    const key = normalizeSystemName(milestone) || "sin hito";
+    const existing = acc.find((group) => group.key === key);
+    if (existing) {
+      existing.items.push(item);
+    } else {
+      acc.push({ key, milestone, items: [item] });
+    }
+    return acc;
+  }, []);
 
   const renderEducationCard = (item, index, prefix = "") => {
     const image = safeUrl(item.imagePreview);
     const link = safeUrl(item.link);
+    const cardKey = `${prefix}${item.deliverable}-${index}`;
+    const isOpen = openEducationCard === cardKey;
 
     return (
-      <article className="educationCard premiumEducationCard" key={`${prefix}${item.deliverable}-${index}`}>
+      <article className={`educationCard premiumEducationCard ${isOpen ? "open" : ""}`} key={cardKey}>
         {image ? (
           <img className="previewImage" src={image} alt={item.deliverable || "Imagen proceso"} />
         ) : (
-          <div className="previewPlaceholder"><Monitor size={34} />Imagen proceso</div>
+          <div className="previewPlaceholder"><Monitor size={34} />Vista previa</div>
         )}
 
         <div className="educationContent">
+          <button
+            className="educationCardToggle"
+            type="button"
+            onClick={() => setOpenEducationCard((current) => (current === cardKey ? "" : cardKey))}
+            aria-expanded={isOpen}
+          >
+            <ChevronRight size={24} />
+          </button>
+
           <div className="area">{item.system || "Entregable"}</div>
           <h3>{item.deliverable}</h3>
 
           <div className="badgeRow">
             {item.milestone && <Badge status="En validación">Hito: {item.milestone}</Badge>}
-            {item.status && <Badge status={item.status}>{item.status}</Badge>}
+            {item.status && <Badge status={getEducationStatusBucket(item.status) === "Terminado" ? "Finalizado" : item.status}>{item.status}</Badge>}
           </div>
 
-          {item.whatIs && <p><strong>¿Qué es?</strong><br />{item.whatIs}</p>}
-          {item.purpose && <p><strong>¿Para qué sirve?</strong><br />{item.purpose}</p>}
-          {item.howToRead && <p><strong>¿Cómo leerlo?</strong><br />{item.howToRead}</p>}
+          {isOpen && (
+            <div className="educationDetailsPanel">
+              {item.whatIs && <p><strong>¿Qué es?</strong><br />{item.whatIs}</p>}
+              {item.purpose && <p><strong>¿Para qué sirve?</strong><br />{item.purpose}</p>}
+              {item.howToRead && <p><strong>¿Cómo leerlo?</strong><br />{item.howToRead}</p>}
+            </div>
+          )}
 
           {link && (
             <a className="secondaryLink routeSecondaryLinkFixed" href={link} target="_blank" rel="noreferrer">
@@ -2798,7 +3477,7 @@ function Education({ education = [] }) {
   };
 
   return (
-    <section className="card premiumSectionCard">
+    <section className="card premiumSectionCard educationSection">
       <div className="sectionHeader">
         <div>
           <h2>Lo que vas a recibir</h2>
@@ -2814,8 +3493,35 @@ function Education({ education = [] }) {
         control y sostenibilidad de tu empresa.
       </p>
 
-      <div className="filters premiumFilters">
-        <label className="filter searchFilter">
+      <div className="educationSummaryGrid">
+        <article className="educationTotalCard">
+          <div>
+            <h3>Total de entregables</h3>
+            <strong>{education.length}</strong>
+          </div>
+          <div className="educationSummaryIcon">
+            <BookOpen size={54} />
+          </div>
+        </article>
+
+        <article className="educationStatusCard">
+          <h3>Estado de entregables</h3>
+          <div className="educationStatusRows">
+            {statusCounts.map((item) => (
+              <div className="educationStatusRow" key={item.status}>
+                <span>{item.status}</span>
+                <div className="educationStatusTrack">
+                  <div style={{ width: `${education.length ? (item.count / education.length) * 100 : 0}%` }} />
+                </div>
+                <strong>{item.count}</strong>
+              </div>
+            ))}
+          </div>
+        </article>
+      </div>
+
+      <div className="filters premiumFilters educationFilters">
+        <label className="filter searchFilter educationSearchFilter">
           <span>Buscar</span>
           <div className="searchInputWrap">
             <Search size={16} />
@@ -2828,36 +3534,25 @@ function Education({ education = [] }) {
         </label>
         <FilterSelect label="Sistema" value={systemFilter} onChange={setSystemFilter} options={orderedSystems} />
         <FilterSelect label="Hito" value={milestoneFilter} onChange={setMilestoneFilter} options={milestones} />
+        <FilterSelect label="Estado" value={statusFilter} onChange={setStatusFilter} options={["Pendiente", "En desarrollo", "Terminado", ...statuses]} />
       </div>
 
       <div className="badgeRow resultCounter"><Badge status="Disponible">{filtered.length} recursos</Badge></div>
 
       <div className="systemsEducation">
         {grouped.map((group, groupIndex) => (
-          <div className="systemSection premiumSystemSection" key={group.system}>
+          <div className="systemSection premiumSystemSection" key={group.milestone}>
             <div className="systemHeader">
-              <div className="systemNumber">Sistema {groupIndex + 1}</div>
-              <h3>{group.system.replace(/^Sistema\s*\d+\s*:\s*/i, "")}</h3>
+              <div className="systemNumber">Hito {groupIndex + 1}</div>
+              <h3>{group.milestone}</h3>
             </div>
 
             <div className="educationGrid">
-              {group.items.map((item, index) => renderEducationCard(item, index, group.system))}
+              {group.items.map((item, index) => renderEducationCard(item, index, group.milestone))}
             </div>
           </div>
         ))}
 
-        {ungrouped.length > 0 && (
-          <div className="systemSection premiumSystemSection">
-            <div className="systemHeader">
-              <div className="systemNumber">Otros</div>
-              <h3>Entregables adicionales</h3>
-            </div>
-
-            <div className="educationGrid">
-              {ungrouped.map((item, index) => renderEducationCard(item, index, "ungrouped"))}
-            </div>
-          </div>
-        )}
       </div>
 
       {!filtered.length && (
@@ -2879,22 +3574,30 @@ function DocumentsUpload({ documents = [], project }) {
   const [responses, setResponses] = useState({});
   const [saving, setSaving] = useState({});
   const [saveMessage, setSaveMessage] = useState({});
+  const [searchTerm, setSearchTerm] = useState("");
+  const [requiredFilter, setRequiredFilter] = useState("Todos");
+  const [documentStatusFilter, setDocumentStatusFilter] = useState("Todos");
 
   const title = documents.find((item) => item.title)?.title || "Carga de documentos iniciales";
   const description =
     documents.find((item) => item.description)?.description ||
     "Para iniciar el diagnóstico, revisa qué documentos tiene tu empresa y súbelos en la carpeta compartida.";
 
-  const getCurrentResponse = (item) => responses[item.id] ?? item.responseClient ?? "";
+  const getDocumentKey = (item) => item.id || item.item || item.title || "";
+  const getCurrentResponse = (item) => responses[getDocumentKey(item)] ?? item.responseClient ?? "";
   const getCurrentStatus = (item) => {
     const response = getCurrentResponse(item);
     if (response === "Sí tengo") return "Por subir";
     if (response === "No tengo") return "No disponible";
     return item.status || "Pendiente";
   };
+  const getRequiredLabel = (item) => {
+    const value = normalizeSystemName(item.required || item.obligatorio || "");
+    return value.startsWith("s") || value.includes("obligatorio") ? "Obligatorio" : "Opcional";
+  };
 
   const handleResponseChange = async (item, respuesta) => {
-    const key = item.id || item.item;
+    const key = getDocumentKey(item);
     const previous = responses[key] ?? item.responseClient ?? "";
 
     setResponses((current) => ({ ...current, [key]: respuesta }));
@@ -2944,31 +3647,51 @@ function DocumentsUpload({ documents = [], project }) {
     }
   };
 
-  const categories = [...new Set(documents.map((item) => item.category).filter(Boolean))];
-  const grouped = categories.map((category) => ({
-    category,
-    items: documents.filter((item) => item.category === category),
-  }));
-  const ungrouped = documents.filter((item) => !item.category);
+  const statusOptions = useMemo(
+    () => Array.from(new Set(documents.map((item) => getCurrentStatus(item)).filter(Boolean))),
+    [documents, responses]
+  );
 
-  const answered = documents.filter((item) => ["Sí tengo", "No tengo"].includes(getCurrentResponse(item))).length;
+  const filteredDocuments = useMemo(() => {
+    const query = normalizeSystemName(searchTerm);
+
+    return documents.filter((item) => {
+      const searchable = normalizeSystemName(
+        [
+          item.title,
+          item.category,
+          item.item,
+          item.detail,
+          item.observation,
+          item.required,
+          getCurrentStatus(item),
+        ].filter(Boolean).join(" ")
+      );
+      const matchesSearch = !query || searchable.includes(query);
+      const matchesRequired = requiredFilter === "Todos" || getRequiredLabel(item) === requiredFilter;
+      const matchesStatus = documentStatusFilter === "Todos" || getCurrentStatus(item) === documentStatusFilter;
+      return matchesSearch && matchesRequired && matchesStatus;
+    });
+  }, [documents, responses, searchTerm, requiredFilter, documentStatusFilter]);
+
   const yesHave = documents.filter((item) => getCurrentResponse(item) === "Sí tengo").length;
-  const required = documents.filter((item) => String(item.required || "").toLowerCase().startsWith("s")).length;
+  const required = documents.filter((item) => getRequiredLabel(item) === "Obligatorio").length;
 
   const renderDocumentItem = (item, index) => {
-    const key = item.id || item.item || String(index);
+    const key = getDocumentKey(item) || String(index);
     const currentResponse = getCurrentResponse(item);
     const currentStatus = getCurrentStatus(item);
     const isDone = currentResponse === "Sí tengo" || String(currentStatus || "").toLowerCase().includes("cargado") || String(currentStatus || "").toLowerCase().includes("validado");
 
     return (
-      <article className="documentChecklistItem" key={`${item.category || "general"}-${item.item}-${index}`}>
+      <article className="documentChecklistItem" key={`${item.category || "general"}-${key}-${index}`}>
         <div className="documentCheckIcon">
           {isDone ? <CheckCircle2 size={19} /> : <ClipboardCheck size={19} />}
         </div>
 
         <div className="documentChecklistContent">
           <div className="documentItemTop">
+            {item.category && <span className="documentCardCategory">{item.category}</span>}
             <h3>{item.item}</h3>
             <div className="badgeRow">
               {item.required && <Badge status="Disponible">Obligatorio: {item.required}</Badge>}
@@ -3035,18 +3758,37 @@ function DocumentsUpload({ documents = [], project }) {
 
         <div className="documentsHeroMetrics">
           <div className="portalMetricCard">
-            <span>Ítems respondidos</span>
-            <strong>{answered}/{documents.length}</strong>
+            <span>Ítems cargados</span>
+            <strong><ChevronRight size={26} />{yesHave}/{documents.length}</strong>
+            <ProgressBar value={documents.length ? (yesHave / documents.length) * 100 : 0} status="Finalizado" />
           </div>
           <div className="portalMetricCard">
             <span>Sí tiene</span>
-            <strong>{yesHave}</strong>
+            <strong><ChevronRight size={26} />{yesHave}</strong>
+            <ProgressBar value={documents.length ? (yesHave / documents.length) * 100 : 0} status="Finalizado" />
           </div>
           <div className="portalMetricCard">
             <span>Obligatorios</span>
-            <strong>{required}</strong>
+            <strong><ChevronRight size={26} />{required}</strong>
+            <ProgressBar value={documents.length ? (required / documents.length) * 100 : 0} status="Finalizado" />
           </div>
         </div>
+      </div>
+
+      <div className="filters premiumFilters documentsFilters">
+        <label className="filter searchFilter documentsSearchFilter">
+          <span>Buscar</span>
+          <div className="searchInputWrap">
+            <Search size={19} />
+            <input
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar documento, categoría o estado..."
+            />
+          </div>
+        </label>
+        <FilterSelect label="Obligatorio" value={requiredFilter} onChange={setRequiredFilter} options={["Obligatorio", "Opcional"]} />
+        <FilterSelect label="Estado" value={documentStatusFilter} onChange={setDocumentStatusFilter} options={statusOptions} />
       </div>
 
       <div className="documentsChecklist">
@@ -3073,35 +3815,21 @@ function DocumentsUpload({ documents = [], project }) {
           </div>
         )}
 
-        {grouped.map((group) => (
-          <div className="documentCategoryBlock" key={group.category}>
+        {documents.length > 0 && filteredDocuments.length === 0 && (
+          <div className="documentCategoryBlock documentsEmptyState">
             <div className="documentCategoryHeader">
               <div>
-                <span>Categoría</span>
-                <h3>{group.category}</h3>
+                <span>Sin resultados</span>
+                <h3>No hay documentos con esos filtros</h3>
               </div>
-              <Badge status="Disponible">{group.items.length} documentos</Badge>
-            </div>
-
-            <div className="documentItemsGrid">
-              {group.items.map((item, index) => renderDocumentItem(item, index))}
+              <Badge status="Pendiente">Ajustar búsqueda</Badge>
             </div>
           </div>
-        ))}
+        )}
 
-        {ungrouped.length > 0 && (
-          <div className="documentCategoryBlock">
-            <div className="documentCategoryHeader">
-              <div>
-                <span>Categoría</span>
-                <h3>Documentos generales</h3>
-              </div>
-              <Badge status="Disponible">{ungrouped.length} documentos</Badge>
-            </div>
-
-            <div className="documentItemsGrid">
-              {ungrouped.map((item, index) => renderDocumentItem(item, index))}
-            </div>
+        {filteredDocuments.length > 0 && (
+          <div className="documentItemsGrid documentsFlatGrid">
+            {filteredDocuments.map((item, index) => renderDocumentItem(item, index))}
           </div>
         )}
       </div>
@@ -3109,7 +3837,138 @@ function DocumentsUpload({ documents = [], project }) {
   );
 }
 
+function getStoredClientSession() {
+  try {
+    return JSON.parse(window.localStorage.getItem("gseClientSession") || "null");
+  } catch {
+    return null;
+  }
+}
+
+function ClientLogin({ onLogin }) {
+  const loginUrl = import.meta.env.VITE_LOGIN_WEBHOOK_URL || "";
+  const supportWhatsappUrl = safeUrl(import.meta.env.VITE_SUPPORT_WHATSAPP_URL || "");
+  const [usuario, setUsuario] = useState(() => window.localStorage.getItem("gseRememberedUser") || "");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(() => Boolean(window.localStorage.getItem("gseRememberedUser")));
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setMessage("");
+
+    if (!loginUrl) {
+      setMessage("Falta configurar VITE_LOGIN_WEBHOOK_URL en Vercel.");
+      return;
+    }
+
+    if (!usuario.trim() || !password.trim()) {
+      setMessage("Ingresa usuario y contraseña.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch(loginUrl, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ usuario, password }),
+      });
+      const result = await response.json();
+
+      if (!response.ok || result.ok === false || !result.user?.sheetId) {
+        throw new Error(result.message || "No se pudo iniciar sesión.");
+      }
+
+      const session = {
+        ...result.user,
+        loggedAt: new Date().toISOString(),
+      };
+      if (rememberMe) {
+        window.localStorage.setItem("gseRememberedUser", usuario.trim());
+      } else {
+        window.localStorage.removeItem("gseRememberedUser");
+      }
+      window.localStorage.setItem("gseClientSession", JSON.stringify(session));
+      onLogin(session);
+    } catch (error) {
+      setMessage(error.message || "Usuario o contraseña incorrectos.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="loginShell">
+      <section className="loginPanel">
+        <div className="loginBrandBlock">
+          <div className="loginBrandMark">GSE&CO</div>
+          <span>Portal privado del cliente</span>
+        </div>
+        <div>
+          <span className="loginEyebrow">Ruta de Implementación Visible</span>
+          <h1>Acceso cliente</h1>
+          <p>Ingresa con el usuario asignado para abrir automáticamente tu ruta del proyecto.</p>
+        </div>
+
+        <form className="loginForm" onSubmit={handleSubmit}>
+          <label>
+            <span>Usuario</span>
+            <input value={usuario} onChange={(event) => setUsuario(event.target.value)} autoComplete="username" />
+          </label>
+
+          <label>
+            <span>Contraseña</span>
+            <div className="passwordInputWrap">
+              <input value={password} onChange={(event) => setPassword(event.target.value)} type={showPassword ? "text" : "password"} autoComplete="current-password" />
+              <button
+                type="button"
+                className="passwordToggleButton"
+                onMouseDown={() => setShowPassword(true)}
+                onMouseUp={() => setShowPassword(false)}
+                onMouseLeave={() => setShowPassword(false)}
+                onTouchStart={() => setShowPassword(true)}
+                onTouchEnd={() => setShowPassword(false)}
+                aria-label="Mostrar contraseña"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </label>
+
+          <label className="rememberLoginOption">
+            <input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} />
+            <span>Recuérdame</span>
+          </label>
+
+          {message && <div className="loginMessage">{message}</div>}
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Validando..." : "Entrar"}
+            <ChevronRight size={18} />
+          </button>
+        </form>
+
+        <div className="loginHelpText">
+          <MessageCircle size={18} />
+          <p>
+            Si tienes algún problema o si olvidaste la contraseña,
+            {supportWhatsappUrl ? (
+              <> <a href={supportWhatsappUrl} target="_blank" rel="noreferrer">escríbenos al WhatsApp</a>.</>
+            ) : (
+              " escríbenos al WhatsApp."
+            )}
+          </p>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 function App() {
+  const [session, setSession] = useState(() => getStoredClientSession());
   const [view, setView] = useState("portal");
   const [data, setData] = useState(demoData);
   const [connected, setConnected] = useState(false);
@@ -3118,6 +3977,8 @@ function App() {
   const [selectedHito, setSelectedHito] = useState("");
 
   useEffect(() => {
+    if (!session?.sheetId) return;
+
     loadSheetData()
       .then((sheetData) => {
         setData(sheetData);
@@ -3129,21 +3990,48 @@ function App() {
         setConnected(false);
         setError("No se pudo conectar con Google Sheets. Revisa publicación, permisos o nombres de pestañas.");
       });
-  }, []);
+  }, [session?.sheetId]);
 
-  const { project, milestones, findings, pending, deliverables, updates, education, documents = [], processesAsIs = [], processesToBe = [], coeAsIs = [], coeToBe = [] } = data;
+  const { project, milestones, findings, pending, deliverables, updates, education, meetings = [], documents = [], processesAsIs = [], processesToBe = [], coeAsIs = [], coeToBe = [] } = data;
 
   const completedText = useMemo(() => {
     const completed = milestones.filter((m) => m.status === "Finalizado" || m.status === "Aprobado").length;
     return `${completed} hitos completados de ${milestones.length}`;
   }, [milestones]);
 
+  const handleLogout = () => {
+    window.localStorage.removeItem("gseClientSession");
+    setSession(null);
+    setConnected(false);
+    setData(demoData);
+  };
+
+  if (!session?.sheetId) {
+    return <ClientLogin onLogin={setSession} />;
+  }
+
   return (
     <div className="app">
       <Sidebar view={view} setView={setView} project={project} />
 
       <main className="main">
-        <Header project={project} connected={connected} />
+        <AppTopbar
+          project={project}
+          pending={pending}
+          meetings={meetings}
+          updates={updates}
+          milestones={milestones}
+          findings={findings}
+          deliverables={deliverables}
+          documents={documents}
+          education={education}
+          processesAsIs={processesAsIs}
+          processesToBe={processesToBe}
+          setView={setView}
+          setSelectedHito={setSelectedHito}
+          setSelectedDeliverable={setSelectedDeliverable}
+          onLogout={handleLogout}
+        />
 
         <div className="content">
           <div className="mobileTabs">
@@ -3167,44 +4055,23 @@ function App() {
 
           {error && <div className="errorBox">{error}</div>}
 
-          <ProjectHero project={project} completedText={completedText} />
-
           {view === "portal" && <PortalProject project={project} milestones={milestones} pending={pending} setView={setView} />}
 
           {view === "resumen" && (
-            <div className="summaryMirrorPage">
-              <KpiCards project={project} milestones={milestones} pending={pending} setView={setView} />
-
-              <div className="executiveSummaryLayout hitosFirst summaryTopMirrorGrid">
-                <section className="card summaryHitosCombinedCard">
-                  <div className="summaryHitosCombinedInner">
-                    <div className="executiveSummaryMain summaryHitosColumn">
-                      <MilestonesExecutive
-                        milestones={milestones}
-                        setView={setView}
-                        selectedHito={selectedHito}
-                        setSelectedHito={setSelectedHito}
-                      />
-                    </div>
-
-                    <HitosStatusMatrix milestones={milestones} setView={setView} setSelectedHito={setSelectedHito} />
-                  </div>
-                </section>
-
-                <UpdatesPanel project={project} updates={updates} pending={pending} setView={setView} />
-              </div>
-
-              <SummaryInsightCards
-                project={project}
-                milestones={milestones}
-                deliverables={deliverables}
-                findings={findings}
-                processesAsIs={processesAsIs}
-                processesToBe={processesToBe}
-                coeAsIs={coeAsIs}
-                coeToBe={coeToBe}
-              />
-            </div>
+            <SummaryCanvaDashboard
+              project={project}
+              milestones={milestones}
+              pending={pending}
+              findings={findings}
+              deliverables={deliverables}
+              processesAsIs={processesAsIs}
+              processesToBe={processesToBe}
+              coeAsIs={coeAsIs}
+              coeToBe={coeToBe}
+              updates={updates}
+              meetings={meetings}
+              setView={setView}
+            />
           )}
 
           {view === "ruta" && <Timeline milestones={milestones} deliverables={deliverables} detailed setView={setView} setSelectedDeliverable={setSelectedDeliverable} selectedHito={selectedHito} setSelectedHito={setSelectedHito} />}
@@ -3391,3 +4258,4 @@ createRoot(document.getElementById("root")).render(<App />);
 
 
 // HALLAZGOS_V12_FILTROS_FECHAMAX_FINAL
+
